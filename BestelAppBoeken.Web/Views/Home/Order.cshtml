@@ -1,0 +1,62 @@
+@model BestelAppBoeken.Core.Models.Book
+
+@{
+    ViewData["Title"] = "Order Book";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Complete Your Order</h4>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-4 text-center">
+                    <img src="@Model.ImageUrl" class="img-fluid rounded shadow-sm" alt="@Model.Title" style="max-height: 200px;">
+                </div>
+                <div class="col-md-8">
+                    <h5>@Model.Title</h5>
+                    <p class="text-muted">By @Model.Author</p>
+                    <p>@Model.Description</p>
+                    <h4 class="text-success">€@Model.Price</h4>
+                </div>
+            </div>
+
+            <form asp-action="PlaceOrder" method="post">
+                <input type="hidden" name="bookId" value="@Model.Id" />
+                
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <div class="input-group">
+                        <button class="btn btn-outline-secondary" type="button" onclick="decrement()">-</button>
+                        <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" required>
+                        <button class="btn btn-outline-secondary" type="button" onclick="increment()">+</button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill">Place Order</button>
+                    <a asp-action="Index" class="btn btn-link text-muted">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function increment() {
+        var el = document.getElementById('quantity');
+        el.value = parseInt(el.value) + 1;
+    }
+    function decrement() {
+        var el = document.getElementById('quantity');
+        if (parseInt(el.value) > 1) {
+            el.value = parseInt(el.value) - 1;
+        }
+    }
+</script>

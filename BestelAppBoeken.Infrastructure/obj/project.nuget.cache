@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "3c/f0bW24d4=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Raihane\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Raihane\\.nuget\\packages\\rabbitmq.client\\7.2.0\\rabbitmq.client.7.2.0.nupkg.sha512",
+    "C:\\Users\\Raihane\\.nuget\\packages\\system.threading.ratelimiting\\8.0.0\\system.threading.ratelimiting.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

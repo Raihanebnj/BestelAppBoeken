@@ -1,0 +1,25 @@
+﻿@model IEnumerable<BestelAppBoeken.Core.Models.Book>
+
+@{
+    ViewData["Title"] = "Book Catalog";
+}
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-primary">@item.Title</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@item.Author</h6>
+                    <p class="card-text text-truncate">@item.Description</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <span class="h5 mb-0 text-success">€@item.Price</span>
+                        <a asp-action="Order" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm rounded-pill px-3">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,15 @@
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAppBoeken.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAppBoeken.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAppBoeken.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAppBoeken.Infrastructure.AssemblyInfo.cs
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAppBoeken.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\bin\Debug\net10.0\BestelAppBoeken.Infrastructure.deps.json
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\bin\Debug\net10.0\BestelAppBoeken.Infrastructure.dll
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\bin\Debug\net10.0\BestelAppBoeken.Infrastructure.pdb
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\bin\Debug\net10.0\BestelAppBoeken.Core.dll
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\bin\Debug\net10.0\BestelAppBoeken.Core.pdb
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAp.38B3D84D.Up2Date
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAppBoeken.Infrastructure.dll
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\refint\BestelAppBoeken.Infrastructure.dll
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAppBoeken.Infrastructure.pdb
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\ref\BestelAppBoeken.Infrastructure.dll

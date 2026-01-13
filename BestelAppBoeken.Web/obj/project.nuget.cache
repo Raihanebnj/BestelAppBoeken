@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "cu5X3AjOsng=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Raihane\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Web\\BestelAppBoeken.Web.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Raihane\\.nuget\\packages\\rabbitmq.client\\7.2.0\\rabbitmq.client.7.2.0.nupkg.sha512"
+  ],
+  "logs": []
+}
