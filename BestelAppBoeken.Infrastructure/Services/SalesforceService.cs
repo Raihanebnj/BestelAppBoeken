@@ -6,11 +6,16 @@ namespace BestelAppBoeken.Infrastructure.Services
 {
     public class SalesforceService : ISalesforceService
     {
-        public Task SyncOrderAsync(Order order)
+        private readonly IMessageQueueService _messageQueueService;
+
+        public SalesforceService(IMessageQueueService messageQueueService)
         {
-            // Placeholder for Salesforce integration
-            // In a real scenario, this would use a REST API or Salesforce SDK
-            return Task.CompletedTask;
+            _messageQueueService = messageQueueService;
+        }
+
+        public async Task SyncOrderAsync(Order order)
+        {
+            await _messageQueueService.PublishOrderAsync(order);
         }
     }
 }

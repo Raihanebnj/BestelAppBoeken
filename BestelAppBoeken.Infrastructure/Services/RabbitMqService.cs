@@ -3,20 +3,25 @@ using BestelAppBoeken.Core.Models;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace BestelAppBoeken.Infrastructure.Services
 {
     public class RabbitMqService : IMessageQueueService
     {
+        private readonly IConfiguration _configuration;
         private readonly ConnectionFactory _factory;
 
-        public RabbitMqService()
+        public RabbitMqService(IConfiguration configuration)
         {
+            _configuration = configuration;
+            var rabbitMqSection = _configuration.GetSection("RabbitMq");
+
             _factory = new ConnectionFactory
             {
-                HostName = "10.2.160.223",
-                UserName = "bestelapp",
-                Password = "Groep3"
+                HostName = rabbitMqSection["HostName"],
+                UserName = rabbitMqSection["UserName"],
+                Password = rabbitMqSection["Password"]
             };
         }
 
@@ -25,7 +30,9 @@ namespace BestelAppBoeken.Infrastructure.Services
             using var connection = await _factory.CreateConnectionAsync();
             using var channel = await connection.CreateChannelAsync();
 
-            await channel.QueueDeclareAsync(queue: "orders",
+            var queueName = _configuration["RabbitMq:QueueName"] ?? "orders";
+
+            await channel.QueueDeclareAsync(queue: queueName,
                                  durable: false,
                                  exclusive: false,
                                  autoDelete: false,
@@ -35,7 +42,7 @@ namespace BestelAppBoeken.Infrastructure.Services
             var body = Encoding.UTF8.GetBytes(message);
 
             await channel.BasicPublishAsync(exchange: "",
-                                 routingKey: "orders",
+                                 routingKey: queueName,
                                  mandatory: false,
                                  basicProperties: new BasicProperties(),
                                  body: body);

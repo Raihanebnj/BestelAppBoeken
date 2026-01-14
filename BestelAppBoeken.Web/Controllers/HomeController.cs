@@ -58,13 +58,10 @@ namespace BestelAppBoeken.Web.Controllers
                 }
             };
 
-            // 1. Publish to RabbitMQ
-            await _messageQueue.PublishOrderAsync(order);
-
-            // 2. Sync to Salesforce (Async)
+            // 1. Sync to Salesforce (via RabbitMQ -> MuleSoft)
             await _salesforceService.SyncOrderAsync(order);
 
-            // 3. Post to SAP (Async)
+            // 2. Post to SAP (Async)
             await _sapService.PostInvoiceAsync(order);
 
             return RedirectToAction("OrderConfirmation");
