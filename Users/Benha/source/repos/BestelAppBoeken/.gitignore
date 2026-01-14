@@ -1,28 +1,27 @@
-﻿# Visual Studio
+﻿## Visual Studio - DO THIS FIRST!
 .vs/
-bin/
-obj/
+.vscode/
 *.user
 *.suo
 *.cache
+*.VC.db
 
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
+## Build
+bin/
+obj/
 [Bb]in/
 [Oo]bj/
-[Ll]og/
-[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
 
-# Sensitive files
+## NuGet
+packages/
+*.nupkg
+
+## Sensitive
 .env
-*.env.local
-appsettings.Development.json
-appsettings.Production.json
+appsettings.*.json
+secrets.json
+
+## OS
+.DS_Store
