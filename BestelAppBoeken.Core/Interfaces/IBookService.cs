@@ -1,5 +1,4 @@
 using BestelAppBoeken.Core.Models;
-using System.Collections.Generic;
 
 namespace BestelAppBoeken.Core.Interfaces
 {
@@ -7,5 +6,11 @@ namespace BestelAppBoeken.Core.Interfaces
     {
         IEnumerable<Book> GetAllBooks();
         Book? GetBookById(int id);
+        Book CreateBook(Book book);
+        Book? UpdateBook(int id, Book book);
+        bool DeleteBook(int id);
+        IEnumerable<Book> SearchBooks(string query);
+        bool AddStock(int bookId, int amount);
+        bool ReduceStock(int bookId, int amount);
     }
 }

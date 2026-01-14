@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BestelAppBoeken.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fbabc3789a5cd528140ebabaccec1fbc92805a60")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6dfc9c2c6abb5c946a0b6abeaeedcfa5469ea59e")]
 [assembly: System.Reflection.AssemblyProductAttribute("BestelAppBoeken.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BestelAppBoeken.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Bookstore Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --danger: #f56565;
+            --warning: #ed8936;
+            --info: #4299e1;
+            --dark: #2d3748;
+            --light: #f7fafc;
+            --gray: #718096;
+            --border: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h1 i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            font-size: 20px;
+        }
+
+        .meta {
+            background: linear-gradient(135deg, #e6f7ff, #bae7ff);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            border-left: 4px solid var(--info);
+        }
+
+        .meta strong {
+            color: var(--dark);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            font-size: 16px;
+            border-left: 4px solid var(--success);
+            line-height: 1.8;
+        }
+
+        .highlight strong {
+            color: var(--dark);
+            font-size: 17px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #4a5568;
+        }
+
+        ul {
+            margin: 15px 0 15px 25px;
+            color: #4a5568;
+        }
+
+        li {
+            margin-bottom: 8px;
+            padding-left: 5px;
+        }
+
+        ul li::marker {
+            color: var(--primary);
+        }
+
+        code {
+            background: #2d3748;
+            color: #48bb78;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        .contact {
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border-left: 4px solid var(--danger);
+        }
+
+        .contact h2 {
+            color: var(--danger);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            margin-top: 0;
+        }
+
+        .contact p {
+            color: #742a2a;
+        }
+
+        .contact a {
+            color: #c53030;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            text-decoration: none;
+        }
+
+        .back-link i {
+            font-size: 16px;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fef5e7, #fdeaa8);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .warning-box strong {
+            color: #744210;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e6f7ff, #bae7ff);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--info);
+            margin: 20px 0;
+        }
+
+        .info-box strong {
+            color: #0c5273;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+        }
+
+        /* Animatie */
+        .container {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-shield-alt"></i> Privacy Policy</h1>
+        
+        <div class="meta">
+            <strong><i class="fas fa-calendar-alt"></i> Laatste update:</strong> 15 januari 2024<br>
+            <strong><i class="fas fa-code-branch"></i> Versie:</strong> 1.0<br>
+            <strong><i class="fas fa-language"></i> Taal:</strong> Nederlands
+        </div>
+
+        <div class="highlight">
+            <strong><i class="fas fa-info-circle"></i> Samenvatting:</strong> Wij verzamelen alleen noodzakelijke gegevens voor orderverwerking. 
+            U heeft volledige controle over uw data via onze API endpoints. Wij voldoen aan de AVG/GDPR.
+        </div>
+
+        <h2><i class="fas fa-building"></i> 1. Wie zijn wij?</h2>
+        <p>
+            <strong>Bookstore Management System</strong> is een platform voor het beheren van boekverkoop orders. 
+            Wij verzamelen en verwerken persoonsgegevens uitsluitend voor het uitvoeren van bestellingen 
+            en klantenadministratie.
+        </p>
+        <p>
+            <strong>Contactgegevens:</strong><br>
+            <i class="fas fa-map-marker-alt"></i> Nijverheidskaai 170, 1070 Brussel, België<br>
+            <i class="fas fa-envelope"></i> <a href="mailto:info@bookstore@ehb.be">info@bookstore@ehb.be</a>
+        </p>
+
+        <h2><i class="fas fa-database"></i> 2. Welke gegevens verzamelen wij?</h2>
+        
+        <div class="info-box">
+            <strong><i class="fas fa-check-circle"></i> Wij verzamelen de volgende persoonsgegevens:</strong>
+            <ul style="margin-top: 10px;">
+                <li><i class="fas fa-user"></i> Naam (verplicht voor orderverwerking)</li>
+                <li><i class="fas fa-envelope"></i> E-mailadres (verplicht voor communicatie)</li>
+                <li><i class="fas fa-phone"></i> Telefoonnummer (optioneel voor contact)</li>
+                <li><i class="fas fa-map-marker-alt"></i> Adres (verplicht voor levering)</li>
+                <li><i class="fas fa-history"></i> Ordergeschiedenis</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <strong><i class="fas fa-times-circle"></i> Wij verzamelen GEEN:</strong>
+            <ul style="margin-top: 10px;">
+                <li>Geboortedatum</li>
+                <li>Burgerservicenummer (BSN)</li>
+                <li>Financiële gegevens (creditcards)</li>
+                <li>Gevoelige categorieën (gezondheid, religie, etc.)</li>
+            </ul>
+        </div>
+
+        <h2><i class="fas fa-question-circle"></i> 3. Waarom verzamelen wij uw gegevens?</h2>
+        
+        <p><strong>Rechtsgrondslag voor verwerking:</strong></p>
+        <ul>
+            <li><strong>Uitvoering van overeenkomst</strong> (Art. 6.1.b GDPR) - Orders verwerken</li>
+            <li><strong>Toestemming</strong> (Art. 6.1.a GDPR) - Via API call</li>
+            <li><strong>Gerechtvaardigd belang</strong> (Art. 6.1.f GDPR) - Fraudepreventie</li>
+        </ul>
+
+        <p><strong>Doeleinden:</strong></p>
+        <ul>
+            <li><i class="fas fa-shopping-cart"></i> Orderverwerking</li>
+            <li><i class="fas fa-users"></i> Klantenadministratie</li>
+            <li><i class="fas fa-comments"></i> Communicatie over uw bestelling</li>
+            <li><i class="fas fa-balance-scale"></i> Wettelijke verplichtingen (fiscaal)</li>
+        </ul>
+
+        <h2><i class="fas fa-clock"></i> 4. Hoe lang bewaren wij uw gegevens?</h2>
+        <ul>
+            <li><strong>Ordergegevens:</strong> 7 jaar (fiscale verplichting)</li>
+            <li><strong>Klantgegevens:</strong> Tot verwijderingsverzoek</li>
+            <li><strong>Backups:</strong> 30 dagen</li>
+            <li><strong>Logs:</strong> 7 dagen</li>
+        </ul>
+        <p><i class="fas fa-info-circle"></i> Na deze termijn worden gegevens permanent verwijderd.</p>
+
+        <h2><i class="fas fa-share-alt"></i> 5. Met wie delen wij uw gegevens?</h2>
+        
+        <p><strong>Ontvangers van uw gegevens:</strong></p>
+        <ul>
+            <li><i class="fas fa-cloud"></i> <strong>Salesforce (CRM)</strong> - Klantbeheer</li>
+            <li><i class="fas fa-cogs"></i> <strong>SAP R/3 (ERP)</strong> - Orderverwerking</li>
+            <li><i class="fas fa-exchange-alt"></i> <strong>RabbitMQ (Queue)</strong> - Interne message broker</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong><i class="fas fa-ban"></i> Wij geven uw gegevens NIET door aan:</strong>
+            <ul style="margin-top: 10px;">
+                <li>Marketingbedrijven</li>
+                <li>Social media platforms</li>
+                <li>Derde partijen zonder toestemming</li>
+            </ul>
+        </div>
+
+        <p><strong><i class="fas fa-globe-europe"></i> Doorgifte buiten EU:</strong> Nee (alle data binnen EU)</p>
+
+        <h2><i class="fas fa-user-shield"></i> 6. Uw rechten onder de AVG/GDPR</h2>
+        <p>U heeft de volgende rechten:</p>
+
+        <p><strong>1. Recht op inzage (Art. 15)</strong><br>
+        <code>GET /api/klanten/{id}</code></p>
+
+        <p><strong>2. Recht op correctie (Art. 16)</strong><br>
+        <code>PUT /api/klanten/{id}</code></p>
+
+        <p><strong>3. Recht op verwijdering (Art. 17)</strong><br>
+        <code>DELETE /api/klanten/{id}</code></p>
+
+        <p><strong>4. Recht op dataportabiliteit (Art. 20)</strong><br>
+        <code>GET /api/klanten/{id}/export</code></p>
+
+        <p><strong>5. Recht op beperking verwerking (Art. 18)</strong><br>
+        Contact: <a href="mailto:privacy@bookstore@ehb.be"><i class="fas fa-envelope"></i> privacy@bookstore@ehb.be</a></p>
+
+        <p><strong>6. Recht van bezwaar (Art. 21)</strong><br>
+        Contact: <a href="mailto:privacy@bookstore@ehb.be"><i class="fas fa-envelope"></i> privacy@bookstore@ehb.be</a></p>
+
+        <div class="info-box">
+            <i class="fas fa-hourglass-half"></i> <strong>Reactietijd:</strong> Verzoeken behandelen wij binnen 1 maand conform GDPR.
+        </div>
+
+        <h2><i class="fas fa-lock"></i> 7. Beveiliging van uw gegevens</h2>
+        <p><strong>Beveiligingsmaatregelen:</strong></p>
+        <ul>
+            <li><i class="fas fa-key"></i> API Key authenticatie (X-API-Key header)</li>
+            <li><i class="fas fa-shield-alt"></i> HTTPS encryptie (TLS 1.2+)</li>
+            <li><i class="fas fa-filter"></i> Input validatie tegen SQL injection en XSS</li>
+            <li><i class="fas fa-clipboard-list"></i> Audit logging van alle acties</li>
+            <li><i class="fas fa-database"></i> Dagelijkse backups (encrypted)</li>
+            <li><i class="fas fa-user-lock"></i> Access control (alleen geautoriseerd personeel)</li>
+        </ul>
+        
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle"></i> <strong>Datalek:</strong> Bij een datalek informeren wij u binnen 72 uur conform GDPR.
+        </div>
+
+        <h2><i class="fas fa-cookie-bite"></i> 8. Cookies en tracking</h2>
+        
+        <div class="info-box">
+            <strong><i class="fas fa-check-circle"></i> Deze applicatie gebruikt:</strong>
+            <ul style="margin-top: 10px;">
+                <li><i class="fas fa-times"></i> Geen cookies (API-only, geen webinterface sessies)</li>
+                <li><i class="fas fa-times"></i> Geen tracking pixels</li>
+                <li><i class="fas fa-times"></i> Geen third-party analytics</li>
+            </ul>
+        </div>
+        
+        <p>Zie <a href="/cookie-policy.html"><i class="fas fa-cookie-bite"></i> Cookie Policy</a> voor meer details.</p>
+
+        <div class="contact">
+            <h2><i class="fas fa-phone-alt"></i> Contact & Klachten</h2>
+            <p><strong>Vragen of klachten over privacy?</strong></p>
+            <p>
+                <i class="fas fa-envelope"></i> E-mail: <a href="mailto:privacy@bookstore@ehb.be">privacy@bookstore@ehb.be</a><br>
+                <i class="fas fa-user-shield"></i> Data Protection Officer: <a href="mailto:dpo@bookstore@ehb.be">dpo@bookstore@ehb.be</a>
+            </p>
+
+            <p><strong>Klacht indienen bij toezichthouder:</strong></p>
+            <p>
+                <strong>Gegevensbeschermingsautoriteit (GBA)</strong><br>
+                <i class="fas fa-map-marker-alt"></i> Drukpersstraat 35<br>
+                1000 Brussel, België<br>
+                <i class="fas fa-globe"></i> Website: <a href="https://www.gegevensbeschermingsautoriteit.be" target="_blank">gegevensbeschermingsautoriteit.be</a>
+            </p>
+        </div>
+
+        <h2><i class="fas fa-sync-alt"></i> 9. Wijzigingen in deze policy</h2>
+        <p>
+            Wij kunnen deze privacy policy aanpassen. De laatste versie vindt u altijd op deze pagina.
+            Belangrijke wijzigingen communiceren wij via e-mail.
+        </p>
+        <p><i class="fas fa-bell"></i> Check regelmatig deze pagina voor updates.</p>
+
+        <a href="/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Terug naar Dashboard
+        </a>
+    </div>
+
+    <script>
+        console.log('%c?? Privacy Policy geladen', 'color: #667eea; font-size: 14px; font-weight: bold;');
+        console.log('%c?? GDPR/AVG compliant', 'color: #48bb78; font-size: 12px;');
+    </script>
+</body>
+</html>

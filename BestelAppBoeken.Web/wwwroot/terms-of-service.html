@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gebruiksvoorwaarden - Bookstore Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --danger: #f56565;
+            --warning: #ed8936;
+            --info: #4299e1;
+            --dark: #2d3748;
+            --light: #f7fafc;
+            --gray: #718096;
+            --border: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meta {
+            background: linear-gradient(135deg, #e6f7ff, #bae7ff);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            border-left: 4px solid var(--info);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            font-size: 16px;
+            border-left: 4px solid var(--success);
+            line-height: 1.8;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fef5e7, #fdeaa8);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e6f7ff, #bae7ff);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--info);
+            margin: 20px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #4a5568;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 25px;
+            color: #4a5568;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 25px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-file-contract"></i> Gebruiksvoorwaarden</h1>
+        
+        <div class="meta">
+            <strong><i class="fas fa-calendar-alt"></i> Ingangsdatum:</strong> 15 januari 2024<br>
+            <strong><i class="fas fa-code-branch"></i> Versie:</strong> 1.0<br>
+            <strong><i class="fas fa-language"></i> Taal:</strong> Nederlands
+        </div>
+
+        <div class="highlight">
+            <strong><i class="fas fa-info-circle"></i> Welkom bij Bookstore Management!</strong> 
+            Door deze service te gebruiken, gaat u akkoord met deze voorwaarden. Lees deze zorgvuldig door.
+        </div>
+
+        <h2><i class="fas fa-handshake"></i> 1. Aanvaarding van de voorwaarden</h2>
+        <p>
+            Door toegang te krijgen tot en gebruik te maken van het Bookstore Management System 
+            ("de Service"), aanvaardt u deze gebruiksvoorwaarden volledig. Als u niet akkoord gaat 
+            met deze voorwaarden, mag u de Service niet gebruiken.
+        </p>
+
+        <h2><i class="fas fa-building"></i> 2. Over de Service</h2>
+        <p><strong>Bookstore Management System</strong> biedt:</p>
+        <ul>
+            <li><i class="fas fa-users"></i> Klantenbeheer</li>
+            <li><i class="fas fa-book"></i> Boekenbeheer met voorraadcontrole</li>
+            <li><i class="fas fa-shopping-cart"></i> Orderverwerking</li>
+            <li><i class="fas fa-exchange-alt"></i> Integratie met Salesforce en SAP R/3 via RabbitMQ</li>
+        </ul>
+
+        <h2><i class="fas fa-user-check"></i> 3. Gebruik van de Service</h2>
+        
+        <div class="info-box">
+            <strong><i class="fas fa-check-circle"></i> U mag de Service gebruiken voor:</strong>
+            <ul style="margin-top: 10px;">
+                <li>Legitieme bedrijfsdoeleinden</li>
+                <li>Beheer van klanten en bestellingen</li>
+                <li>Voorraad administratie</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <strong><i class="fas fa-ban"></i> U mag de Service NIET gebruiken voor:</strong>
+            <ul style="margin-top: 10px;">
+                <li>Illegale activiteiten</li>
+                <li>Inbreuk op intellectuele eigendomsrechten</li>
+                <li>Verspreiding van malware of virussen</li>
+                <li>Ongeautoriseerde toegang tot systemen</li>
+                <li>Spam of phishing</li>
+                <li>Overbelasting van servers (DOS aanvallen)</li>
+            </ul>
+        </div>
+
+        <h2><i class="fas fa-key"></i> 4. API Toegang en Authenticatie</h2>
+        <p><strong>API Key vereisten:</strong></p>
+        <ul>
+            <li>U bent verantwoordelijk voor het geheimhouden van uw API keys</li>
+            <li>Deel uw API keys nooit met derden</li>
+            <li>Meld onmiddellijk verdachte activiteiten</li>
+            <li>API keys kunnen worden ingetrokken bij misbruik</li>
+        </ul>
+
+        <h2><i class="fas fa-balance-scale"></i> 5. Intellectuele eigendom</h2>
+        <p>
+            Alle rechten, titels en belangen in en op de Service, inclusief maar niet beperkt tot software, 
+            tekst, graphics, logo's, en content, zijn eigendom van Bookstore Management of haar licentiegevers.
+        </p>
+
+        <h2><i class="fas fa-database"></i> 6. Gegevensgebruik</h2>
+        <p>
+            Door de Service te gebruiken, geeft u toestemming voor het verzamelen en verwerken van gegevens 
+            zoals beschreven in onze <a href="/privacy-policy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a>.
+        </p>
+        <ul>
+            <li>Uw gegevens worden veilig opgeslagen</li>
+            <li>We delen geen data zonder toestemming</li>
+            <li>U heeft recht op inzage, correctie en verwijdering</li>
+        </ul>
+
+        <h2><i class="fas fa-exclamation-triangle"></i> 7. Disclaimer en aansprakelijkheid</h2>
+        
+        <div class="warning-box">
+            <strong><i class="fas fa-info-circle"></i> Belangrijke disclaimers:</strong>
+            <ul style="margin-top: 10px;">
+                <li>De Service wordt aangeboden "zoals deze is" zonder garanties</li>
+                <li>We garanderen geen ononderbroken of foutloze werking</li>
+                <li>We zijn niet aansprakelijk voor indirecte schade</li>
+                <li>Gebruik van de Service is op eigen risico</li>
+            </ul>
+        </div>
+
+        <h2><i class="fas fa-hand-paper"></i> 8. Beëindiging</h2>
+        <p>
+            Wij behouden ons het recht voor om uw toegang tot de Service te beëindigen of op te schorten 
+            zonder voorafgaande kennisgeving bij:
+        </p>
+        <ul>
+            <li>Schending van deze voorwaarden</li>
+            <li>Frauduleuze activiteiten</li>
+            <li>Misbruik van de Service</li>
+            <li>Op verzoek van de gebruiker</li>
+        </ul>
+
+        <h2><i class="fas fa-sync-alt"></i> 9. Wijzigingen in de voorwaarden</h2>
+        <p>
+            Wij kunnen deze gebruiksvoorwaarden op elk moment wijzigen. Belangrijke wijzigingen 
+            zullen worden gecommuniceerd via e-mail. Voortgezet gebruik van de Service na wijzigingen 
+            betekent acceptatie van de nieuwe voorwaarden.
+        </p>
+
+        <h2><i class="fas fa-gavel"></i> 10. Toepasselijk recht</h2>
+        <p>
+            Deze gebruiksvoorwaarden worden beheerst door en geïnterpreteerd in overeenstemming met 
+            het Belgische recht. Geschillen zullen worden voorgelegd aan de bevoegde rechtbanken in Brussel.
+        </p>
+
+        <h2><i class="fas fa-shield-alt"></i> 11. Beveiliging</h2>
+        <p><strong>Wij implementeren de volgende beveiligingsmaatregelen:</strong></p>
+        <ul>
+            <li><i class="fas fa-lock"></i> HTTPS/TLS encryptie</li>
+            <li><i class="fas fa-key"></i> API Key authenticatie</li>
+            <li><i class="fas fa-shield-alt"></i> Input validatie en sanitization</li>
+            <li><i class="fas fa-database"></i> Encrypted backups</li>
+            <li><i class="fas fa-user-lock"></i> Access control en audit logs</li>
+        </ul>
+
+        <h2><i class="fas fa-life-ring"></i> 12. Support en contact</h2>
+        <p><strong>Voor vragen over deze voorwaarden:</strong></p>
+        <p>
+            <i class="fas fa-envelope"></i> E-mail: <a href="mailto:support@bookstore@ehb.be">support@bookstore@ehb.be</a><br>
+            <i class="fas fa-map-marker-alt"></i> Adres: Nijverheidskaai 170, 1070 Brussel, België<br>
+            <i class="fas fa-phone"></i> Telefoon: +32 (0)2 123 45 67
+        </p>
+
+        <div class="info-box">
+            <strong><i class="fas fa-book-reader"></i> Gerelateerde documenten:</strong>
+            <ul style="margin-top: 10px;">
+                <li><a href="/privacy-policy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+                <li><a href="/cookie-policy.html"><i class="fas fa-cookie-bite"></i> Cookie Policy</a></li>
+                <li><a href="/swagger"><i class="fas fa-code"></i> API Documentatie</a></li>
+            </ul>
+        </div>
+
+        <h2><i class="fas fa-check-circle"></i> 13. Aanvaarding</h2>
+        <p>
+            Door de Service te gebruiken, bevestigt u dat u deze gebruiksvoorwaarden heeft gelezen, 
+            begrepen en ermee akkoord gaat. Als u niet akkoord gaat, dient u het gebruik van de Service 
+            onmiddellijk te staken.
+        </p>
+
+        <div class="highlight">
+            <strong><i class="fas fa-handshake"></i> Bedankt voor het gebruik van Bookstore Management!</strong><br>
+            Wij streven ernaar om u de beste service te bieden.
+        </div>
+
+        <a href="/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Terug naar Dashboard
+        </a>
+    </div>
+
+    <script>
+        console.log('%c?? Gebruiksvoorwaarden geladen', 'color: #667eea; font-size: 14px; font-weight: bold;');
+        console.log('%c?? Versie 1.0 - Belgisch recht van toepassing', 'color: #718096; font-size: 12px;');
+    </script>
+</body>
+</html>
