@@ -1,4 +1,5 @@
 using BestelAppBoeken.Core.Interfaces;
+using BestelAppBoeken.Core.Models;
 using BestelAppBoeken.Infrastructure.Services;
 using BestelAppBoeken.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -35,14 +36,96 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    
     try
     {
         var context = services.GetRequiredService<BookstoreDbContext>();
+        
+        // Optie 1: Gebruik DbSeeder (standaard)
         DbSeeder.SeedData(context);
+        
+        // Optie 2: Extra hardcoded data direct in Program.cs
+        logger.LogInformation("?? Extra hardcoded data wordt toegevoegd...");
+        
+        // Check of er al extra data is
+        if (!context.Klanten.Any(k => k.Email == "sophie.vermeulen@example.be"))
+        {
+            // Hardcoded EXTRA klanten (naast de 3 in DbSeeder)
+            var extraKlanten = new[]
+            {
+                new Klant 
+                { 
+                    Naam = "Sophie Vermeulen", 
+                    Email = "sophie.vermeulen@example.be", 
+                    Telefoon = "0478123456", 
+                    Adres = "Kerkstraat 45, 1000 Brussel" 
+                },
+                new Klant 
+                { 
+                    Naam = "Lucas Dubois", 
+                    Email = "lucas.dubois@example.be", 
+                    Telefoon = "0479234567", 
+                    Adres = "Meir 123, 2000 Antwerpen" 
+                },
+                new Klant 
+                { 
+                    Naam = "Emma Van Der Berg", 
+                    Email = "emma.vanderberg@example.be", 
+                    Telefoon = "0476345678", 
+                    Adres = "Korenmarkt 8, 9000 Gent" 
+                }
+            };
+            
+            context.Klanten.AddRange(extraKlanten);
+            logger.LogInformation($"? {extraKlanten.Length} extra klanten toegevoegd");
+        }
+        
+        // Hardcoded EXTRA boeken (naast de 50 in DbSeeder)
+        if (!context.Books.Any(b => b.Isbn == "PROG-001"))
+        {
+            var extraBoeken = new[]
+            {
+                new Book 
+                { 
+                    Title = "De Kunst van Programmeren", 
+                    Author = "Donald Knuth", 
+                    Price = 89.99m, 
+                    Isbn = "PROG-001", 
+                    VoorraadAantal = 25,
+                    Description = "Klassiek werk over algoritmen en datastructuren"
+                },
+                new Book 
+                { 
+                    Title = "Clean Code: A Handbook of Agile Software Craftsmanship", 
+                    Author = "Robert C. Martin", 
+                    Price = 54.99m, 
+                    Isbn = "PROG-002", 
+                    VoorraadAantal = 40,
+                    Description = "Gids voor het schrijven van leesbare en onderhoudbare code"
+                },
+                new Book 
+                { 
+                    Title = "The Pragmatic Programmer", 
+                    Author = "Andrew Hunt & David Thomas", 
+                    Price = 52.50m, 
+                    Isbn = "PROG-003", 
+                    VoorraadAantal = 35,
+                    Description = "Essenties van praktisch softwareontwikkeling"
+                }
+            };
+            
+            context.Books.AddRange(extraBoeken);
+            logger.LogInformation($"? {extraBoeken.Length} extra boeken toegevoegd");
+        }
+        
+        context.SaveChanges();
+        logger.LogInformation("?? Extra hardcoded data succesvol opgeslagen!");
+        
+        logger.LogInformation("? Database initialization completed successfully");
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "? Er is een fout opgetreden bij het seeden van de database.");
     }
 }
