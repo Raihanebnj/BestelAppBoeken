@@ -1350,6 +1350,45 @@
             </div>
         </section>
 
+        <!-- Database Backup Sectie -->
+        <section id="backup-sectie" class="card fade-in">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-database"></i>
+                    Database Backup & Export
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="createBackup()">
+                        <i class="fas fa-save"></i> Database Backup
+                    </button>
+                    <button class="btn btn-success" onclick="exportOrdersJson()">
+                        <i class="fas fa-file-code"></i> Export JSON
+                    </button>
+                    <button class="btn btn-info" onclick="exportOrdersTxt()">
+                        <i class="fas fa-file-alt"></i> Export TXT
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="background: linear-gradient(135deg, #e6fffa, #b2f5ea); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid var(--success);">
+                    <p style="margin: 0; color: var(--dark); font-size: 14px;">
+                        <i class="fas fa-info-circle"></i> <strong>Backup Opties:</strong><br>
+                        <span style="font-size: 13px; opacity: 0.9;">
+                            • <strong>Database Backup (.db)</strong>: Volledige database kopie voor herstel<br>
+                            • <strong>Export JSON (.json)</strong>: Bestellingen in machine-leesbaar formaat<br>
+                            • <strong>Export TXT (.txt)</strong>: Leesbaar rapport van alle bestellingen
+                        </span>
+                    </p>
+                </div>
+                
+                <div id="backup-list-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Backups laden...
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Footer -->
         <footer class="fade-in">
             <p style="font-weight: 600; margin-bottom: 10px;">

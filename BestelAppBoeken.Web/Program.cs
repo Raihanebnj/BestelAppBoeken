@@ -30,6 +30,9 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IKlantService, KlantService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
+// ? Database Backup Service (nieuw toegevoegd)
+builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
+
 var app = builder.Build();
 
 // Database initialisatie en seeding
