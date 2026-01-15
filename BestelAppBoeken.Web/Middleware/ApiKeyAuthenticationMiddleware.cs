@@ -37,6 +37,7 @@ namespace BestelAppBoeken.Web.Middleware
                 return;
             }
 
+
             await _next(context);
         }
     }
