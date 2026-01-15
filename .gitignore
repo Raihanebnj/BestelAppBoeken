@@ -1,0 +1,20 @@
+﻿## .NET ##
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## VS/Rider ##
+.vs/
+.idea/
+*.sln.iml
+
+## DB files ##
+*.db
+*.mdb
+
+## OS files ##
+.DS_Store
+Thumbs.db
