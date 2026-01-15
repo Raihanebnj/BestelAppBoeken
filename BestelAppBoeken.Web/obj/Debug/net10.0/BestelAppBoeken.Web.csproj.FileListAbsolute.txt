@@ -103,6 +103,7 @@ C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net1
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\BestelAppBoeken.Web.genruntimeconfig.cache
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\ref\BestelAppBoeken.Web.dll
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\BestelAppBoeken.Web.sourcelink.json
+<<<<<<< HEAD
 C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\BestelAppBoeken.Web.dll
 C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\refint\BestelAppBoeken.Web.dll
 C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\BestelAppBoeken.Web.pdb
@@ -208,3 +209,5 @@ C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.
 C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\BestelAp.2D558799.Up2Date
 C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\BestelAppBoeken.Web.genruntimeconfig.cache
 C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\ref\BestelAppBoeken.Web.dll
+=======
+>>>>>>> de9a522f2069da56989a382ed44716630a30539d

@@ -21,6 +21,7 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+<<<<<<< HEAD
       "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.2": {
         "type": "package",
         "compile": {
@@ -56,6 +57,8 @@
           "buildTransitive/net8.0/Microsoft.Extensions.Logging.Abstractions.targets": {}
         }
       },
+=======
+>>>>>>> de9a522f2069da56989a382ed44716630a30539d
       "Microsoft.Extensions.Primitives/10.0.2": {
         "type": "package",
         "compile": {
@@ -146,6 +149,7 @@
         "useSharedDesignerContext.txt"
       ]
     },
+<<<<<<< HEAD
     "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.2": {
       "sha512": "zOIurr59+kUf9vNcsUkCvKWZv+fPosUZXURZesYkJCvl0EzTc9F7maAO4Cd2WEV7ZJJ0AZrFQvuH6Npph9wdBw==",
       "type": "package",
@@ -249,6 +253,8 @@
         "useSharedDesignerContext.txt"
       ]
     },
+=======
+>>>>>>> de9a522f2069da56989a382ed44716630a30539d
     "Microsoft.Extensions.Primitives/10.0.2": {
       "sha512": "QmSiO+oLBEooGgB3i0GRXyeYRDHjllqt3k365jwfZlYWhvSHA3UL2NEVV5m8aZa041eIlblo6KMI5txvTMpTwA==",
       "type": "package",
@@ -334,7 +340,10 @@
     "net10.0": [
       "BestelAppBoeken.Core >= 1.0.0",
       "Microsoft.Extensions.Configuration.Abstractions >= 10.0.2",
+<<<<<<< HEAD
       "Microsoft.Extensions.Logging.Abstractions >= 10.0.2",
+=======
+>>>>>>> de9a522f2069da56989a382ed44716630a30539d
       "RabbitMQ.Client >= 7.2.0"
     ]
   },
@@ -397,10 +406,13 @@
             "target": "Package",
             "version": "[10.0.2, )"
           },
+<<<<<<< HEAD
           "Microsoft.Extensions.Logging.Abstractions": {
             "target": "Package",
             "version": "[10.0.2, )"
           },
+=======
+>>>>>>> de9a522f2069da56989a382ed44716630a30539d
           "RabbitMQ.Client": {
             "target": "Package",
             "version": "[7.2.0, )"

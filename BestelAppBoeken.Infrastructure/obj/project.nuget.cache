@@ -1,15 +1,26 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "wk3xc7pf8Zo=",
+=======
+  "dgSpecHash": "wHZ6JkFW3h0=",
+>>>>>>> de9a522f2069da56989a382ed44716630a30539d
   "success": true,
   "projectFilePath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
   "expectedPackageFiles": [
+<<<<<<< HEAD
     "C:\\Users\\Kimbe\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.2\\microsoft.extensions.configuration.abstractions.10.0.2.nupkg.sha512",
     "C:\\Users\\Kimbe\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.2\\microsoft.extensions.dependencyinjection.abstractions.10.0.2.nupkg.sha512",
     "C:\\Users\\Kimbe\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.2\\microsoft.extensions.logging.abstractions.10.0.2.nupkg.sha512",
     "C:\\Users\\Kimbe\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.2\\microsoft.extensions.primitives.10.0.2.nupkg.sha512",
     "C:\\Users\\Kimbe\\.nuget\\packages\\rabbitmq.client\\7.2.0\\rabbitmq.client.7.2.0.nupkg.sha512",
     "C:\\Users\\Kimbe\\.nuget\\packages\\system.threading.ratelimiting\\8.0.0\\system.threading.ratelimiting.8.0.0.nupkg.sha512"
+=======
+    "C:\\Users\\Raihane\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.2\\microsoft.extensions.configuration.abstractions.10.0.2.nupkg.sha512",
+    "C:\\Users\\Raihane\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.2\\microsoft.extensions.primitives.10.0.2.nupkg.sha512",
+    "C:\\Users\\Raihane\\.nuget\\packages\\rabbitmq.client\\7.2.0\\rabbitmq.client.7.2.0.nupkg.sha512",
+    "C:\\Users\\Raihane\\.nuget\\packages\\system.threading.ratelimiting\\8.0.0\\system.threading.ratelimiting.8.0.0.nupkg.sha512"
+>>>>>>> de9a522f2069da56989a382ed44716630a30539d
   ],
   "logs": []
 }
