@@ -22,10 +22,34 @@ document.addEventListener('DOMContentLoaded', () => {
         loadBoeken();
         loadOrders();
         setupForms();
+        setupTableScrollIndicators();
     } else {
         console.log('?? Geen dashboard pagina - app.js wordt niet geladen');
     }
 });
+
+// Setup scroll indicators voor tables
+function setupTableScrollIndicators() {
+    const tableContainers = document.querySelectorAll('.table-container');
+    
+    tableContainers.forEach(container => {
+        // Hide scroll arrow when user scrolls
+        container.addEventListener('scroll', function() {
+            if (this.scrollLeft > 20) {
+                this.classList.add('scrolled');
+            } else {
+                this.classList.remove('scrolled');
+            }
+        });
+        
+        // Check if scrollable on load
+        const isScrollable = container.scrollWidth > container.clientWidth;
+        if (!isScrollable) {
+            // Hide scroll indicator if content fits
+            container.classList.add('no-scroll');
+        }
+    });
+}
 
 // Setup event listeners voor formulieren
 function setupForms() {
