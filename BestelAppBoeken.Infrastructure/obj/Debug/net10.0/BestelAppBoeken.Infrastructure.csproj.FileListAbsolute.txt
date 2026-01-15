@@ -13,3 +13,4 @@ C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\refint\BestelAppBoeken.Infrastructure.dll
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAppBoeken.Infrastructure.pdb
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\ref\BestelAppBoeken.Infrastructure.dll
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Infrastructure\obj\Debug\net10.0\BestelAppBoeken.Infrastructure.sourcelink.json

@@ -102,3 +102,4 @@ C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net1
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\BestelAppBoeken.Web.pdb
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\BestelAppBoeken.Web.genruntimeconfig.cache
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\ref\BestelAppBoeken.Web.dll
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Web\obj\Debug\net10.0\BestelAppBoeken.Web.sourcelink.json

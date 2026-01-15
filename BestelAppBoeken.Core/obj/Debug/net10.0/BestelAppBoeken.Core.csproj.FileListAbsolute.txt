@@ -9,3 +9,4 @@ C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\refint\BestelAppBoeken.Core.dll
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.pdb
 C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\ref\BestelAppBoeken.Core.dll
+C:\Users\Raihane\source\repos\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.sourcelink.json
