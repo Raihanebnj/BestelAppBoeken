@@ -1,11 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "Qb1B2nCwD9k=",
+  "dgSpecHash": "wk3xc7pf8Zo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Raihane\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Raihane\\.nuget\\packages\\rabbitmq.client\\7.2.0\\rabbitmq.client.7.2.0.nupkg.sha512",
-    "C:\\Users\\Raihane\\.nuget\\packages\\system.threading.ratelimiting\\8.0.0\\system.threading.ratelimiting.8.0.0.nupkg.sha512"
+    "C:\\Users\\Kimbe\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.2\\microsoft.extensions.configuration.abstractions.10.0.2.nupkg.sha512",
+    "C:\\Users\\Kimbe\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.2\\microsoft.extensions.dependencyinjection.abstractions.10.0.2.nupkg.sha512",
+    "C:\\Users\\Kimbe\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.2\\microsoft.extensions.logging.abstractions.10.0.2.nupkg.sha512",
+    "C:\\Users\\Kimbe\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.2\\microsoft.extensions.primitives.10.0.2.nupkg.sha512",
+    "C:\\Users\\Kimbe\\.nuget\\packages\\rabbitmq.client\\7.2.0\\rabbitmq.client.7.2.0.nupkg.sha512",
+    "C:\\Users\\Kimbe\\.nuget\\packages\\system.threading.ratelimiting\\8.0.0\\system.threading.ratelimiting.8.0.0.nupkg.sha512"
   ],
   "logs": []
 }

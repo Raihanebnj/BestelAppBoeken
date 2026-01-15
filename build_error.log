@@ -1,0 +1,12 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  BestelAppBoeken.Core -> C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Core\bin\Debug\net10.0\BestelAppBoeken.Core.dll
+C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs(102,14): error CS1513: } expected [C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\BestelAppBoeken.Receiver.csproj]
+
+Build FAILED.
+
+C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs(102,14): error CS1513: } expected [C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\BestelAppBoeken.Receiver.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:01.33

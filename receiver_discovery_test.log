@@ -1,0 +1,6 @@
+Using launch settings from BestelAppBoeken.Receiver\Properties\launchSettings.json...
+Building...
+C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs(97,9): error CS1524: Expected catch or finally [C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\BestelAppBoeken.Receiver.csproj]
+C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs(97,10): error CS1513: } expected [C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\BestelAppBoeken.Receiver.csproj]
+
+The build failed. Fix the build errors and run again.

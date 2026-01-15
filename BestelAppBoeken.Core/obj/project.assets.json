@@ -8,23 +8,23 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Raihane\\.nuget\\packages\\": {},
+    "C:\\Users\\Kimbe\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Raihane\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj",
+      "projectUniqueName": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj",
       "projectName": "BestelAppBoeken.Core",
-      "projectPath": "C:\\Users\\Raihane\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj",
-      "packagesPath": "C:\\Users\\Raihane\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Raihane\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\obj\\",
+      "projectPath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj",
+      "packagesPath": "C:\\Users\\Kimbe\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Raihane\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Kimbe\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

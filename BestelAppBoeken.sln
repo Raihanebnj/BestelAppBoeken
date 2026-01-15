@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestelAppBoeken.Infrastruct
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestelAppBoeken.Web", "BestelAppBoeken.Web\BestelAppBoeken.Web.csproj", "{D11DC278-B393-4447-A9C1-99709354938F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestelAppBoeken.Receiver", "BestelAppBoeken.Receiver\BestelAppBoeken.Receiver.csproj", "{D5698727-05D0-41DC-B799-B4C6B332186D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{D11DC278-B393-4447-A9C1-99709354938F}.Release|x64.Build.0 = Release|Any CPU
 		{D11DC278-B393-4447-A9C1-99709354938F}.Release|x86.ActiveCfg = Release|Any CPU
 		{D11DC278-B393-4447-A9C1-99709354938F}.Release|x86.Build.0 = Release|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Debug|x64.Build.0 = Debug|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Debug|x86.Build.0 = Debug|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Release|x64.ActiveCfg = Release|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Release|x64.Build.0 = Release|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Release|x86.ActiveCfg = Release|Any CPU
+		{D5698727-05D0-41DC-B799-B4C6B332186D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

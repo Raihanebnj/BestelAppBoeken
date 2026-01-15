@@ -1,0 +1,54 @@
+Using launch settings from BestelAppBoeken.Receiver\Properties\launchSettings.json...
+Building...
+info: BestelAppBoeken.Receiver.Worker[0]
+      Connected to RabbitMQ. Listening on orders...
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver
+info: BestelAppBoeken.Receiver.Worker[0]
+      Received message: {"Id":0,"OrderDate":"2026-01-15T12:22:48.99374+01:00","Items":[{"Id":0,"BookId":1,"BookTitle":"The Great Gatsby","Quantity":1,"UnitPrice":12.99}],"TotalAmount":12.99,"CustomerEmail":"test@example.com","Status":"Pending"}
+info: System.Net.Http.HttpClient.Default.LogicalHandler[100]
+      Start processing HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[100]
+      Sending HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[101]
+      Received HTTP response headers after 752.3328ms - 400
+info: System.Net.Http.HttpClient.Default.LogicalHandler[101]
+      End processing HTTP request after 856.0237ms - 400
+fail: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Salesforce Authentication Failed: BadRequest, {"error":"invalid_grant","error_description":"request not supported on this domain"}
+fail: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Error authenticating with Salesforce.
+      System.Exception: Salesforce authentication failed.
+         at BestelAppBoeken.Receiver.Services.SalesforceClient.AuthenticateAsync() in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs:line 60
+fail: BestelAppBoeken.Receiver.Worker[0]
+      Error processing message.
+      System.Exception: Salesforce authentication failed.
+         at BestelAppBoeken.Receiver.Services.SalesforceClient.AuthenticateAsync() in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs:line 60
+         at BestelAppBoeken.Receiver.Services.SalesforceClient.PushOrderAsync(Order order) in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs:line 80
+         at BestelAppBoeken.Receiver.Worker.<ExecuteAsync>b__7_0(Object model, BasicDeliverEventArgs ea) in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Worker.cs:line 74
+info: BestelAppBoeken.Receiver.Worker[0]
+      Received message: {"Id":0,"OrderDate":"2026-01-15T12:27:53.7877678+01:00","Items":[{"Id":0,"BookId":1,"BookTitle":"The Great Gatsby","Quantity":1,"UnitPrice":12.99}],"TotalAmount":12.99,"CustomerEmail":"auth_test@example.com","Status":"Pending"}
+info: System.Net.Http.HttpClient.Default.LogicalHandler[100]
+      Start processing HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[100]
+      Sending HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[101]
+      Received HTTP response headers after 246.2853ms - 400
+info: System.Net.Http.HttpClient.Default.LogicalHandler[101]
+      End processing HTTP request after 246.482ms - 400
+fail: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Salesforce Authentication Failed: BadRequest, {"error":"invalid_grant","error_description":"request not supported on this domain"}
+fail: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Error authenticating with Salesforce.
+      System.Exception: Salesforce authentication failed.
+         at BestelAppBoeken.Receiver.Services.SalesforceClient.AuthenticateAsync() in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs:line 60
+fail: BestelAppBoeken.Receiver.Worker[0]
+      Error processing message.
+      System.Exception: Salesforce authentication failed.
+         at BestelAppBoeken.Receiver.Services.SalesforceClient.AuthenticateAsync() in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs:line 60
+         at BestelAppBoeken.Receiver.Services.SalesforceClient.PushOrderAsync(Order order) in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs:line 80
+         at BestelAppBoeken.Receiver.Worker.<ExecuteAsync>b__7_0(Object model, BasicDeliverEventArgs ea) in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Worker.cs:line 74

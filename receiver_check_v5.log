@@ -1,0 +1,44 @@
+Using launch settings from BestelAppBoeken.Receiver\Properties\launchSettings.json...
+Building...
+info: BestelAppBoeken.Receiver.Worker[0]
+      Connected to RabbitMQ. Listening on orders...
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver
+info: BestelAppBoeken.Receiver.Worker[0]
+      Received message: {"Id":0,"OrderDate":"2026-01-15T13:43:26.0091396+01:00","Items":[{"Id":0,"BookId":1,"BookTitle":"The Great Gatsby","Quantity":1,"UnitPrice":12.99}],"TotalAmount":12.99,"CustomerEmail":"check_v5@example.com","Status":"Pending"}
+info: System.Net.Http.HttpClient.Default.LogicalHandler[100]
+      Start processing HTTP request POST https://orgfarm-0c7966cfe8-dev-ed.develop.my.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[100]
+      Sending HTTP request POST https://orgfarm-0c7966cfe8-dev-ed.develop.my.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[101]
+      Received HTTP response headers after 423.7694ms - 200
+info: System.Net.Http.HttpClient.Default.LogicalHandler[101]
+      End processing HTTP request after 443.7847ms - 200
+info: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Successfully authenticated with Salesforce.
+info: System.Net.Http.HttpClient.Default.LogicalHandler[100]
+      Start processing HTTP request GET https://orgfarm-0c7966cfe8-dev-ed.develop.my.salesforce.com/services/data/v58.0/sobjects/
+info: System.Net.Http.HttpClient.Default.ClientHandler[100]
+      Sending HTTP request GET https://orgfarm-0c7966cfe8-dev-ed.develop.my.salesforce.com/services/data/v58.0/sobjects/
+info: System.Net.Http.HttpClient.Default.ClientHandler[101]
+      Received HTTP response headers after 694.0229ms - 200
+info: System.Net.Http.HttpClient.Default.LogicalHandler[101]
+      End processing HTTP request after 694.1826ms - 200
+info: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      --- AVAILABLE CUSTOM OBJECTS ---
+info: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      --------------------------------
+info: System.Net.Http.HttpClient.Default.LogicalHandler[100]
+      Start processing HTTP request POST https://orgfarm-0c7966cfe8-dev-ed.develop.my.salesforce.com/services/data/v58.0/sobjects/WebOrder__c/
+info: System.Net.Http.HttpClient.Default.ClientHandler[100]
+      Sending HTTP request POST https://orgfarm-0c7966cfe8-dev-ed.develop.my.salesforce.com/services/data/v58.0/sobjects/WebOrder__c/
+info: System.Net.Http.HttpClient.Default.ClientHandler[101]
+      Received HTTP response headers after 171.7795ms - 404
+info: System.Net.Http.HttpClient.Default.LogicalHandler[101]
+      End processing HTTP request after 172.0595ms - 404
+fail: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Failed to push order to Salesforce: NotFound - [{"errorCode":"NOT_FOUND","message":"The requested resource does not exist"}]
