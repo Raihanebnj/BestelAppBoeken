@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace BestelAppBoeken.Web.Controllers
+
 {
     public class HomeController : Controller
     {

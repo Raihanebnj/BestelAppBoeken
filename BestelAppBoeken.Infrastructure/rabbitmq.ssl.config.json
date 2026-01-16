@@ -1,0 +1,36 @@
+{
+  "RabbitMQ": {
+    "HostName": "localhost",
+    "Port": 5671,
+    "UserName": "bestelapp",
+    "Password": "Groep3 #",
+    "VirtualHost": "/",
+    "Ssl": {
+      "Enabled": true,
+      "ServerName": "rabbitmq.local",
+      "CertificatePath": "/path/to/certificate.pem",
+      "CertificatePassphrase": "",
+      "AcceptablePolicyErrors": "None"
+    },
+    "Queues": {
+      "SalesforceQueue": {
+        "Name": "salesforce_queue",
+        "Durable": true,
+        "Exclusive": false,
+        "AutoDelete": false,
+        "Arguments": {
+          "x-message-ttl": 86400000,
+          "x-dead-letter-exchange": "dead_letter_exchange",
+          "x-max-length": 10000
+        }
+      },
+      "DeadLetterQueue": {
+        "Name": "dead_letter_queue",
+        "Durable": true,
+        "Arguments": {
+          "x-message-ttl": 604800000
+        }
+      }
+    }
+  }
+}
