@@ -10,10 +10,7 @@
         "dependencies": {
           "BestelAppBoeken.Core": "1.0.0",
           "Microsoft.Extensions.Configuration.Abstractions": "10.0.2",
-<<<<<<< HEAD
           "Microsoft.Extensions.Logging.Abstractions": "10.0.2",
-=======
->>>>>>> de9a522f2069da56989a382ed44716630a30539d
           "RabbitMQ.Client": "7.2.0"
         },
         "runtime": {
@@ -31,7 +28,6 @@
           }
         }
       },
-<<<<<<< HEAD
       "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.2": {
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
@@ -51,8 +47,6 @@
           }
         }
       },
-=======
->>>>>>> de9a522f2069da56989a382ed44716630a30539d
       "Microsoft.Extensions.Primitives/10.0.2": {
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.Primitives.dll": {
@@ -103,7 +97,6 @@
       "path": "microsoft.extensions.configuration.abstractions/10.0.2",
       "hashPath": "microsoft.extensions.configuration.abstractions.10.0.2.nupkg.sha512"
     },
-<<<<<<< HEAD
     "Microsoft.Extensions.DependencyInjection.Abstractions/10.0.2": {
       "type": "package",
       "serviceable": true,
@@ -118,8 +111,6 @@
       "path": "microsoft.extensions.logging.abstractions/10.0.2",
       "hashPath": "microsoft.extensions.logging.abstractions.10.0.2.nupkg.sha512"
     },
-=======
->>>>>>> de9a522f2069da56989a382ed44716630a30539d
     "Microsoft.Extensions.Primitives/10.0.2": {
       "type": "package",
       "serviceable": true,

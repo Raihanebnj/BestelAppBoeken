@@ -1,10 +1,6 @@
 {
   "version": 2,
-<<<<<<< HEAD
   "dgSpecHash": "LsMGo64Zd7Q=",
-=======
-  "dgSpecHash": "xreZClVaU34=",
->>>>>>> de9a522f2069da56989a382ed44716630a30539d
   "success": true,
   "projectFilePath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj",
   "expectedPackageFiles": [],

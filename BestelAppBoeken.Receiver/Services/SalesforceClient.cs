@@ -27,50 +27,93 @@ namespace BestelAppBoeken.Receiver.Services
 
         private async Task AuthenticateAsync()
         {
-            var tokenUrl = _configuration["Salesforce:AuthUrl"] ?? "https://login.salesforce.com/services/oauth2/token";
-            
-            // Using Client Credentials Flow (assuming Connected App is configured for this or Password flow if user/pass provided)
-            // Based on user input, we have Key, Secret, and "Security Token". 
-            // Usually Security Token is for Password Flow (User + Pass + Token).
-            // But we don't have user/pass. 
-            // However, the user said "make it work". I will assume they might want Client Credentials if they only provided Key/Secret mainly.
-            // But wait, "Security Token" is specific.
-            // Let's try to use Client Credentials first as it's cleaner for server-to-server. 
-            // If that fails, we might need to ask for User/Pass.
-            // Actually, let's look at the parameters.
-            
-            var content = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("grant_type", "client_credentials"),
-                new KeyValuePair<string, string>("client_id", (_configuration["Salesforce:ConsumerKey"] ?? "").Trim()),
-                new KeyValuePair<string, string>("client_secret", (_configuration["Salesforce:ConsumerSecret"] ?? "").Trim())
-            });
+            var authUrl = _configuration["Salesforce:AuthUrl"] ?? "https://login.salesforce.com/services/oauth2/token";
+            var clientId = (_configuration["Salesforce:ConsumerKey"] ?? "").Trim();
+            var clientSecret = (_configuration["Salesforce:ConsumerSecret"] ?? "").Trim();
+            var username = (_configuration["Salesforce:Username"] ?? "").Trim();
+            var password = (_configuration["Salesforce:Password"] ?? "").Trim();
+            var securityToken = (_configuration["Salesforce:SecurityToken"] ?? "").Trim();
 
-            // Note: If this fails, we might need 'password' grant type which requires username and password (which we might lack).
-            // For now, let's implement validation log.
-
+            // Strategy 1: Password Grant with Security Token
             try 
             {
-                var response = await _httpClient.PostAsync(tokenUrl, content);
-                var responseString = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
+                _logger.LogInformation("Attempting Auth Strategy 1: Password Flow with Security Token...");
+                await TryAuthStrategy(authUrl, new[]
                 {
-                    _logger.LogError($"Salesforce Authentication Failed: {response.StatusCode}, {responseString}");
-                    throw new Exception("Salesforce authentication failed.");
-                }
+                    new KeyValuePair<string, string>("grant_type", "password"),
+                    new KeyValuePair<string, string>("client_id", clientId),
+                    new KeyValuePair<string, string>("client_secret", clientSecret),
+                    new KeyValuePair<string, string>("username", username),
+                    new KeyValuePair<string, string>("password", password + securityToken)
+                });
+                return; // Success
+            }
+            catch (Exception ex) 
+            { 
+               _logger.LogWarning($"Strategy 1 Failed: {ex.Message}");
+            }
 
-                var authResponse = JsonConvert.DeserializeObject<dynamic>(responseString);
-                _accessToken = authResponse.access_token;
-                _instanceUrl = authResponse.instance_url;
-                
-                _logger.LogInformation("Successfully authenticated with Salesforce.");
+            // Strategy 2: Password Grant WITHOUT Security Token
+            try 
+            {
+                _logger.LogInformation("Attempting Auth Strategy 2: Password Flow WITHOUT Security Token...");
+                await TryAuthStrategy(authUrl, new[]
+                {
+                    new KeyValuePair<string, string>("grant_type", "password"),
+                    new KeyValuePair<string, string>("client_id", clientId),
+                    new KeyValuePair<string, string>("client_secret", clientSecret),
+                    new KeyValuePair<string, string>("username", username),
+                    new KeyValuePair<string, string>("password", password)
+                });
+                return; // Success
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error authenticating with Salesforce.");
+                _logger.LogWarning($"Strategy 2 Failed: {ex.Message}");
+            }
+
+            // Strategy 3: Client Credentials Flow (Fallback)
+            try 
+            {
+                _logger.LogInformation("Attempting Auth Strategy 3: Client Credentials Flow...");
+                await TryAuthStrategy(authUrl, new[]
+                {
+                    new KeyValuePair<string, string>("grant_type", "client_credentials"),
+                    new KeyValuePair<string, string>("client_id", clientId),
+                    new KeyValuePair<string, string>("client_secret", clientSecret)
+                });
+                return; // Success
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"All Authentication Strategies Failed. Final Error: {ex.Message}");
                 throw;
             }
+        }
+
+        private async Task TryAuthStrategy(string url, KeyValuePair<string, string>[] formData)
+        {
+            var content = new FormUrlEncodedContent(formData);
+            var response = await _httpClient.PostAsync(url, content);
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Salesforce returned {response.StatusCode}: {responseString}");
+            }
+
+            var authResponse = JsonConvert.DeserializeObject<dynamic>(responseString);
+            var token = (string)authResponse?.access_token;
+            var instance = (string)authResponse?.instance_url;
+
+            if (string.IsNullOrEmpty(token))
+            {
+                 throw new Exception("Auth successful but Access Token is null.");
+            }
+
+            _accessToken = token;
+            _instanceUrl = instance;
+            _logger.LogInformation($"Strategy Succeeded! Authenticated. Instance: {_instanceUrl}");
         }
 
         public async Task PushOrderAsync(Order order)

@@ -1,0 +1,55 @@
+Using launch settings from BestelAppBoeken.Receiver\Properties\launchSettings.json...
+Building...
+info: BestelAppBoeken.Receiver.Worker[0]
+      Connected to RabbitMQ. Listening on orders...
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver
+info: BestelAppBoeken.Receiver.Worker[0]
+      Received message: {"Id":0,"OrderDate":"2026-01-15T15:15:27.0004205+01:00","Items":[{"Id":0,"BookId":2,"BookTitle":"1984","Quantity":1,"UnitPrice":10.50}],"TotalAmount":10.50,"CustomerEmail":"ThillKimberleyPro@gmail.com","Status":"Pending"}
+info: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Attempting Auth Strategy 1: Password Flow with Security Token...
+info: System.Net.Http.HttpClient.Default.LogicalHandler[100]
+      Start processing HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[100]
+      Sending HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[101]
+      Received HTTP response headers after 2169.5665ms - 400
+info: System.Net.Http.HttpClient.Default.LogicalHandler[101]
+      End processing HTTP request after 2224.0821ms - 400
+warn: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Strategy 1 Failed: Salesforce returned BadRequest: {"error":"invalid_grant","error_description":"authentication failure"}
+info: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Attempting Auth Strategy 2: Password Flow WITHOUT Security Token...
+info: System.Net.Http.HttpClient.Default.LogicalHandler[100]
+      Start processing HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[100]
+      Sending HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[101]
+      Received HTTP response headers after 1603.6867ms - 400
+info: System.Net.Http.HttpClient.Default.LogicalHandler[101]
+      End processing HTTP request after 1603.9238ms - 400
+warn: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Strategy 2 Failed: Salesforce returned BadRequest: {"error":"invalid_grant","error_description":"authentication failure"}
+info: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      Attempting Auth Strategy 3: Client Credentials Flow...
+info: System.Net.Http.HttpClient.Default.LogicalHandler[100]
+      Start processing HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[100]
+      Sending HTTP request POST https://login.salesforce.com/services/oauth2/token
+info: System.Net.Http.HttpClient.Default.ClientHandler[101]
+      Received HTTP response headers after 154.7382ms - 400
+info: System.Net.Http.HttpClient.Default.LogicalHandler[101]
+      End processing HTTP request after 154.9024ms - 400
+fail: BestelAppBoeken.Receiver.Services.SalesforceClient[0]
+      All Authentication Strategies Failed. Final Error: Salesforce returned BadRequest: {"error":"invalid_grant","error_description":"request not supported on this domain"}
+fail: BestelAppBoeken.Receiver.Worker[0]
+      Error processing message.
+      System.Exception: Salesforce returned BadRequest: {"error":"invalid_grant","error_description":"request not supported on this domain"}
+         at BestelAppBoeken.Receiver.Services.SalesforceClient.TryAuthStrategy(String url, KeyValuePair`2[] formData) in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs:line 102
+         at BestelAppBoeken.Receiver.Services.SalesforceClient.AuthenticateAsync() in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs:line 79
+         at BestelAppBoeken.Receiver.Services.SalesforceClient.PushOrderAsync(Order order) in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Services\SalesforceClient.cs:line 123
+         at BestelAppBoeken.Receiver.Worker.<ExecuteAsync>b__7_0(Object model, BasicDeliverEventArgs ea) in C:\Users\Kimbe\source\repos\BestelAppBoeken\BestelAppBoeken.Receiver\Worker.cs:line 74

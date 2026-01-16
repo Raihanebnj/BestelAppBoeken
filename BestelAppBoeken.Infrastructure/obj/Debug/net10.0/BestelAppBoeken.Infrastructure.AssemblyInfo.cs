@@ -13,11 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BestelAppBoeken.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d421b074be12970f3edeb36436baddfddebcb08")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a68e518935635ff45830534799e83f0cc1942095")]
->>>>>>> de9a522f2069da56989a382ed44716630a30539d
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5bf5d8d5999259e8674e8dddc77cde4ac4284e62")]
 [assembly: System.Reflection.AssemblyProductAttribute("BestelAppBoeken.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BestelAppBoeken.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
