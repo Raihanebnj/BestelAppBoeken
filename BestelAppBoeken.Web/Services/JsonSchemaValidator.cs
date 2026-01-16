@@ -15,7 +15,7 @@ namespace BestelAppBoeken.Web.Services
 
         private void InitializeSchemas()
         {
-            // Order schema 
+            // Order schema
             var orderSchema = new JsonSchema
             {
                 RequiredFields = new List<string> { "orderId", "timestamp" },
