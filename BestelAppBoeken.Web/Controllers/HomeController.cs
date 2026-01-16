@@ -14,7 +14,7 @@ namespace BestelAppBoeken.Web.Controllers
         private readonly ISalesforceService _salesforceService;
         private readonly ISapService _sapService;
 
-        public HomeController(ILogger<HomeController> logger, 
+        public HomeController(ILogger<HomeController> logger,
             IBookService bookService,
             IMessageQueueService messageQueue,
             ISalesforceService salesforceService,
@@ -58,10 +58,13 @@ namespace BestelAppBoeken.Web.Controllers
                 }
             };
 
-            // 1. Sync to Salesforce (via RabbitMQ -> MuleSoft)
+            // 1. Publish to RabbitMQ
+            await _messageQueue.PublishOrderAsync(order);
+
+            // 2. Sync to Salesforce (Async)
             await _salesforceService.SyncOrderAsync(order);
 
-            // 2. Post to SAP (Async)
+            // 3. Post to SAP (Async)
             await _sapService.PostInvoiceAsync(order);
 
             return RedirectToAction("OrderConfirmation");
