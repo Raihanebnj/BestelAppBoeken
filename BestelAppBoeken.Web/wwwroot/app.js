@@ -21,11 +21,36 @@ document.addEventListener('DOMContentLoaded', () => {
         loadKlanten();
         loadBoeken();
         loadOrders();
+        loadBackups(); // ? Load backups on startup
         setupForms();
+        setupTableScrollIndicators();
     } else {
         console.log('?? Geen dashboard pagina - app.js wordt niet geladen');
     }
 });
+
+// Setup scroll indicators voor tables
+function setupTableScrollIndicators() {
+    const tableContainers = document.querySelectorAll('.table-container');
+    
+    tableContainers.forEach(container => {
+        // Hide scroll arrow when user scrolls
+        container.addEventListener('scroll', function() {
+            if (this.scrollLeft > 20) {
+                this.classList.add('scrolled');
+            } else {
+                this.classList.remove('scrolled');
+            }
+        });
+        
+        // Check if scrollable on load
+        const isScrollable = container.scrollWidth > container.clientWidth;
+        if (!isScrollable) {
+            // Hide scroll indicator if content fits
+            container.classList.add('no-scroll');
+        }
+    });
+}
 
 // Setup event listeners voor formulieren
 function setupForms() {
@@ -774,6 +799,164 @@ function updateHeaderStats() {
         document.getElementById('stat-klanten').textContent = `${klantenCount} Klant${klantenCount !== 1 ? 'en' : ''}`;
         document.getElementById('stat-boeken').textContent = `${boekenCount} Boek${boekenCount !== 1 ? 'en' : ''}`;
     }, 100);
+}
+
+// ============================================
+// DATABASE BACKUP FUNCTIES
+// ============================================
+
+async function createBackup() {
+    try {
+        showSuccess('? Backup wordt aangemaakt...');
+        const response = await apiCall('/backup/create', 'POST');
+        
+        if (response.success) {
+            showSuccess(`? Backup succesvol aangemaakt: ${response.fileName}`);
+            loadBackups();
+        }
+    } catch (error) {
+        showError('Fout bij aanmaken backup: ' + error.message);
+    }
+}
+
+async function loadBackups() {
+    try {
+        const response = await apiCall('/backup/list');
+        const container = document.getElementById('backup-list-container');
+        
+        if (!response.backups || response.backups.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--gray);">
+                    <i class="fas fa-database" style="font-size: 48px; opacity: 0.3; margin-bottom: 15px;"></i>
+                    <p style="font-size: 16px;">Nog geen backups beschikbaar</p>
+                    <p style="font-size: 14px; margin-top: 10px;">Klik op "Maak Backup" om je eerste backup aan te maken</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = `
+            <div style="margin-bottom: 15px; padding: 12px; background: var(--light); border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <i class="fas fa-check-circle" style="color: var(--success); margin-right: 8px;"></i>
+                    <strong>${response.count}</strong> backup${response.count !== 1 ? 's' : ''} gevonden
+                </div>
+                <div style="font-size: 12px; color: var(--gray);">
+                    <i class="fas fa-shield-alt"></i> Alle backups blijven permanent bewaard
+                </div>
+            </div>
+            <div class="table-container">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;"><i class="fas fa-file"></i> Bestandsnaam</th>
+                            <th style="width: 25%;"><i class="fas fa-clock"></i> Datum/Tijd</th>
+                            <th style="width: 25%; text-align: center;"><i class="fas fa-tools"></i> Acties</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${response.backups.map((backup, index) => `
+                            <tr style="${index % 2 === 0 ? 'background: var(--light);' : ''}">
+                                <td>
+                                    <i class="fas fa-database" style="color: var(--primary); margin-right: 8px;"></i>
+                                    <code style="font-size: 12px;">${escapeHtml(backup.fileName)}</code>
+                                </td>
+                                <td>
+                                    <i class="fas fa-calendar-alt" style="margin-right: 5px; color: var(--info);"></i>
+                                    ${escapeHtml(backup.formattedDate)}
+                                </td>
+                                <td style="text-align: center;">
+                                    <button class="btn btn-icon btn-primary" onclick="restoreBackup('${backup.fileName}')" title="Herstel database">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                    <button class="btn btn-icon btn-success" onclick="downloadBackup('${backup.fileName}')" title="Download backup">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    } catch (error) {
+        const container = document.getElementById('backup-list-container');
+        container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> Fout bij laden backups: ${escapeHtml(error.message)}</div>`;
+    }
+}
+
+async function restoreBackup(fileName) {
+    if (!confirm(`?? WAARSCHUWING: Database Herstellen\n\nWeet je zeker dat je de database wilt herstellen naar:\n\n"${fileName}"\n\n? Voordeel: Automatisch wordt eerst een veiligheidsbackup gemaakt van de huidige database!\n\n? Let op: Alle huidige data wordt overschreven met de geselecteerde backup!\n\nDoorgaan?`)) {
+        return;
+    }
+    
+    try {
+        showSuccess('? Database wordt hersteld... Even geduld...');
+        const response = await apiCall('/backup/restore', 'POST', { fileName });
+        
+        if (response.success) {
+            showSuccess(`? Database succesvol hersteld van: ${fileName}\n\n?? Pagina wordt herladen om nieuwe data te tonen...`);
+            
+            // Reload page after 3 seconds
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+        }
+    } catch (error) {
+        showError('? Fout bij herstellen backup: ' + error.message);
+    }
+}
+
+async function downloadBackup(fileName) {
+    try {
+        showSuccess(`?? Backup wordt gedownload: ${fileName}`);
+        
+        // Open download in new window
+        const downloadUrl = `/api/backup/download/${encodeURIComponent(fileName)}`;
+        window.open(downloadUrl, '_blank');
+        
+        setTimeout(() => {
+            showSuccess(`? Download gestart: ${fileName}`);
+        }, 500);
+    } catch (error) {
+        showError('Fout bij downloaden backup: ' + error.message);
+    }
+}
+
+// ============================================
+// BESTELLINGEN EXPORT FUNCTIES
+// ============================================
+
+async function exportOrdersJson() {
+    try {
+        showSuccess('?? Bestellingen worden geëxporteerd naar JSON...');
+        
+        // Direct download trigger
+        const exportUrl = '/api/backup/export/orders/json';
+        window.open(exportUrl, '_blank');
+        
+        setTimeout(() => {
+            showSuccess('? JSON export gestart! Controleer je downloads folder.');
+        }, 500);
+    } catch (error) {
+        showError('Fout bij exporteren naar JSON: ' + error.message);
+    }
+}
+
+async function exportOrdersTxt() {
+    try {
+        showSuccess('?? Bestellingen worden geëxporteerd naar TXT...');
+        
+        // Direct download trigger
+        const exportUrl = '/api/backup/export/orders/txt';
+        window.open(exportUrl, '_blank');
+        
+        setTimeout(() => {
+            showSuccess('? TXT export gestart! Controleer je downloads folder.');
+        }, 500);
+    } catch (error) {
+        showError('Fout bij exporteren naar TXT: ' + error.message);
+    }
 }
 
 // Close modals wanneer buiten geklikt wordt

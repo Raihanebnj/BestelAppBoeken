@@ -22,6 +22,15 @@ namespace BestelAppBoeken.Infrastructure.Services
                 .ToList();
         }
 
+        // ? Async versie voor export functionaliteit
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        {
+            return await _context.Orders
+                .Include(o => o.Items)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
+
         public Order? GetOrderById(int id)
         {
             return _context.Orders
