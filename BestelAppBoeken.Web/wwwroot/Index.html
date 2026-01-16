@@ -62,6 +62,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .header-left {
@@ -91,6 +92,12 @@
             background-clip: text;
         }
 
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .header-stats {
             display: flex;
             gap: 20px;
@@ -107,9 +114,9 @@
             font-weight: 600;
         }
 
-            .stat-badge i {
-                color: var(--primary);
-            }
+        .stat-badge i {
+            color: var(--primary);
+        }
 
         /* Info Banner */
         .info-banner {
@@ -124,10 +131,10 @@
             gap: 15px;
         }
 
-            .info-banner i {
-                font-size: 24px;
-                opacity: 0.9;
-            }
+        .info-banner i {
+            font-size: 24px;
+            opacity: 0.9;
+        }
 
         .info-banner-content h3 {
             font-size: 16px;
@@ -172,10 +179,10 @@
             color: var(--dark);
         }
 
-            .card-title i {
-                color: var(--primary);
-                font-size: 24px;
-            }
+        .card-title i {
+            color: var(--primary);
+            font-size: 24px;
+        }
 
         .card-body {
             padding: 30px;
@@ -202,11 +209,11 @@
             appearance: none;
         }
 
-            .search-input:focus {
-                outline: none;
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
 
         /* All input fields touch-friendly */
         input, select, textarea {
@@ -251,28 +258,28 @@
             background-attachment: local, local, scroll, scroll;
         }
 
-            /* Scroll hint - visible on load */
-            .table-container::before {
-                content: '→';
-                position: absolute;
-                right: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                background: var(--primary);
-                color: white;
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 18px;
-                font-weight: bold;
-                pointer-events: none;
-                animation: pulse 2s infinite;
-                z-index: 10;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            }
+        /* Scroll hint - visible on load */
+        .table-container::before {
+            content: '→';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: pulse 2s infinite;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
 
         @keyframes pulse {
             0%, 100% {
@@ -321,13 +328,13 @@
             white-space: nowrap; /* Prevent text wrapping */
         }
 
-            th:first-child {
-                border-top-left-radius: 10px;
-            }
+        th:first-child {
+            border-top-left-radius: 10px;
+        }
 
-            th:last-child {
-                border-top-right-radius: 10px;
-            }
+        th:last-child {
+            border-top-right-radius: 10px;
+        }
 
         td {
             padding: 16px;
@@ -340,10 +347,10 @@
             transition: all 0.2s;
         }
 
-            tbody tr:hover {
-                background: var(--light);
-                transform: translateX(2px);
-            }
+        tbody tr:hover {
+            background: var(--light);
+            transform: translateX(2px);
+        }
 
         /* Buttons */
         .btn {
@@ -363,16 +370,17 @@
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
             user-select: none;
+            text-decoration: none;
         }
 
-            .btn:active {
-                transform: scale(0.95);
-            }
+        .btn:active {
+            transform: scale(0.95);
+        }
 
-            .btn:hover {
-                transform: translateY(-2px);
-                box-shadow: var(--shadow);
-            }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
 
         /* Mobile: Remove hover effects, keep active */
         @media (hover: none) and (pointer: coarse) {
@@ -452,11 +460,11 @@
             transition: all 0.3s;
         }
 
-            input:focus, select:focus {
-                outline: none;
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
 
         .order-form {
             display: grid;
@@ -474,14 +482,14 @@
             box-shadow: var(--shadow);
         }
 
-            #winkelmandje h3 {
-                color: var(--primary);
-                margin-bottom: 15px;
-                font-size: 20px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
+        #winkelmandje h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
         .cart-item {
             display: flex;
@@ -495,10 +503,10 @@
             transition: all 0.2s;
         }
 
-            .cart-item:hover {
-                border-color: var(--primary);
-                transform: translateX(4px);
-            }
+        .cart-item:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
 
         .cart-items {
             margin-top: 15px;
@@ -553,10 +561,10 @@
             font-size: 16px;
         }
 
-            .loading::after {
-                content: '...';
-                animation: loading 1.5s infinite;
-            }
+        .loading::after {
+            content: '...';
+            animation: loading 1.5s infinite;
+        }
 
         @keyframes loading {
             0%, 20% {
@@ -656,10 +664,10 @@
             line-height: 1;
         }
 
-            .close:hover {
-                color: var(--danger);
-                transform: rotate(90deg);
-            }
+        .close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
 
         .modal-content h2 {
             color: var(--primary);
@@ -679,18 +687,18 @@
             box-shadow: var(--shadow);
         }
 
-            footer a {
-                color: var(--primary);
-                text-decoration: none;
-                margin: 0 10px;
-                font-weight: 600;
-                transition: all 0.2s;
-            }
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
 
-                footer a:hover {
-                    color: var(--secondary);
-                    text-decoration: underline;
-                }
+        footer a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
 
         /* Responsive Design - Mobile First */
 
@@ -731,6 +739,12 @@
                 width: 100%;
             }
 
+            .header-right {
+                flex-direction: column;
+                width: 100%;
+                align-items: stretch;
+            }
+
             h1 {
                 font-size: 22px;
             }
@@ -740,11 +754,18 @@
                 justify-content: center;
                 flex-wrap: wrap;
                 gap: 10px;
+                margin-bottom: 10px;
             }
 
             .stat-badge {
                 font-size: 12px;
                 padding: 6px 12px;
+            }
+
+            /* Admin login button on mobile */
+            .header-right .btn {
+                width: 100%;
+                justify-content: center;
             }
 
             /* Search container */
@@ -753,11 +774,11 @@
                 gap: 15px;
             }
 
-                .search-container input,
-                .search-container select,
-                .search-container button {
-                    width: 100%;
-                }
+            .search-container input,
+            .search-container select,
+            .search-container button {
+                width: 100%;
+            }
 
             /* Books grid */
             .books-grid {
@@ -782,26 +803,26 @@
                 scroll-behavior: smooth;
             }
 
-                /* Make scroll arrow more visible on tablet */
-                .table-container::before {
-                    width: 35px;
-                    height: 35px;
-                    font-size: 20px;
-                    right: 10px;
-                }
+            /* Make scroll arrow more visible on tablet */
+            .table-container::before {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+                right: 10px;
+            }
 
-                /* Table scroll hint */
-                .table-container::after {
-                    content: '← Swipe om meer te zien →';
-                    display: block;
-                    text-align: center;
-                    padding: 8px;
-                    background: var(--light);
-                    color: var(--gray);
-                    font-size: 11px;
-                    font-style: italic;
-                    border-top: 1px solid var(--border);
-                }
+            /* Table scroll hint */
+            .table-container::after {
+                content: '← Swipe om meer te zien →';
+                display: block;
+                text-align: center;
+                padding: 8px;
+                background: var(--light);
+                color: var(--gray);
+                font-size: 11px;
+                font-style: italic;
+                border-top: 1px solid var(--border);
+            }
 
             table {
                 font-size: 12px;
@@ -814,25 +835,25 @@
                 white-space: nowrap;
             }
 
-                /* Compact column widths */
-                th:first-child, td:first-child {
-                    min-width: 60px; /* ID column */
-                }
+            /* Compact column widths */
+            th:first-child, td:first-child {
+                min-width: 60px; /* ID column */
+            }
 
-                th:nth-child(2), td:nth-child(2) {
-                    min-width: 120px; /* Name/Title column */
-                }
+            th:nth-child(2), td:nth-child(2) {
+                min-width: 120px; /* Name/Title column */
+            }
 
-                th:last-child, td:last-child {
-                    min-width: 100px; /* Actions column */
-                }
+            th:last-child, td:last-child {
+                min-width: 100px; /* Actions column */
+            }
 
-                /* Action buttons in table - stack vertically */
-                td .btn {
-                    display: block;
-                    margin: 4px 0;
-                    width: 100%;
-                }
+            /* Action buttons in table - stack vertically */
+            td .btn {
+                display: block;
+                margin: 4px 0;
+                width: 100%;
+            }
 
             /* Order form */
             .order-form {
@@ -847,9 +868,9 @@
                 margin: 20px auto;
             }
 
-                .modal-content h2 {
-                    font-size: 20px;
-                }
+            .modal-content h2 {
+                font-size: 20px;
+            }
 
             /* Buttons */
             .btn {
@@ -895,26 +916,26 @@
                 border-radius: 12px;
             }
 
-                .card h2 {
-                    font-size: 18px;
-                }
+            .card h2 {
+                font-size: 18px;
+            }
 
             /* Book cards */
             .book-card {
                 padding: 15px;
             }
 
-                .book-card h3 {
-                    font-size: 16px;
-                }
+            .book-card h3 {
+                font-size: 16px;
+            }
 
-                .book-card .author {
-                    font-size: 12px;
-                }
+            .book-card .author {
+                font-size: 12px;
+            }
 
-                .book-card .price {
-                    font-size: 20px;
-                }
+            .book-card .price {
+                font-size: 20px;
+            }
 
             /* Stat cards */
             .stat-card h3 {
@@ -934,15 +955,15 @@
                 -webkit-overflow-scrolling: touch !important;
             }
 
-                /* Stronger scroll indicator on mobile */
-                .table-container::before {
-                    width: 40px;
-                    height: 40px;
-                    font-size: 24px;
-                    right: 5px;
-                    animation: pulse 1.5s infinite, bounce 2s infinite;
-                    z-index: 100; /* Ensure it's on top */
-                }
+            /* Stronger scroll indicator on mobile */
+            .table-container::before {
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+                right: 5px;
+                animation: pulse 1.5s infinite, bounce 2s infinite;
+                z-index: 100; /* Ensure it's on top */
+            }
 
             @keyframes bounce {
                 0%, 100% {
@@ -966,10 +987,10 @@
                 font-size: 10px;
             }
 
-                th i, td i {
-                    font-size: 10px;
-                    margin-right: 2px;
-                }
+            th i, td i {
+                font-size: 10px;
+                margin-right: 2px;
+            }
 
             /* Abbreviate column headers on mobile */
             th {
@@ -977,15 +998,15 @@
                 letter-spacing: 0;
             }
 
-                /* Make first column sticky for context */
-                th:first-child, td:first-child {
-                    position: sticky;
-                    left: 0;
-                    background: white;
-                    z-index: 2;
-                    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
-                    min-width: 50px;
-                }
+            /* Make first column sticky for context */
+            th:first-child, td:first-child {
+                position: sticky;
+                left: 0;
+                background: white;
+                z-index: 2;
+                box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+                min-width: 50px;
+            }
 
             thead th:first-child {
                 background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -1009,9 +1030,9 @@
                 font-size: 12px;
             }
 
-                .btn i {
-                    font-size: 12px;
-                }
+            .btn i {
+                font-size: 12px;
+            }
 
             /* Search */
             .search-container input {
@@ -1037,10 +1058,10 @@
                 font-size: 12px;
             }
 
-                footer a {
-                    display: block;
-                    margin: 5px 0;
-                }
+            footer a {
+                display: block;
+                margin: 5px 0;
+            }
 
             /* Stat badge smaller */
             .stat-badge {
@@ -1126,20 +1147,21 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header fade-in">
-            <div class="header-left">
-                <div class="logo">
-                    <i class="fas fa-book"></i>
-                </div>
-                <div>
-                    <h1>Bookstore Management</h1>
-                    <p style="color: var(--gray); font-size: 14px; margin-top: 5px;">
-                        <i class="fas fa-mobile-alt"></i> Smartphone-ready verkoopdashboard
-                    </p>
-                </div>
+<div class="container">
+    <!-- Header -->
+    <div class="header fade-in">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-book"></i>
             </div>
+            <div>
+                <h1>Bookstore Management</h1>
+                <p style="color: var(--gray); font-size: 14px; margin-top: 5px;">
+                    <i class="fas fa-mobile-alt"></i> Smartphone-ready verkoopdashboard
+                </p>
+            </div>
+        </div>
+        <div class="header-right">
             <div class="header-stats">
                 <div class="stat-badge">
                     <i class="fas fa-shopping-cart"></i>
@@ -1154,389 +1176,382 @@
                     <span id="stat-boeken">0 Boeken</span>
                 </div>
             </div>
+
+            <!-- Admin Login Knop -->
+            <a href="/login.html" class="btn btn-primary">
+                <i class="fas fa-user-shield"></i> Admin Login
+            </a>
         </div>
+    </div>
 
-        <!-- Info Banner -->
-        <div class="info-banner fade-in">
-            <i class="fas fa-info-circle"></i>
-            <div class="info-banner-content">
-                <h3><i class="fas fa-bullseye"></i> Doel van dit Dashboard</h3>
-                <p>Als verkoper kun je hier snel orders plaatsen voor klanten. Alle gegevens worden via RabbitMQ naar Salesforce en via SAP iDoc naar SAP R/3 gestuurd. Beheer klanten, boeken en bekijk alle bestellingen op een centrale plek.</p>
+    <!-- Info Banner -->
+    <div class="info-banner fade-in">
+        <i class="fas fa-info-circle"></i>
+        <div class="info-banner-content">
+            <h3><i class="fas fa-bullseye"></i> Doel van dit Dashboard</h3>
+            <p>Als verkoper kun je hier snel orders plaatsen voor klanten. Alle gegevens worden via RabbitMQ naar Salesforce en via SAP iDoc naar SAP R/3 gestuurd. Beheer klanten, boeken en bekijk alle bestellingen op een centrale plek.</p>
+        </div>
+    </div>
+
+    <div id="message-container"></div>
+
+    <!-- Bestellingen Sectie -->
+    <section id="bestellingen-sectie" class="card fade-in">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-clipboard-list"></i>
+                Bestellingen
             </div>
         </div>
-
-        <div id="message-container"></div>
-
-        <!-- Bestellingen Sectie -->
-        <section id="bestellingen-sectie" class="card fade-in">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fas fa-clipboard-list"></i>
-                    Bestellingen
-                </div>
+        <div class="card-body">
+            <div id="bestellingen-loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Bestellingen laden
             </div>
-            <div class="card-body">
-                <div id="bestellingen-loading" class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Bestellingen laden
-                </div>
-                <div class="table-container">
-                    <table id="bestellingen-tabel" style="display:none;">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-hashtag"></i> ID</th>
-                                <th><i class="fas fa-user"></i> Klant</th>
-                                <th><i class="fas fa-book"></i> Boek(en)</th>
-                                <th><i class="fas fa-calendar"></i> Datum</th>
-                                <th><i class="fas fa-euro-sign"></i> Totaal</th>
-                                <th><i class="fas fa-cog"></i> Acties</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bestellingen-body">
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-container">
+                <table id="bestellingen-tabel" style="display:none;">
+                    <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-user"></i> Klant</th>
+                        <th><i class="fas fa-book"></i> Boek(en)</th>
+                        <th><i class="fas fa-calendar"></i> Datum</th>
+                        <th><i class="fas fa-euro-sign"></i> Totaal</th>
+                        <th><i class="fas fa-cog"></i> Acties</th>
+                    </tr>
+                    </thead>
+                    <tbody id="bestellingen-body">
+                    </tbody>
+                </table>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Klantenbeheer Sectie -->
-        <section id="klanten-sectie" class="card fade-in">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fas fa-users"></i>
-                    Klantenbeheer
-                </div>
-                <button class="btn btn-success" onclick="openNieuweKlantModal()">
-                    <i class="fas fa-plus"></i> Nieuwe Klant
+    <!-- Klantenbeheer Sectie -->
+    <section id="klanten-sectie" class="card fade-in">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-users"></i>
+                Klantenbeheer
+            </div>
+            <button class="btn btn-success" onclick="openNieuweKlantModal()">
+                <i class="fas fa-plus"></i> Nieuwe Klant
+            </button>
+        </div>
+        <div class="card-body">
+            <!-- Zoekbalk -->
+            <div class="search-container">
+                <input type="text" id="klanten-search-input" class="search-input" placeholder="Zoek op naam, email of telefoon...">
+                <button class="btn btn-search" onclick="searchKlanten()">
+                    <i class="fas fa-search"></i> Zoeken
+                </button>
+                <button class="btn btn-clear" onclick="clearKlantenSearch()">
+                    <i class="fas fa-times"></i> Reset
                 </button>
             </div>
-            <div class="card-body">
-                <!-- Zoekbalk -->
-                <div class="search-container">
-                    <input type="text" id="klanten-search-input" class="search-input" placeholder="Zoek op naam, email of telefoon...">
-                    <button class="btn btn-search" onclick="searchKlanten()">
-                        <i class="fas fa-search"></i> Zoeken
-                    </button>
-                    <button class="btn btn-clear" onclick="clearKlantenSearch()">
-                        <i class="fas fa-times"></i> Reset
-                    </button>
-                </div>
-                <div id="klanten-search-results" class="search-results"></div>
+            <div id="klanten-search-results" class="search-results"></div>
 
-                <div id="klanten-loading" class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Klanten laden
-                </div>
-                <div class="table-container">
-                    <table id="klanten-tabel" style="display:none;">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-user"></i> Naam</th>
-                                <th><i class="fas fa-envelope"></i> Email</th>
-                                <th><i class="fas fa-phone"></i> Telefoon</th>
-                                <th><i class="fas fa-cog"></i> Acties</th>
-                            </tr>
-                        </thead>
-                        <tbody id="klanten-body">
-                        </tbody>
-                    </table>
-                </div>
+            <div id="klanten-loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Klanten laden
             </div>
-        </section>
-
-        <!-- Klant Details Sectie -->
-        <section id="klant-details-sectie" class="form-section fade-in">
-            <h2 style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-user-edit"></i> Klant Details
-            </h2>
-            <p style="color: var(--gray); margin-bottom: 20px; font-size: 14px;">
-                <i class="fas fa-info-circle"></i> Gebruik dit formulier om een nieuwe klant toe te voegen of bestaande klant aan te passen.
-            </p>
-            <form id="klant-form">
-                <input type="hidden" id="klant-id">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Naam</label>
-                    <input type="text" id="klant-naam" placeholder="Voer klantnaam in" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="klant-email" placeholder="Voer klantemail in" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-phone"></i> Telefoon</label>
-                    <input type="text" id="klant-telefoon" placeholder="Voer telefoonnummer in" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> Adres</label>
-                    <input type="text" id="klant-adres" placeholder="Voer adres in" required>
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Opslaan
-                </button>
-                <button type="button" class="btn btn-clear" onclick="resetKlantForm()">
-                    <i class="fas fa-redo"></i> Nieuwe klant
-                </button>
-            </form>
-        </section>
-
-        <!-- Boeken Sectie -->
-        <section id="boeken-sectie" class="card fade-in">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fas fa-book-open"></i>
-                    Boeken
-                </div>
-                <button class="btn btn-success" onclick="openNieuwBoekModal()">
-                    <i class="fas fa-plus"></i> Nieuw Boek
-                </button>
+            <div class="table-container">
+                <table id="klanten-tabel" style="display:none;">
+                    <thead>
+                    <tr>
+                        <th><i class="fas fa-user"></i> Naam</th>
+                        <th><i class="fas fa-envelope"></i> Email</th>
+                        <th><i class="fas fa-phone"></i> Telefoon</th>
+                        <th><i class="fas fa-cog"></i> Acties</th>
+                    </tr>
+                    </thead>
+                    <tbody id="klanten-body">
+                    </tbody>
+                </table>
             </div>
-            <div class="card-body">
-                <!-- Zoekbalk -->
-                <div class="search-container">
-                    <input type="text" id="boeken-search-input" class="search-input" placeholder="Zoek op titel, auteur of ISBN...">
-                    <button class="btn btn-search" onclick="searchBoeken()">
-                        <i class="fas fa-search"></i> Zoeken
-                    </button>
-                    <button class="btn btn-clear" onclick="clearBoekenSearch()">
-                        <i class="fas fa-times"></i> Reset
-                    </button>
-                </div>
-                <div id="boeken-search-results" class="search-results"></div>
+        </div>
+    </section>
 
-                <div id="boeken-loading" class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Boeken laden
-                </div>
-                <div class="table-container">
-                    <table id="boeken-tabel" style="display:none;">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-book"></i> Titel</th>
-                                <th><i class="fas fa-pen"></i> Auteur</th>
-                                <th><i class="fas fa-euro-sign"></i> Prijs</th>
-                                <th><i class="fas fa-boxes"></i> Voorraad</th>
-                                <th><i class="fas fa-barcode"></i> ISBN</th>
-                                <th><i class="fas fa-cog"></i> Acties</th>
-                            </tr>
-                        </thead>
-                        <tbody id="boeken-body">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Bestel een boek Sectie -->
-        <section id="order-sectie" class="form-section fade-in">
-            <h2 style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-shopping-cart"></i> Bestel een boek
-            </h2>
-            <p style="color: var(--gray); margin-bottom: 20px; font-size: 14px;">
-                <i class="fas fa-info-circle"></i> Selecteer klant en boek(en), voeg toe aan winkelmandje en plaats de bestelling.
-            </p>
-            <div class="order-form">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Klant</label>
-                    <select id="order-klant" required>
-                        <option value="">Selecteer een klant</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-book"></i> Boek</label>
-                    <select id="order-boek" required>
-                        <option value="">Selecteer een boek</option>
-                    </select>
-                </div>
+    <!-- Klant Details Sectie -->
+    <section id="klant-details-sectie" class="form-section fade-in">
+        <h2 style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-user-edit"></i> Klant Details
+        </h2>
+        <p style="color: var(--gray); margin-bottom: 20px; font-size: 14px;">
+            <i class="fas fa-info-circle"></i> Gebruik dit formulier om een nieuwe klant toe te voegen of bestaande klant aan te passen.
+        </p>
+        <form id="klant-form">
+            <input type="hidden" id="klant-id">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Naam</label>
+                <input type="text" id="klant-naam" placeholder="Voer klantnaam in" required>
             </div>
             <div class="form-group">
-                <label><i class="fas fa-calculator"></i> Aantal</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <input type="number" id="order-aantal" value="1" min="1" class="aantal-selector">
-                    <button type="button" class="btn btn-primary" onclick="toevoegenAanWinkelmandje()">
-                        <i class="fas fa-cart-plus"></i> Toevoegen aan winkelmandje
-                    </button>
-                </div>
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="klant-email" placeholder="Voer klantemail in" required>
             </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Telefoon</label>
+                <input type="text" id="klant-telefoon" placeholder="Voer telefoonnummer in" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-map-marker-alt"></i> Adres</label>
+                <input type="text" id="klant-adres" placeholder="Voer adres in" required>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Opslaan
+            </button>
+            <button type="button" class="btn btn-clear" onclick="resetKlantForm()">
+                <i class="fas fa-redo"></i> Nieuwe klant
+            </button>
+        </form>
+    </section>
 
-            <div id="winkelmandje">
-                <h3><i class="fas fa-shopping-basket"></i> Winkelmandje</h3>
-                <div id="winkelmandje-items" class="cart-items">
-                    <p style="color: #999; text-align: center; padding: 20px;">
-                        <i class="fas fa-shopping-cart" style="font-size: 24px; opacity: 0.5; display: block; margin-bottom: 10px;"></i>
-                        Geen items in winkelmandje
-                    </p>
-                </div>
-                <div class="totaal-bedrag" id="totaal-bedrag">
-                    <i class="fas fa-euro-sign"></i> Totaal: EUR 0.00
-                </div>
-                <button type="button" class="btn btn-success" onclick="plaatsOrder()" style="width: 100%; margin-top: 10px; font-size: 16px; padding: 14px;">
-                    <i class="fas fa-check-circle"></i> Bestelling Plaatsen
+    <!-- Boeken Sectie -->
+    <section id="boeken-sectie" class="card fade-in">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-book-open"></i>
+                Boeken
+            </div>
+            <button class="btn btn-success" onclick="openNieuwBoekModal()">
+                <i class="fas fa-plus"></i> Nieuw Boek
+            </button>
+        </div>
+        <div class="card-body">
+            <!-- Zoekbalk -->
+            <div class="search-container">
+                <input type="text" id="boeken-search-input" class="search-input" placeholder="Zoek op titel, auteur of ISBN...">
+                <button class="btn btn-search" onclick="searchBoeken()">
+                    <i class="fas fa-search"></i> Zoeken
+                </button>
+                <button class="btn btn-clear" onclick="clearBoekenSearch()">
+                    <i class="fas fa-times"></i> Reset
                 </button>
             </div>
-        </section>
+            <div id="boeken-search-results" class="search-results"></div>
 
-        <!-- Database Backup Sectie -->
-        <section id="backup-sectie" class="card fade-in">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fas fa-database"></i>
-                    Database Backup & Export
-                </div>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="createBackup()">
-                        <i class="fas fa-save"></i> Database Backup
-                    </button>
-                    <button class="btn btn-success" onclick="exportOrdersJson()">
-                        <i class="fas fa-file-code"></i> Export JSON
-                    </button>
-                    <button class="btn btn-info" onclick="exportOrdersTxt()">
-                        <i class="fas fa-file-alt"></i> Export TXT
-                    </button>
-                </div>
+            <div id="boeken-loading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Boeken laden
             </div>
-            <div class="card-body">
-                <div style="background: linear-gradient(135deg, #e6fffa, #b2f5ea); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid var(--success);">
-                    <p style="margin: 0; color: var(--dark); font-size: 14px;">
-                        <i class="fas fa-info-circle"></i> <strong>Backup Opties:</strong><br>
-                        <span style="font-size: 13px; opacity: 0.9;">
+            <div class="table-container">
+                <table id="boeken-tabel" style="display:none;">
+                    <thead>
+                    <tr>
+                        <th><i class="fas fa-book"></i> Titel</th>
+                        <th><i class="fas fa-pen"></i> Auteur</th>
+                        <th><i class="fas fa-euro-sign"></i> Prijs</th>
+                        <th><i class="fas fa-boxes"></i> Voorraad</th>
+                        <th><i class="fas fa-barcode"></i> ISBN</th>
+                        <th><i class="fas fa-cog"></i> Acties</th>
+                    </tr>
+                    </thead>
+                    <tbody id="boeken-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bestel een boek Sectie -->
+    <section id="order-sectie" class="form-section fade-in">
+        <h2 style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-shopping-cart"></i> Bestel een boek
+        </h2>
+        <p style="color: var(--gray); margin-bottom: 20px; font-size: 14px;">
+            <i class="fas fa-info-circle"></i> Selecteer klant en boek(en), voeg toe aan winkelmandje en plaats de bestelling.
+        </p>
+        <div class="order-form">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Klant</label>
+                <select id="order-klant" required>
+                    <option value="">Selecteer een klant</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-book"></i> Boek</label>
+                <select id="order-boek" required>
+                    <option value="">Selecteer een boek</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label><i class="fas fa-calculator"></i> Aantal</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="number" id="order-aantal" value="1" min="1" class="aantal-selector">
+                <button type="button" class="btn btn-primary" onclick="toevoegenAanWinkelmandje()">
+                    <i class="fas fa-cart-plus"></i> Toevoegen aan winkelmandje
+                </button>
+            </div>
+        </div>
+
+        <div id="winkelmandje">
+            <h3><i class="fas fa-shopping-basket"></i> Winkelmandje</h3>
+            <div id="winkelmandje-items" class="cart-items">
+                <p style="color: #999; text-align: center; padding: 20px;">
+                    <i class="fas fa-shopping-cart" style="font-size: 24px; opacity: 0.5; display: block; margin-bottom: 10px;"></i>
+                    Geen items in winkelmandje
+                </p>
+            </div>
+            <div class="totaal-bedrag" id="totaal-bedrag">
+                <i class="fas fa-euro-sign"></i> Totaal: EUR 0.00
+            </div>
+            <button type="button" class="btn btn-success" onclick="plaatsOrder()" style="width: 100%; margin-top: 10px; font-size: 16px; padding: 14px;">
+                <i class="fas fa-check-circle"></i> Bestelling Plaatsen
+            </button>
+        </div>
+    </section>
+
+    <!-- Database Backup Sectie -->
+    <section id="backup-sectie" class="card fade-in">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-database"></i>
+                Database Backup & Export
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="createBackup()">
+                    <i class="fas fa-save"></i> Database Backup
+                </button>
+                <button class="btn btn-success" onclick="exportOrdersJson()">
+                    <i class="fas fa-file-code"></i> Export JSON
+                </button>
+                <button class="btn btn-info" onclick="exportOrdersTxt()">
+                    <i class="fas fa-file-alt"></i> Export TXT
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div style="background: linear-gradient(135deg, #e6fffa, #b2f5ea); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid var(--success);">
+                <p style="margin: 0; color: var(--dark); font-size: 14px;">
+                    <i class="fas fa-info-circle"></i> <strong>Backup Opties:</strong><br>
+                    <span style="font-size: 13px; opacity: 0.9;">
                             • <strong>Database Backup (.db)</strong>: Volledige database kopie voor herstel<br>
                             • <strong>Export JSON (.json)</strong>: Bestellingen in machine-leesbaar formaat<br>
                             • <strong>Export TXT (.txt)</strong>: Leesbaar rapport van alle bestellingen
                         </span>
-                    </p>
-                </div>
+                </p>
+            </div>
 
-                <div id="backup-list-container">
-                    <div class="loading">
-                        <i class="fas fa-spinner fa-spin"></i> Backups laden...
-                    </div>
+            <div id="backup-list-container">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Backups laden...
                 </div>
             </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="fade-in">
-            <p style="font-weight: 600; margin-bottom: 10px;">
-                <i class="fas fa-book-reader"></i> &copy; 2024 Bookstore - Alle rechten voorbehouden
-            </p>
-            <p>
-                <a href="/privacy-policy.html" target="_blank"><i class="fas fa-shield-alt"></i> Privacy Policy</a> |
-                <a href="/cookie-policy.html" target="_blank"><i class="fas fa-cookie-bite"></i> Cookie Policy</a> |
-                <a href="/terms-of-service.html" target="_blank"><i class="fas fa-file-contract"></i> Gebruiksvoorwaarden</a> |
-                <a href="/swagger" target="_blank"><i class="fas fa-code"></i> API Documentatie</a>
-            </p>
-            <p style="margin-top: 15px; font-size: 13px; color: var(--gray);">
-                <i class="fas fa-envelope"></i> Contact: <a href="mailto:support@bookstore@ehb.be">support@bookstore@ehb.be</a> |
-                <i class="fas fa-map-marker-alt"></i> Nijverheidskaai 170, 1070 Brussel
-            </p>
-            <p style="margin-top: 10px; font-size: 12px; opacity: 0.7;">
-                <i class="fas fa-cogs"></i> Powered by RabbitMQ + Salesforce + SAP R/3
-            </p>
-        </footer>
-    </div>
-
-    <!-- Modals -->
-    <div id="klant-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeKlantModal()">&times;</span>
-            <h2 id="klant-modal-title"><i class="fas fa-user-edit"></i> Klant Bewerken</h2>
-            <form id="klant-modal-form">
-                <input type="hidden" id="modal-klant-id">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Naam</label>
-                    <input type="text" id="modal-klant-naam" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="modal-klant-email" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-phone"></i> Telefoon</label>
-                    <input type="text" id="modal-klant-telefoon" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> Adres</label>
-                    <input type="text" id="modal-klant-adres" required>
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Opslaan
-                </button>
-                <button type="button" class="btn btn-clear" onclick="closeKlantModal()">
-                    <i class="fas fa-times"></i> Annuleren
-                </button>
-            </form>
         </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="fade-in">
+        <p style="font-weight: 600; margin-bottom: 10px;">
+            <i class="fas fa-book-reader"></i> &copy; 2024 Bookstore - Alle rechten voorbehouden
+        </p>
+        <p>
+            <a href="/privacy-policy.html" target="_blank"><i class="fas fa-shield-alt"></i> Privacy Policy</a> |
+            <a href="/cookie-policy.html" target="_blank"><i class="fas fa-cookie-bite"></i> Cookie Policy</a> |
+            <a href="/terms-of-service.html" target="_blank"><i class="fas fa-file-contract"></i> Gebruiksvoorwaarden</a> |
+            <a href="/swagger" target="_blank"><i class="fas fa-code"></i> API Documentatie</a>
+        </p>
+        <p style="margin-top: 15px; font-size: 13px; color: var(--gray);">
+            <i class="fas fa-envelope"></i> Contact: <a href="mailto:support@bookstore@ehb.be">support@bookstore@ehb.be</a> |
+            <i class="fas fa-map-marker-alt"></i> Nijverheidskaai 170, 1070 Brussel
+        </p>
+        <p style="margin-top: 10px; font-size: 12px; opacity: 0.7;">
+            <i class="fas fa-cogs"></i> Powered by RabbitMQ + Salesforce + SAP R/3
+        </p>
+    </footer>
+</div>
+
+<!-- Modals -->
+<div id="klant-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeKlantModal()">&times;</span>
+        <h2 id="klant-modal-title"><i class="fas fa-user-edit"></i> Klant Bewerken</h2>
+        <form id="klant-modal-form">
+            <input type="hidden" id="modal-klant-id">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Naam</label>
+                <input type="text" id="modal-klant-naam" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="modal-klant-email" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Telefoon</label>
+                <input type="text" id="modal-klant-telefoon" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-map-marker-alt"></i> Adres</label>
+                <input type="text" id="modal-klant-adres" required>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Opslaan
+            </button>
+            <button type="button" class="btn btn-clear" onclick="closeKlantModal()">
+                <i class="fas fa-times"></i> Annuleren
+            </button>
+        </form>
     </div>
+</div>
 
-    <div id="boek-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeBoekModal()">&times;</span>
-            <h2 id="boek-modal-title"><i class="fas fa-book"></i> Boek Bewerken</h2>
-            <form id="boek-modal-form">
-                <input type="hidden" id="modal-boek-id">
-                <div class="form-group">
-                    <label><i class="fas fa-book"></i> Titel</label>
-                    <input type="text" id="modal-boek-titel" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-pen"></i> Auteur</label>
-                    <input type="text" id="modal-boek-auteur" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-euro-sign"></i> Prijs (EUR)</label>
-                    <input type="number" step="0.01" id="modal-boek-prijs" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-boxes"></i> Voorraad Aantal</label>
-                    <input type="number" id="modal-boek-voorraad" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-barcode"></i> ISBN</label>
-                    <input type="text" id="modal-boek-isbn" required>
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Opslaan
-                </button>
-                <button type="button" class="btn btn-clear" onclick="closeBoekModal()">
-                    <i class="fas fa-times"></i> Annuleren
-                </button>
-            </form>
-        </div>
+<div id="boek-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeBoekModal()">&times;</span>
+        <h2 id="boek-modal-title"><i class="fas fa-book"></i> Boek Bewerken</h2>
+        <form id="boek-modal-form">
+            <input type="hidden" id="modal-boek-id">
+            <div class="form-group">
+                <label><i class="fas fa-book"></i> Titel</label>
+                <input type="text" id="modal-boek-titel" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-pen"></i> Auteur</label>
+                <input type="text" id="modal-boek-auteur" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-euro-sign"></i> Prijs (EUR)</label>
+                <input type="number" step="0.01" id="modal-boek-prijs" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-boxes"></i> Voorraad Aantal</label>
+                <input type="number" id="modal-boek-voorraad" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-barcode"></i> ISBN</label>
+                <input type="text" id="modal-boek-isbn" required>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Opslaan
+            </button>
+            <button type="button" class="btn btn-clear" onclick="closeBoekModal()">
+                <i class="fas fa-times"></i> Annuleren
+            </button>
+        </form>
     </div>
+</div>
 
-    <div id="order-details-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeOrderDetailsModal()">&times;</span>
-            <h2><i class="fas fa-receipt"></i> Bestelling Details</h2>
-            <div id="order-details-content"></div>
-        </div>
+<div id="order-details-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeOrderDetailsModal()">&times;</span>
+        <h2><i class="fas fa-receipt"></i> Bestelling Details</h2>
+        <div id="order-details-content"></div>
     </div>
+</div>
 
-    <script src="app.js"></script>
-    <script src="search-functions.js"></script>
-    <script>
-        // Update stats in header
-        function updateHeaderStats() {
-            setTimeout(() => {
-                const orders = document.querySelectorAll('#bestellingen-body tr').length;
-                const klanten = document.querySelectorAll('#klanten-body tr').length;
-                const boeken = document.querySelectorAll('#boeken-body tr').length;
+<script src="app.js"></script>
+<script src="search-functions.js"></script>
+<script>
+    // Update stats in header
+    function updateHeaderStats() {
+        setTimeout(() => {
+            const orders = document.querySelectorAll('#bestellingen-body tr').length;
+            const klanten = document.querySelectorAll('#klanten-body tr').length;
+            const boeken = document.querySelectorAll('#boeken-body tr').length;
 
-                document.getElementById('stat-orders').textContent = `${orders} Orders`;
-                document.getElementById('stat-klanten').textContent = `${klanten} Klanten`;
-                document.getElementById('stat-boeken').textContent = `${boeken} Boeken`;
-            }, 500);
-        }
-
-        // Monitor data changes
-        if (typeof MutationObserver !== 'undefined') {
-            const observer = new MutationObserver(updateHeaderStats);
-            const config = { childList: true, subtree: true };
-
-            setTimeout(() => {
-                ['bestellingen-body', 'klanten-body', 'boeken-body'].forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) observer.observe(element, config);
-                });
-            }, 1000);
-        }
-    </script>
+            document.getElementById('stat-orders').textContent = `${orders} Orders`;
+            document.getElementById('stat-klanten').textContent = `${klanten} Klanten`;
+            document.getElementById('stat-boeken').textContent = `${boeken} Boeken`;
+        }, 500);
+    }
+</script>
 </body>
 </html>
