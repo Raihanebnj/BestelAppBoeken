@@ -1,5 +1,6 @@
 using BestelAppBoeken.Core.Interfaces;
 using BestelAppBoeken.Core.Models;
+using BestelAppBoeken.Infrastructure.Data;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,21 +8,87 @@ namespace BestelAppBoeken.Infrastructure.Services
 {
     public class BookService : IBookService
     {
-        private static readonly List<Book> _books = new List<Book>
+        private readonly BookstoreDbContext _context;
+
+        public BookService(BookstoreDbContext context)
         {
-            new Book { Id = 1, Title = "The Great Gatsby", Author = "F. Scott Fitzgerald", Price = 12.99m, Isbn = "9780743273565", ImageUrl = "https://via.placeholder.com/150", Description = "A classic novel of the Jazz Age." },
-            new Book { Id = 2, Title = "1984", Author = "George Orwell", Price = 10.50m, Isbn = "9780451524935", ImageUrl = "https://via.placeholder.com/150", Description = "A dystopian social science fiction novel." },
-            new Book { Id = 3, Title = "To Kill a Mockingbird", Author = "Harper Lee", Price = 14.20m, Isbn = "9780061120084", ImageUrl = "https://via.placeholder.com/150", Description = "A novel about the serious issues of rape and racial inequality." }
-        };
+            _context = context;
+        }
 
         public IEnumerable<Book> GetAllBooks()
         {
-            return _books;
+            return _context.Books.ToList();
         }
 
         public Book? GetBookById(int id)
         {
-            return _books.FirstOrDefault(b => b.Id == id);
+            return _context.Books.FirstOrDefault(b => b.Id == id);
+        }
+
+        public Book CreateBook(Book book)
+        {
+            _context.Books.Add(book);
+            _context.SaveChanges();
+            return book;
+        }
+
+        public Book? UpdateBook(int id, Book book)
+        {
+            var existingBook = _context.Books.FirstOrDefault(b => b.Id == id);
+            if (existingBook == null) return null;
+
+            existingBook.Title = book.Title;
+            existingBook.Author = book.Author;
+            existingBook.Price = book.Price;
+            existingBook.Isbn = book.Isbn;
+            existingBook.Description = book.Description;
+            existingBook.ImageUrl = book.ImageUrl;
+            existingBook.VoorraadAantal = book.VoorraadAantal;
+
+            _context.SaveChanges();
+            return existingBook;
+        }
+
+        public bool DeleteBook(int id)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+            if (book == null) return false;
+
+            _context.Books.Remove(book);
+            _context.SaveChanges();
+            return true;
+        }
+
+        public IEnumerable<Book> SearchBooks(string query)
+        {
+            query = query.ToLower();
+            return _context.Books
+                .Where(b => b.Title.ToLower().Contains(query) ||
+                           b.Author.ToLower().Contains(query) ||
+                           b.Isbn.Contains(query))
+                .ToList();
+        }
+
+        // Voorraad toevoegen/bijbestellen functionaliteit
+        public bool AddStock(int bookId, int amount)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == bookId);
+            if (book == null || amount <= 0) return false;
+
+            book.VoorraadAantal += amount;
+            _context.SaveChanges();
+            return true;
+        }
+
+        // Voorraad verminderen (bij bestelling)
+        public bool ReduceStock(int bookId, int amount)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == bookId);
+            if (book == null || amount <= 0 || book.VoorraadAantal < amount) return false;
+
+            book.VoorraadAantal -= amount;
+            _context.SaveChanges();
+            return true;
         }
     }
 }
