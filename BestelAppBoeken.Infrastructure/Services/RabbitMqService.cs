@@ -22,9 +22,9 @@ namespace BestelAppBoeken.Infrastructure.Services
 
             _factory = new ConnectionFactory
             {
-                HostName = rabbitMqSection["HostName"] ?? "localhost",
-                UserName = rabbitMqSection["UserName"],
-                Password = rabbitMqSection["Password"]
+                HostName = "10.2.160.223",
+                UserName = "bestelapp",
+                Password = "Groep3"
             };
         }
 
