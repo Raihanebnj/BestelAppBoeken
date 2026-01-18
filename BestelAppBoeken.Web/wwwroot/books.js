@@ -1,0 +1,274 @@
+// Books.js - Book Management Page Logic
+
+const API_BASE = '/api';
+let boeken = [];
+let allBoeken = [];
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadBooks();
+    setupForm();
+});
+
+// Setup form
+function setupForm() {
+    const form = document.getElementById('book-form');
+    if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+    }
+}
+
+// Load all books
+async function loadBooks() {
+    try {
+        const response = await fetch(`${API_BASE}/books`);
+        if (!response.ok) throw new Error('Kon boeken niet laden');
+        
+        const boekenData = await response.json();
+        
+        // Transform data
+        boeken = boekenData.map(boek => ({
+            id: boek.id,
+            titel: boek.title,
+            auteur: boek.author,
+            prijs: boek.price,
+            voorraadAantal: boek.voorraadAantal,
+            isbn: boek.isbn
+        }));
+        
+        allBoeken = [...boeken];
+        displayBooks();
+        
+        document.getElementById('books-loading').style.display = 'none';
+        document.getElementById('books-table-container').style.display = 'block';
+    } catch (error) {
+        console.error('Error loading books:', error);
+        document.getElementById('books-loading').innerHTML = 
+            '<div class="message error"><i class="fas fa-exclamation-circle"></i> Kon boeken niet laden</div>';
+    }
+}
+
+// Display books in table
+function displayBooks() {
+    const tbody = document.getElementById('books-body');
+    
+    if (boeken.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 40px;">
+                    <div style="color: var(--gray);">
+                        <i class="fas fa-book" style="font-size: 48px; opacity: 0.3; display: block; margin-bottom: 15px;"></i>
+                        <p style="font-size: 18px;">Geen boeken gevonden</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = boeken.map(boek => {
+        const voorraadClass = boek.voorraadAantal < 15 ? 'voorraad-laag' : '';
+        const voorraadWarning = boek.voorraadAantal < 15 ? '<span class="voorraad-info">(Laag!)</span>' : '';
+        
+        return `
+            <tr>
+                <td>${boek.id}</td>
+                <td><strong>${escapeHtml(boek.titel)}</strong></td>
+                <td>${escapeHtml(boek.auteur)}</td>
+                <td><strong>EUR ${boek.prijs.toFixed(2)}</strong></td>
+                <td class="${voorraadClass}">
+                    ${boek.voorraadAantal} ${voorraadWarning}
+                </td>
+                <td><small>${escapeHtml(boek.isbn)}</small></td>
+                <td>
+                    <button class="btn btn-icon btn-warning" onclick="editBook(${boek.id})" title="Bewerken">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-icon btn-danger" onclick="deleteBook(${boek.id})" title="Verwijderen">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Search books
+function searchBooks() {
+    const query = document.getElementById('search-input').value.toLowerCase().trim();
+    const resultsDiv = document.getElementById('search-results');
+    
+    if (!query) {
+        boeken = [...allBoeken];
+        resultsDiv.style.display = 'none';
+    } else {
+        boeken = allBoeken.filter(b => 
+            b.titel.toLowerCase().includes(query) ||
+            b.auteur.toLowerCase().includes(query) ||
+            b.isbn.toLowerCase().includes(query)
+        );
+        
+        resultsDiv.style.display = 'block';
+        resultsDiv.innerHTML = `<i class="fas fa-search"></i> ${boeken.length} boek(en) gevonden`;
+    }
+    
+    displayBooks();
+}
+
+// Clear search
+function clearSearch() {
+    document.getElementById('search-input').value = '';
+    document.getElementById('search-results').style.display = 'none';
+    boeken = [...allBoeken];
+    displayBooks();
+}
+
+// Open modal for new book
+function openNewBookModal() {
+    document.getElementById('modal-title').innerHTML = '<i class="fas fa-book-medical"></i> Nieuw Boek';
+    document.getElementById('book-form').reset();
+    document.getElementById('book-id').value = '';
+    document.getElementById('book-modal').style.display = 'block';
+}
+
+// Edit book
+function editBook(id) {
+    const boek = allBoeken.find(b => b.id === id);
+    if (!boek) return;
+    
+    document.getElementById('modal-title').innerHTML = '<i class="fas fa-book"></i> Boek Bewerken';
+    document.getElementById('book-id').value = boek.id;
+    document.getElementById('book-title').value = boek.titel;
+    document.getElementById('book-author').value = boek.auteur;
+    document.getElementById('book-price').value = boek.prijs;
+    document.getElementById('book-stock').value = boek.voorraadAantal;
+    document.getElementById('book-isbn').value = boek.isbn;
+    document.getElementById('book-modal').style.display = 'block';
+}
+
+// Delete book
+async function deleteBook(id) {
+    if (!confirm('Weet u zeker dat u dit boek wilt verwijderen?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/books/${id}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({ error: 'Kon boek niet verwijderen' }));
+            throw new Error(error.error || 'Kon boek niet verwijderen');
+        }
+        
+        showSuccess('Boek succesvol verwijderd');
+        loadBooks();
+    } catch (error) {
+        console.error('Error deleting book:', error);
+        showError(error.message);
+    }
+}
+
+// Handle form submit
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    const id = document.getElementById('book-id').value;
+    const bookData = {
+        title: document.getElementById('book-title').value.trim(),
+        author: document.getElementById('book-author').value.trim(),
+        price: parseFloat(document.getElementById('book-price').value),
+        voorraadAantal: parseInt(document.getElementById('book-stock').value),
+        isbn: document.getElementById('book-isbn').value.trim()
+    };
+    
+    // Validation
+    if (bookData.price <= 0) {
+        showError('Prijs moet groter zijn dan 0');
+        return;
+    }
+    
+    if (bookData.voorraadAantal < 0) {
+        showError('Voorraad kan niet negatief zijn');
+        return;
+    }
+    
+    try {
+        let response;
+        if (id) {
+            // Update existing book
+            response = await fetch(`${API_BASE}/books/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookData)
+            });
+        } else {
+            // Create new book
+            response = await fetch(`${API_BASE}/books`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookData)
+            });
+        }
+        
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({ error: 'Er is een fout opgetreden' }));
+            throw new Error(error.error || 'Kon boek niet opslaan');
+        }
+        
+        showSuccess(id ? 'Boek succesvol bijgewerkt' : 'Boek succesvol toegevoegd');
+        closeModal();
+        loadBooks();
+    } catch (error) {
+        console.error('Error saving book:', error);
+        showError(error.message);
+    }
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById('book-modal').style.display = 'none';
+    document.getElementById('book-form').reset();
+}
+
+// Show messages
+function showSuccess(message) {
+    const container = document.getElementById('message-container');
+    container.innerHTML = `
+        <div class="message success">
+            <i class="fas fa-check-circle"></i>
+            <span>${escapeHtml(message)}</span>
+        </div>
+    `;
+    setTimeout(() => container.innerHTML = '', 5000);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showError(message) {
+    const container = document.getElementById('message-container');
+    container.innerHTML = `
+        <div class="message error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>${escapeHtml(message)}</span>
+        </div>
+    `;
+    setTimeout(() => container.innerHTML = '', 5000);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Escape HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('book-modal');
+    if (event.target === modal) {
+        closeModal();
+    }
+}

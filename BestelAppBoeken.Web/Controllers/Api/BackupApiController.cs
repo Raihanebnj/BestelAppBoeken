@@ -12,17 +12,20 @@ namespace BestelAppBoeken.Web.Controllers.Api
         private readonly IDatabaseBackupService _backupService;
         private readonly IOrderService _orderService;
         private readonly IKlantService _klantService; // ? Voor klant lookup
+        private readonly PdfExportService _pdfExportService; // PDF Export Service
         private readonly ILogger<BackupApiController> _logger;
 
         public BackupApiController(
             IDatabaseBackupService backupService,
             IOrderService orderService,
             IKlantService klantService, // ? Voor klant lookup
+            PdfExportService pdfExportService, // PDF Export Service
             ILogger<BackupApiController> logger)
         {
             _backupService = backupService;
             _orderService = orderService;
             _klantService = klantService;
+            _pdfExportService = pdfExportService;
             _logger = logger;
         }
 
@@ -333,6 +336,48 @@ namespace BestelAppBoeken.Web.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Fout bij exporteren orders naar TXT");
+                return StatusCode(500, new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Exporteer alle bestellingen naar PDF formaat (professioneel rapport)
+        /// </summary>
+        /// <returns>PDF bestand met alle bestellingen</returns>
+        /// <response code="200">Export succesvol</response>
+        /// <response code="500">Server error</response>
+        [HttpGet("export/orders/pdf")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ExportOrdersPdf()
+        {
+            try
+            {
+                var orders = await _orderService.GetAllOrdersAsync();
+                var klanten = _klantService.GetAllKlanten().ToList();
+
+                // Map orders with customer names from klanten
+                var ordersWithDetails = orders.Select(order =>
+                {
+                    var klant = klanten.FirstOrDefault(k => k.Email == order.CustomerEmail);
+                    if (klant != null && string.IsNullOrEmpty(order.CustomerName))
+                    {
+                        order.CustomerName = klant.Naam;
+                    }
+                    return order;
+                }).ToList();
+
+                var pdfBytes = _pdfExportService.GenerateOrdersPdf(ordersWithDetails);
+
+                var fileName = $"bestellingen_rapport_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+
+                _logger.LogInformation($"?? Orders geëxporteerd naar PDF: {fileName}");
+
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Fout bij exporteren orders naar PDF");
                 return StatusCode(500, new { success = false, error = ex.Message });
             }
         }

@@ -15,6 +15,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
         private readonly ISapService _sapService;
         private readonly IKlantService _klantService;
         private readonly IBookService _bookService;
+        private readonly IEmailService _emailService;
         private readonly ILogger<OrdersApiController> _logger;
 
         public OrdersApiController(
@@ -24,6 +25,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
             ISapService sapService,
             IKlantService klantService,
             IBookService bookService,
+            IEmailService emailService,
             ILogger<OrdersApiController> logger)
         {
             _orderService = orderService;
@@ -32,6 +34,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
             _sapService = sapService;
             _klantService = klantService;
             _bookService = bookService;
+            _emailService = emailService;
             _logger = logger;
         }
 
@@ -216,6 +219,23 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 catch (Exception ex)
                 {
                     _logger.LogWarning(ex, "Fout bij versturen order {OrderId} naar SAP", savedOrder.Id);
+                }
+
+                // 4. Send confirmation email (Async)
+                try
+                {
+                    await _emailService.SendOrderConfirmationEmailAsync(
+                        klant.Email,
+                        klant.Naam,
+                        savedOrder.Id,
+                        savedOrder.TotalAmount
+                    );
+                    _logger.LogInformation("📧 Bevestigingsmail verzonden naar {Email} voor order {OrderId}", klant.Email, savedOrder.Id);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "❌ Fout bij verzenden bevestigingsmail voor order {OrderId}", savedOrder.Id);
+                    // Email failure shouldn't stop the order
                 }
 
                 // Return response met klant info
