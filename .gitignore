@@ -1,4 +1,17 @@
-# Visual Studio
-.vs/
+# .NET
 bin/
 obj/
+*.db
+*.db-shm
+*.db-wal
+
+# IDE
+.vs/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local config
+appsettings.Development.json
