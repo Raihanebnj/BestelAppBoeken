@@ -623,6 +623,16 @@
             transform: scale(0.95);
         }
 
+        /* Quantity buttons hover effects */
+        .quantity-btn:hover {
+            background: var(--primary-dark) !important;
+            transform: scale(1.1);
+        }
+
+        .quantity-btn:active {
+            transform: scale(0.95);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             body {
@@ -973,8 +983,7 @@
                             <th><i class="fas fa-book"></i> Titel</th>
                             <th><i class="fas fa-user-edit"></i> Auteur</th>
                             <th><i class="fas fa-euro-sign"></i> Prijs</th>
-                            <th><i class="fas fa-boxes"></i> Voorraad</th>
-                            <th><i class="fas fa-bolt"></i> Acties</th>
+                            <th><i class="fas fa-shopping-cart"></i> Aantal</th>
                         </tr>
                         </thead>
                         <tbody id="boeken-list-body">
@@ -1157,13 +1166,24 @@
         // Render Grid View
         const gridContainer = document.querySelector('#boeken-grid > div');
         gridContainer.innerHTML = '';
+        
+        // Get current cart to show existing quantities
+        const cart = JSON.parse(localStorage.getItem('winkelmandje') || '[]');
 
         books.forEach(book => {
             const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
-            const stockClass = book.stock <= 5 ? 'low-stock' : '';
-            const stockText = book.stock === 0 ? 'Uitverkocht' : `${book.stock} op voorraad`;
             
-            // ? Gebruik ALLEEN ISBN - geen imageUrl of image property checks!
+            // Check if book is already in cart
+            const cartItem = cart.find(item => item.boekId === book.id);
+            const currentQuantity = cartItem ? cartItem.aantal : 0;
+            
+            // ✅ Voorraad status bepalen
+            const stock = book.stock || book.voorraadAantal || 0;
+            const isOutOfStock = stock === 0;
+            const isLowStock = stock > 0 && stock <= 5;
+            const availableStock = stock - currentQuantity; // Resterende voorraad na cart
+            
+            // ✅ Gebruik ALLEEN ISBN - geen imageUrl of image property checks!
             // Open Library Covers API: direct via ISBN
             const coverUrl = `https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`;
 
@@ -1174,19 +1194,41 @@
                     <img src="${coverUrl}" 
                          alt="${book.title}" 
                          style="width: 100%; height: 100%; object-fit: cover;"
-                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 400 600%27%3E%3Crect fill=%27%23667eea%27 width=%27400%27 height=%27600%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 fill=%27white%27 font-size=%2748%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27 font-family=%27Arial%27%3E%3Ctspan x=%2750%25%27 dy=%27-20%27%3E??%3C/tspan%3E%3Ctspan x=%2750%25%27 dy=%2760%27 font-size=%2720%27%3E${book.title.substring(0, 15)}...%3C/tspan%3E%3C/text%3E%3C/svg%3E';">
+                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 400 600%27%3E%3Crect fill=%27%23667eea%27 width=%27400%27 height=%27600%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 fill=%27white%27 font-size=%2748%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27 font-family=%27Arial%27%3E%3Ctspan x=%2750%25%27 dy=%27-20%27%3E📚%3C/tspan%3E%3Ctspan x=%2750%25%27 dy=%2760%27 font-size=%2720%27%3E${book.title.substring(0, 15)}...%3C/tspan%3E%3C/text%3E%3C/svg%3E';">
                 </div>
                 <div class="book-info">
                     <div class="book-title">${book.title}</div>
                     <div class="book-author">door ${book.author}</div>
                     <div class="book-details">
                         <div class="book-price">${priceFormatted}</div>
-                        <div class="book-stock ${stockClass}">
-                            <i class="fas fa-${book.stock === 0 ? 'exclamation-triangle' : 'check-circle'}"></i> ${stockText}
+                        
+                        <!-- ⚠️ Voorraad waarschuwingen -->
+                        ${isOutOfStock ? `
+                            <div style="background: linear-gradient(135deg, #fed7d7, #feb2b2); color: #742a2a; padding: 8px 12px; border-radius: 8px; font-size: 13px; text-align: center; margin: 10px 0; font-weight: 600;">
+                                <i class="fas fa-exclamation-triangle"></i> UITVERKOCHT
+                            </div>
+                        ` : isLowStock ? `
+                            <div style="background: linear-gradient(135deg, #feebc8, #fbd38d); color: #7c2d12; padding: 8px 12px; border-radius: 8px; font-size: 13px; text-align: center; margin: 10px 0; font-weight: 600;">
+                                <i class="fas fa-exclamation-circle"></i> Nog ${availableStock} beschikbaar
+                            </div>
+                        ` : ''}
+                        
+                        <!-- ✅ Aantal controle met +/- knoppen (zoals winkelmandje) -->
+                        <div style="display: flex; align-items: center; gap: 10px; margin: 15px 0; justify-content: center; ${isOutOfStock ? 'opacity: 0.5; pointer-events: none;' : ''}">
+                            <button class="quantity-btn" onclick="updateBookQuantity(${book.id}, -1, '${book.title.replace(/'/g, "\\'")}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))}, ${stock})" style="width: 35px; height: 35px; border: none; border-radius: 8px; background: var(--primary); color: white; cursor: pointer; font-weight: 700; transition: all 0.2s;" title="Verminder" ${isOutOfStock ? 'disabled' : ''}>
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span id="qty-${book.id}" class="quantity-value" style="font-weight: 700; min-width: 40px; text-align: center; font-size: 16px;">${currentQuantity}</span>
+                            <button class="quantity-btn" onclick="updateBookQuantity(${book.id}, 1, '${book.title.replace(/'/g, "\\'")}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))}, ${stock})" style="width: 35px; height: 35px; border: none; border-radius: 8px; background: var(--primary); color: white; cursor: pointer; font-weight: 700; transition: all 0.2s;" title="Verhoog" ${isOutOfStock || currentQuantity >= stock ? 'disabled' : ''}>
+                                <i class="fas fa-plus"></i>
+                            </button>
                         </div>
-                        <button class="btn-quick-add" onclick="quickAddToCart(${book.id}, '${book.title.replace(/'/g, "\\'")}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))})" ${book.stock === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>
-                            <i class="fas fa-cart-plus"></i> Snel Toevoegen
-                        </button>
+                        
+                        ${currentQuantity > 0 ? `
+                            <div style="background: linear-gradient(135deg, #c6f6d5, #9ae6b4); color: #22543d; padding: 8px 12px; border-radius: 8px; font-size: 13px; text-align: center; margin-bottom: 10px;">
+                                <i class="fas fa-shopping-cart"></i> In mandje: ${currentQuantity}x
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -1199,7 +1241,15 @@
 
         books.forEach(book => {
             const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
-            const stockClass = book.stock <= 5 ? 'style="color: #f56565; font-weight: bold;"' : '';
+            
+            // Check cart quantity
+            const cartItem = cart.find(item => item.boekId === book.id);
+            const currentQuantity = cartItem ? cartItem.aantal : 0;
+            
+            // ✅ Voorraad status
+            const stock = book.stock || book.voorraadAantal || 0;
+            const isOutOfStock = stock === 0;
+            const availableStock = stock - currentQuantity;
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -1207,11 +1257,18 @@
                 <td><strong>${book.title}</strong></td>
                 <td>${book.author}</td>
                 <td><strong>${priceFormatted}</strong></td>
-                <td ${stockClass}>${book.stock}</td>
                 <td>
-                    <button class="btn btn-success" onclick="quickAddToCart(${book.id}, '${book.title}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))})" style="padding: 8px 16px;" ${book.stock === 0 ? 'disabled' : ''}>
-                        <i class="fas fa-cart-plus"></i> Toevoegen
-                    </button>
+                    <!-- ✅ Aantal controle in tabel -->
+                    <div style="display: flex; align-items: center; gap: 8px; ${isOutOfStock ? 'opacity: 0.5;' : ''}">
+                        <button class="quantity-btn" onclick="updateBookQuantity(${book.id}, -1, '${book.title.replace(/'/g, "\\'")}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))}, ${stock})" style="width: 30px; height: 30px; border: none; border-radius: 6px; background: var(--primary); color: white; cursor: pointer;" ${isOutOfStock ? 'disabled' : ''}>
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span id="qty-list-${book.id}" style="font-weight: 700; min-width: 30px; text-align: center;">${currentQuantity}</span>
+                        <button class="quantity-btn" onclick="updateBookQuantity(${book.id}, 1, '${book.title.replace(/'/g, "\\'")}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))}, ${stock})" style="width: 30px; height: 30px; border: none; border-radius: 6px; background: var(--primary); color: white; cursor: pointer;" ${isOutOfStock || currentQuantity >= stock ? 'disabled' : ''}>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        ${isOutOfStock ? '<span style="color: var(--danger); font-size: 12px; margin-left: 8px;"><i class="fas fa-exclamation-triangle"></i> Uitverkocht</span>' : availableStock <= 5 && availableStock > 0 ? `<span style="color: var(--warning); font-size: 12px; margin-left: 8px;"><i class="fas fa-exclamation-circle"></i> ${availableStock} rest</span>` : ''}
+                    </div>
                 </td>
             `;
             listBody.appendChild(row);
@@ -1246,37 +1303,141 @@
         console.log('Switched to', view, 'view');
     }
 
-    // Quick add to cart functie
-    function quickAddToCart(bookId, title, price) {
-        console.log('Quick add to cart:', bookId, title, price);
-
-        // Get huidige winkelmandje van localStorage
+    // ✅ Update book quantity met +/- knoppen EN VOORRAAD CHECK
+    async function updateBookQuantity(bookId, change, title, price, currentStock) {
+        console.log('Update book quantity:', bookId, change, title, price, 'Stock:', currentStock);
+        
+        // Get cart
         let cart = JSON.parse(localStorage.getItem('winkelmandje') || '[]');
-
-        // Check of boek al in cart zit
+        
+        // Find existing item
         const existingItem = cart.find(item => item.boekId === bookId);
-
+        const currentQuantity = existingItem ? existingItem.aantal : 0;
+        const newQuantity = currentQuantity + change;
+        
+        // ⚠️ VOORRAAD CHECK
+        if (change > 0) {
+            // Check if stock is available
+            if (currentStock === 0) {
+                showStockError(title, 'Dit boek is momenteel uitverkocht. Probeer het later opnieuw.');
+                return;
+            }
+            
+            if (newQuantity > currentStock) {
+                showStockError(title, `Maximale voorraad bereikt! Er ${currentStock === 1 ? 'is nog maar 1 exemplaar' : `zijn nog maar ${currentStock} exemplaren`} beschikbaar.`);
+                return;
+            }
+            
+            // Lage voorraad waarschuwing
+            if (currentStock <= 5 && newQuantity === currentStock) {
+                showMessage(`⚠️ Laatste ${currentStock} exemplaren van "${title}" in winkelmandje!`, 'success');
+            }
+        }
+        
         if (existingItem) {
-            existingItem.aantal++;
-            console.log('Increased quantity for', title);
-        } else {
+            // Update aantal
+            existingItem.aantal = newQuantity;
+            
+            // Verwijder als 0 of minder
+            if (existingItem.aantal <= 0) {
+                cart = cart.filter(item => item.boekId !== bookId);
+                showMessage(`"${title}" verwijderd uit winkelmandje`, 'success');
+            } else {
+                showMessage(`Aantal bijgewerkt: ${existingItem.aantal}x "${title}"`, 'success');
+            }
+        } else if (change > 0) {
+            // Add new item
             cart.push({
                 boekId: bookId,
                 titel: title,
                 prijs: price,
-                aantal: 1
+                aantal: change
             });
-            console.log('Added new item to cart:', title);
+            showMessage(`"${title}" toegevoegd aan winkelmandje!`, 'success');
         }
-
-        // Sla op in localStorage
+        
+        // Save cart
         localStorage.setItem('winkelmandje', JSON.stringify(cart));
-
+        
+        // Update UI immediately
+        const finalQuantity = cart.find(item => item.boekId === bookId)?.aantal || 0;
+        
+        const qtyElement = document.getElementById(`qty-${bookId}`);
+        const qtyListElement = document.getElementById(`qty-list-${bookId}`);
+        
+        if (qtyElement) qtyElement.textContent = finalQuantity;
+        if (qtyListElement) qtyListElement.textContent = finalQuantity;
+        
         // Update cart counter
         updateCartCounter();
-
-        // Toon success bericht
-        showMessage(`? "${title}" toegevoegd aan winkelmandje!`, 'success');
+        
+        // Re-render to show/hide cart status badge and update stock warnings
+        await loadBoeken();
+    }
+    
+    // ⚠️ Show stock error popup
+    function showStockError(title, message) {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s;
+        `;
+        
+        modal.innerHTML = `
+            <div style="
+                background: white;
+                padding: 30px;
+                border-radius: 16px;
+                max-width: 500px;
+                width: 90%;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                animation: slideUp 0.3s;
+            ">
+                <div style="text-align: center;">
+                    <div style="
+                        width: 80px;
+                        height: 80px;
+                        background: linear-gradient(135deg, #fed7d7, #feb2b2);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin: 0 auto 20px;
+                    ">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: #742a2a;"></i>
+                    </div>
+                    <h2 style="color: var(--danger); margin-bottom: 15px; font-size: 22px;">Voorraad Probleem</h2>
+                    <p style="color: var(--dark); font-size: 16px; font-weight: 600; margin-bottom: 10px;">"${title}"</p>
+                    <p style="color: var(--gray); font-size: 14px; line-height: 1.6; margin-bottom: 25px;">${message}</p>
+                    <button onclick="this.closest('div[style*=\"fixed\"]').remove()" class="btn btn-danger" style="padding: 12px 30px;">
+                        <i class="fas fa-times"></i> Sluiten
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Auto close after 5 seconds
+        setTimeout(() => {
+            if (modal.parentNode) modal.remove();
+        }, 5000);
+        
+        console.error('Stock error:', title, message);
+    }
+    
+    // Quick add to cart functie (DEPRECATED - gebruik updateBookQuantity)
+    function quickAddToCart(bookId, title, price) {
+        updateBookQuantity(bookId, 1, title, price);
     }
 
     // Update cart counter
@@ -1297,7 +1458,7 @@
         console.log('Cart updated:', totalItems, 'items');
     }
 
-    // Show message functie
+    // Show message functie - MODERNE TOAST NOTIFICATIONS
     function showMessage(text, type) {
         const messageContainer = document.getElementById('message-container');
         if (!messageContainer) {
@@ -1305,26 +1466,37 @@
             return;
         }
 
-        const message = document.createElement('div');
-        message.className = `message message-${type}`;
-        message.style.cssText = `
-            padding: 15px 20px;
-            background: ${type === 'success' ? '#c6f6d5' : '#fed7d7'};
-            color: ${type === 'success' ? '#22543d' : '#742a2a'};
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid ${type === 'success' ? '#38a169' : '#f56565'};
-            animation: slideIn 0.3s ease-out;
+        // Creëer toast element
+        const toast = document.createElement('div');
+        toast.className = `toast-${type}`;
+        
+        // Icon bepalen
+        const icon = type === 'success' 
+            ? 'fa-check-circle' 
+            : type === 'error' 
+            ? 'fa-exclamation-circle'
+            : 'fa-info-circle';
+        
+        toast.innerHTML = `
+            <i class="fas ${icon}"></i>
+            <span>${text}</span>
+            <button class="toast-close" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="toast-progress"></div>
         `;
-        message.textContent = text;
 
-        messageContainer.appendChild(message);
+        messageContainer.appendChild(toast);
 
+        // Auto verwijderen na 5 seconden
         setTimeout(() => {
-            message.style.opacity = '0';
-            message.style.transition = 'opacity 0.3s';
-            setTimeout(() => message.remove(), 300);
-        }, 3000);
+            if (toast.parentNode) {
+                toast.classList.add('toast-fadeout');
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 5000);
+        
+        console.log(`Toast shown: ${type} - ${text}`);
     }
 
     // ============================================
