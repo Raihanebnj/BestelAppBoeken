@@ -11,7 +11,12 @@
           "BestelAppBoeken.Core": "1.0.0",
           "BestelAppBoeken.Infrastructure": "1.0.0",
           "Microsoft.EntityFrameworkCore.Design": "10.0.2",
+<<<<<<< HEAD
           "QuestPDF": "2024.12.3",
+=======
+          "Newtonsoft.Json": "13.0.4",
+          "RabbitMQ.Client": "7.2.0",
+>>>>>>> 02d850fbe45bc88e1c151d90786edbd7e8fb55a5
           "Swashbuckle.AspNetCore": "10.1.0"
         },
         "runtime": {
@@ -251,7 +256,11 @@
           "Microsoft.Build.Framework": "18.0.2",
           "Microsoft.CodeAnalysis.Workspaces.Common": "5.0.0",
           "Microsoft.VisualStudio.SolutionPersistence": "1.0.52",
+<<<<<<< HEAD
           "Newtonsoft.Json": "13.0.3",
+=======
+          "Newtonsoft.Json": "13.0.4",
+>>>>>>> 02d850fbe45bc88e1c151d90786edbd7e8fb55a5
           "System.Composition": "9.0.0"
         },
         "runtime": {
@@ -346,7 +355,11 @@
           "Microsoft.EntityFrameworkCore.Relational": "10.0.2",
           "Microsoft.Extensions.DependencyModel": "10.0.2",
           "Mono.TextTemplating": "3.0.0",
+<<<<<<< HEAD
           "Newtonsoft.Json": "13.0.3"
+=======
+          "Newtonsoft.Json": "13.0.4"
+>>>>>>> 02d850fbe45bc88e1c151d90786edbd7e8fb55a5
         },
         "runtime": {
           "lib/net10.0/Microsoft.EntityFrameworkCore.Design.dll": {
@@ -423,6 +436,7 @@
           }
         }
       },
+<<<<<<< HEAD
       "Newtonsoft.Json/13.0.3": {
         "runtime": {
           "lib/net6.0/Newtonsoft.Json.dll": {
@@ -538,6 +552,13 @@
             "rid": "win-x86",
             "assetType": "native",
             "fileVersion": "0.0.0.0"
+=======
+      "Newtonsoft.Json/13.0.4": {
+        "runtime": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.4.30916"
+>>>>>>> 02d850fbe45bc88e1c151d90786edbd7e8fb55a5
           }
         }
       },
@@ -817,7 +838,10 @@
           "BestelAppBoeken.Core": "1.0.0",
           "Microsoft.EntityFrameworkCore": "10.0.2",
           "Microsoft.EntityFrameworkCore.Sqlite": "10.0.2",
+<<<<<<< HEAD
           "QuestPDF": "2024.12.3",
+=======
+>>>>>>> 02d850fbe45bc88e1c151d90786edbd7e8fb55a5
           "RabbitMQ.Client": "7.2.0"
         },
         "runtime": {
@@ -961,6 +985,7 @@
       "path": "mono.texttemplating/3.0.0",
       "hashPath": "mono.texttemplating.3.0.0.nupkg.sha512"
     },
+<<<<<<< HEAD
     "Newtonsoft.Json/13.0.3": {
       "type": "package",
       "serviceable": true,
@@ -974,6 +999,14 @@
       "sha512": "sha512-gdIoEC9cTnySnDdbwcguUfSS2+444rGEeecQH5n0IKUA9Tm4473eRrFjPk5HoD5I2BxjuyDW+WCGnwKa+OIXsw==",
       "path": "questpdf/2024.12.3",
       "hashPath": "questpdf.2024.12.3.nupkg.sha512"
+=======
+    "Newtonsoft.Json/13.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pdgNNMai3zv51W5aq268sujXUyx7SNdE2bj1wZcWjAQrKMFZV260lbqYop1d2GM67JI1huLRwxo9ZqnfF/lC6A==",
+      "path": "newtonsoft.json/13.0.4",
+      "hashPath": "newtonsoft.json.13.0.4.nupkg.sha512"
+>>>>>>> 02d850fbe45bc88e1c151d90786edbd7e8fb55a5
     },
     "RabbitMQ.Client/7.2.0": {
       "type": "package",

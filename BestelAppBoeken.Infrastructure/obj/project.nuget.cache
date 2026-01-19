@@ -29,5 +29,15 @@
     "C:\\Users\\admin\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.11\\sqlitepclraw.provider.e_sqlite3.2.1.11.nupkg.sha512",
     "C:\\Users\\admin\\.nuget\\packages\\system.threading.ratelimiting\\8.0.0\\system.threading.ratelimiting.8.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "message": "Problem reading the cache file C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0.",
+      "projectPath": "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
+      "targetGraphs": []
+    }
+  ]
 }

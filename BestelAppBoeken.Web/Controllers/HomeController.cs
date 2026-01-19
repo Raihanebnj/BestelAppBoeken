@@ -58,8 +58,8 @@ namespace BestelAppBoeken.Web.Controllers
                 }
             };
 
-            // 1. Publish to RabbitMQ
-            await _messageQueue.PublishOrderAsync(order);
+            // 1. Publish to RabbitMQ - Removed to fix double submission (handled by SyncOrderAsync)
+            // await _messageQueue.PublishOrderAsync(order);
 
             // 2. Sync to Salesforce (Async)
             await _salesforceService.SyncOrderAsync(order);

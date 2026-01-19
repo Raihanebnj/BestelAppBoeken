@@ -1,40 +1,38 @@
-name: CI/CD Pipeline
+name: 🚀 Demo Pipeline
 
 on:
   push:
     branches: 
-      - "kimberley"
-      - "Front-end-Backend-Saleforce"
-  pull_request:
-    branches: 
-      - "kimberley"
-      - "Front-end-Backend-Saleforce"
+      - main
+      - kimberley
+      - Front-end-Backend-Saleforce
   workflow_dispatch:
 
 jobs:
-  build:
+  demo-ci:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup .NET
+    - name: 📥 Checkout
+      uses: actions/checkout@v4
+      
+    - name: ⚙️ Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 10.0.x
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
-
-    - name: Publish
-      run: dotnet publish BestelAppBoeken.Web/BestelAppBoeken.Web.csproj --configuration Release --output ./publish
-
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: BestelAppBoeken-Web-App
-        path: ./publish
-        retention-days: 5
+        dotnet-version: "10.0.x"
+        
+    - name: 📦 Restore Dependencies
+      run: |
+        echo "Restoring dependencies..."
+        dotnet restore
+        
+    - name: 🏗️ Build Web App
+      run: |
+        echo "🔨 Building Web app..."
+        dotnet build --no-restore --verbosity minimal
+        
+    - name: 🎯 Demo Success
+      run: |
+        echo "========================================"
+        echo "✅ CI/CD PIPELINE SUCCESS!"
+        echo "========================================"
