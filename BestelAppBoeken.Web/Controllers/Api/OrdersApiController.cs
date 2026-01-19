@@ -191,52 +191,68 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 _logger.LogInformation("✅ Order {OrderId} opgeslagen in database", savedOrder.Id);
 
                 // ============================================
-                // STAP 2: INTEGRATIE (SALESFORCE + SAP iDoc)
+                // STAP 2: PARALLELLE VERWERKING (RabbitMQ + SAP)
                 // ============================================
                 string? salesforceId = null;
                 SapIDocResponse? sapResponse = null;
 
-                // ✅ Salesforce Sync (via RabbitMQ polling)
-                try
+                // ✅ Start BEIDE processen PARALLEL voor snelheid
+                var salesforceTask = Task.Run(async () =>
                 {
-                    await _salesforceService.SyncOrderAsync(savedOrder);
-                    _logger.LogInformation("📨 [Salesforce] Order {OrderId} sync gestart", savedOrder.Id);
-                    
-                    // Simuleer Salesforce ID (in productie komt dit van Salesforce)
-                    salesforceId = $"SF-{DateTime.Now:yyyyMMddHHmmss}-{savedOrder.Id}";
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "⚠️ [Salesforce] Fout bij sync");
-                }
-
-                // ✅ SAP iDoc verzenden (tweezijdige communicatie: Request-Response)
-                try
-                {
-                    _logger.LogInformation("📤 [SAP iDoc] START - Transformeren Order {OrderId} naar ORDERS05 XML", savedOrder.Id);
-                    
-                    sapResponse = await _sapService.SendOrderIDocAsync(savedOrder);
-                    
-                    _logger.LogInformation(
-                        "✅ [SAP iDoc] SUCCESS - IDoc {IDocNumber} | Status: {Status} | {Description}",
-                        sapResponse.IDocNumber,
-                        (int)sapResponse.Status,
-                        sapResponse.StatusDescription
-                    );
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "❌ [SAP iDoc] FOUT bij verzenden naar SAP R/3");
-                    
-                    // Return error response
-                    sapResponse = new SapIDocResponse
+                    try
                     {
-                        IDocNumber = "ERROR",
-                        Status = SapIDocStatus.Error,
-                        StatusDescription = "SAP integratie gefaald: " + ex.Message,
-                        Timestamp = DateTime.UtcNow
-                    };
-                }
+                        // 3a) RabbitMQ → Salesforce (eenzijdige communicatie)
+                        await _salesforceService.SyncOrderAsync(savedOrder);
+                        _logger.LogInformation("📨 [RabbitMQ] Order {OrderId} gepubliceerd naar queue 'salesforce_orders'", savedOrder.Id);
+                        
+                        // Simuleer Salesforce ID (in productie komt dit van Salesforce)
+                        salesforceId = $"SF-{DateTime.Now:yyyyMMddHHmmss}-{savedOrder.Id}";
+                        return salesforceId;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "⚠️ [RabbitMQ] Fout bij publiceren naar Salesforce queue");
+                        return null;
+                    }
+                });
+
+                var sapTask = Task.Run(async () =>
+                {
+                    try
+                    {
+                        // 3b) SAP iDoc → SAP R/3 (tweezijdige communicatie: Request-Response)
+                        _logger.LogInformation("📤 [SAP iDoc] START - Transformeren Order {OrderId} naar ORDERS05 XML", savedOrder.Id);
+                        
+                        var response = await _sapService.SendOrderIDocAsync(savedOrder);
+                        
+                        _logger.LogInformation(
+                            "✅ [SAP iDoc] SUCCESS - IDoc {IDocNumber} | Status: {Status} | {Description}",
+                            response.IDocNumber,
+                            (int)response.Status,
+                            response.StatusDescription
+                        );
+                        
+                        return response;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "❌ [SAP iDoc] FOUT bij verzenden naar SAP R/3");
+                        
+                        return new SapIDocResponse
+                        {
+                            IDocNumber = "ERROR",
+                            Status = SapIDocStatus.Error,
+                            StatusDescription = "SAP integratie gefaald: " + ex.Message,
+                            Timestamp = DateTime.UtcNow
+                        };
+                    }
+                });
+
+                // ✅ WACHT OP BEIDE TAKEN (parallelle verwerking)
+                await Task.WhenAll(salesforceTask, sapTask);
+                
+                salesforceId = salesforceTask.Result;
+                sapResponse = sapTask.Result;
 
                 // 3. Send confirmation email (Async, niet blokkerend)
                 _ = Task.Run(async () =>
@@ -281,7 +297,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
                         Prijs = i.UnitPrice
                     }).ToList(),
                     
-                    // ✅ STAP 3: Gecombineerde integratie status (Salesforce + SAP)
+                    // ✅ STAP 6: Gecombineerde integratie status (Salesforce + SAP)
                     IntegrationStatus = new IntegrationStatusInfo
                     {
                         SalesforceId = salesforceId,

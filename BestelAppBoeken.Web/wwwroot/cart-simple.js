@@ -234,6 +234,7 @@ async function plaatsOrder() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-API-Key': 'BOOKSTORE-API-2026-SECRET-KEY-XYZ789' // ✅ API-key authenticatie
             },
             body: JSON.stringify(orderData)
         });

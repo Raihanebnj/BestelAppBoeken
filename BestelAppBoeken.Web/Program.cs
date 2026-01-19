@@ -19,9 +19,34 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        // In development: Sta alle localhost origins toe (HTTP en HTTPS)
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.SetIsOriginAllowed(origin => 
+                {
+                    if (string.IsNullOrWhiteSpace(origin))
+                        return false;
+                    
+                    var uri = new Uri(origin);
+                    return uri.Host == "localhost" || 
+                           uri.Host == "127.0.0.1" ||
+                           uri.Host == "[::1]"; // IPv6 localhost
+                })
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
+        else
+        {
+            // In production: Specifieke origins
+            policy.WithOrigins(
+                    "https://yourdomain.com",
+                    "https://www.yourdomain.com"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
     });
 });
 
@@ -37,7 +62,7 @@ builder.Services.AddDbContext<BookstoreDbContext>(options =>
 builder.Services.AddSingleton<IMessageQueueService, RabbitMqService>();
 builder.Services.AddScoped<ISalesforceService, SalesforceService>();
 
-// ✅ SAP iDoc Service (ACTIEF)
+// ✅ SAP iDoc Service (ACTIEF - Tweezijdige communicatie met SAP R/3)
 builder.Services.AddHttpClient<ISapService, SapService>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(30);
@@ -162,6 +187,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+    // Only redirect to HTTPS in production
+    app.UseHttpsRedirection();
 }
 
 // Enable Swagger (beschikbaar op /swagger)
@@ -172,10 +199,13 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = "swagger";
 });
 
-app.UseHttpsRedirection();
-
 // ✅ Enable CORS (moet VOOR UseStaticFiles)
 app.UseCors();
+
+// ✅ API-key Authenticatie Middleware (GDPR compliant)
+// In development: GET requests naar publieke endpoints werken zonder API key
+// In production: API key is verplicht
+app.UseMiddleware<BestelAppBoeken.Web.Middleware.ApiKeyMiddleware>();
 
 // BELANGRIJK: UseDefaultFiles moet VOOR UseStaticFiles komen
 app.UseDefaultFiles(); // Dit zorgt ervoor dat index.html automatisch wordt geladen bij /
@@ -189,5 +219,13 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Log startup information
+var startupLogger = app.Services.GetRequiredService<ILogger<Program>>();
+var urls = app.Urls.Any() ? string.Join(", ", app.Urls) : "http://localhost:7174";
+startupLogger.LogInformation("🚀 Server is gestart op: {Urls}", urls);
+startupLogger.LogInformation("📚 Dashboard: http://localhost:7174");
+startupLogger.LogInformation("📖 Swagger API: http://localhost:7174/swagger");
+startupLogger.LogInformation("✅ CORS is geconfigureerd voor lokale ontwikkeling");
 
 app.Run();

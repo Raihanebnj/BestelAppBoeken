@@ -25,12 +25,15 @@ function showMessage(text, type = 'success') {
     const icon = iconMap[type] || 'fa-info-circle';
     const toastClass = type === 'warning' ? 'toast-warning' : `toast-${type}`;
 
+    // Convert newlines to <br> for multi-line messages
+    const formattedText = text.replace(/\n/g, '<br>');
+
     // Maak toast element
     const toast = document.createElement('div');
     toast.className = toastClass;
     toast.innerHTML = `
         <i class="fas ${icon}"></i>
-        <span>${text}</span>
+        <span style="white-space: pre-wrap;">${formattedText}</span>
         <button class="toast-close" onclick="closeToast(this)" title="Sluiten">
             <i class="fas fa-times"></i>
         </button>
@@ -40,12 +43,13 @@ function showMessage(text, type = 'success') {
     // Voeg toe aan container
     container.appendChild(toast);
 
-    // Auto remove na 5 seconden
+    // Auto remove na 8 seconden voor error messages (langer zodat gebruiker kan lezen)
+    const duration = type === 'error' ? 8000 : 5000;
     const autoRemoveTimer = setTimeout(() => {
         if (toast && toast.parentNode) {
             removeToast(toast);
         }
-    }, 5000);
+    }, duration);
 
     // Store timer op toast voor cleanup
     toast.dataset.timer = autoRemoveTimer;

@@ -178,6 +178,17 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
         return await response.json();
     } catch (error) {
+        // Check if it's a network error
+        if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+            const errorMessage = 'Kan geen verbinding maken met de server\n\n' +
+                'Mogelijke oorzaken:\n' +
+                '• Server draait niet (start met: dotnet run)\n' +
+                '• Verkeerde URL (check: /api/orders)\n' +
+                '• CORS probleem (check Program.cs)\n' +
+                '• SSL certificaat probleem (probeer HTTP in plaats van HTTPS)';
+            showError(errorMessage);
+            throw new Error(errorMessage);
+        }
         showError(error.message);
         throw error;
     }
@@ -191,6 +202,14 @@ async function loadKlanten() {
 try {
     // Echte API call naar backend
     console.log('🔄 [INDEX] Laden van klanten...');
+    
+    // Show loading state
+    const klantenLoading = document.getElementById('klanten-loading');
+    if (klantenLoading) {
+        klantenLoading.innerHTML = '<div class="loading">⏳ Klanten worden geladen...</div>';
+        klantenLoading.style.display = 'block';
+    }
+    
     klanten = await apiCall('/klanten');
 
     console.log('✓ [INDEX] Klanten geladen:', klanten.length, 'klanten');
@@ -203,7 +222,6 @@ try {
     updateQuickStats();
         
         // Check if elements exist before updating
-        const klantenLoading = document.getElementById('klanten-loading');
         const klantenTabel = document.getElementById('klanten-tabel');
         
         if (klantenLoading) {
@@ -218,7 +236,15 @@ try {
         console.error('Fout bij laden klanten:', error);
         const klantenLoading = document.getElementById('klanten-loading');
         if (klantenLoading) {
-            klantenLoading.innerHTML = '<div class="error">Kon klanten niet laden. Probeer later opnieuw.</div>';
+            klantenLoading.innerHTML = `
+                <div class="error" style="background: #fee; color: #c00; padding: 20px; border-radius: 8px; margin: 20px;">
+                    <h3 style="margin: 0 0 10px 0;">❌ Kon klanten niet laden</h3>
+                    <p style="margin: 0;">${error.message}</p>
+                    <button onclick="location.reload()" style="margin-top: 15px; padding: 10px 20px; background: #c00; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        🔄 Probeer opnieuw
+                    </button>
+                </div>
+            `;
         }
     }
 }

@@ -30,3 +30,4 @@ obj/
 /BestelAppBoeken.Infrastructure/obj/Debug/net10.0/ref/BestelAppBoeken.Infrastructure.dll
 /.gitignore
 /.gitignore
+*.md
