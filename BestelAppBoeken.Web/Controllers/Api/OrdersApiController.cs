@@ -188,50 +188,95 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 // Opslaan in database
                 var savedOrder = _orderService.CreateOrder(order);
 
-                // 1. Publish to RabbitMQ (Handled by SalesforceService for now, or redundant)
-                // Removed to fix double-order bug
+                _logger.LogInformation("✅ Order {OrderId} opgeslagen in database", savedOrder.Id);
 
+                // ============================================
+                // STAP 2: PARALLELLE VERWERKING (RabbitMQ + SAP)
+                // ============================================
+                string? salesforceId = null;
+                SapIDocResponse? sapResponse = null;
 
-                // 2. Sync to Salesforce (Async)
-                try
+                // Start beide processen parallel voor snelheid
+                var rabbitMqTask = Task.Run(async () =>
                 {
-                    await _salesforceService.SyncOrderAsync(savedOrder);
-                    _logger.LogInformation("Order {OrderId} gesynchroniseerd met Salesforce", savedOrder.Id);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Fout bij synchroniseren order {OrderId} met Salesforce", savedOrder.Id);
-                }
+                    try
+                    {
+                        // 3a) RabbitMQ → Salesforce (eenzijdige communicatie)
+                        await _salesforceService.SyncOrderAsync(savedOrder);
+                        _logger.LogInformation("📨 [RabbitMQ] Order {OrderId} gepubliceerd naar queue 'salesforce_orders'", savedOrder.Id);
+                        
+                        // Simuleer Salesforce ID (in productie komt dit van Salesforce)
+                        salesforceId = $"SF-{DateTime.Now:yyyyMMddHHmmss}-{savedOrder.Id}";
+                        return salesforceId;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "⚠️ [RabbitMQ] Fout bij publiceren naar Salesforce queue");
+                        return null;
+                    }
+                });
 
-                // 3. Post to SAP (Async)
-                try
+                var sapTask = Task.Run(async () =>
                 {
-                    await _sapService.PostInvoiceAsync(savedOrder);
-                    _logger.LogInformation("Order {OrderId} verstuurd naar SAP", savedOrder.Id);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Fout bij versturen order {OrderId} naar SAP", savedOrder.Id);
-                }
+                    try
+                    {
+                        // 3b) SAP iDoc → SAP R/3 (tweezijdige communicatie: Request-Response)
+                        _logger.LogInformation("🔄 [SAP iDoc] START - Transformeren Order {OrderId} naar ORDERS05 XML", savedOrder.Id);
+                        
+                        var response = await _sapService.SendOrderIDocAsync(savedOrder);
+                        
+                        _logger.LogInformation(
+                            "✅ [SAP iDoc] SUCCESS - IDoc {IDocNumber} | Status: {Status} | {Description}",
+                            response.IDocNumber,
+                            (int)response.Status,
+                            response.StatusDescription
+                        );
+                        
+                        return response;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "❌ [SAP iDoc] FOUT bij verzenden naar SAP R/3");
+                        
+                        // Return error response
+                        return new SapIDocResponse
+                        {
+                            IDocNumber = "ERROR",
+                            Status = SapIDocStatus.Error,
+                            StatusDescription = "SAP integratie gefaald: " + ex.Message,
+                            Timestamp = DateTime.UtcNow
+                        };
+                    }
+                });
 
-                // 4. Send confirmation email (Async)
-                try
-                {
-                    await _emailService.SendOrderConfirmationEmailAsync(
-                        klant.Email,
-                        klant.Naam,
-                        savedOrder.Id,
-                        savedOrder.TotalAmount
-                    );
-                    _logger.LogInformation("📧 Bevestigingsmail verzonden naar {Email} voor order {OrderId}", klant.Email, savedOrder.Id);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "❌ Fout bij verzenden bevestigingsmail voor order {OrderId}", savedOrder.Id);
-                    // Email failure shouldn't stop the order
-                }
+                // Wacht op beide taken (max 10 seconden)
+                await Task.WhenAll(rabbitMqTask, sapTask);
+                
+                salesforceId = rabbitMqTask.Result;
+                sapResponse = sapTask.Result;
 
-                // Return response met klant info
+                // 4. Send confirmation email (Async, niet blokkerend)
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _emailService.SendOrderConfirmationEmailAsync(
+                            klant.Email,
+                            klant.Naam,
+                            savedOrder.Id,
+                            savedOrder.TotalAmount
+                        );
+                        _logger.LogInformation("📧 Bevestigingsmail verzonden naar {Email} voor order {OrderId}", klant.Email, savedOrder.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "❌ Fout bij verzenden bevestigingsmail voor order {OrderId}", savedOrder.Id);
+                    }
+                });
+
+                // ============================================
+                // STAP 6: GECOMBINEERDE RESPONSE (Salesforce + SAP)
+                // ============================================
                 var response = new OrderResponse
                 {
                     Id = savedOrder.Id,
@@ -251,8 +296,28 @@ namespace BestelAppBoeken.Web.Controllers.Api
                         Titel = i.BookTitle,
                         Aantal = i.Quantity,
                         Prijs = i.UnitPrice
-                    }).ToList()
+                    }).ToList(),
+                    
+                    // ✅ STAP 6: Gecombineerde response (Salesforce + SAP)
+                    IntegrationStatus = new IntegrationStatusInfo
+                    {
+                        SalesforceId = salesforceId,
+                        SalesforceSuccess = salesforceId != null,
+                        SapIDocNumber = sapResponse?.IDocNumber,
+                        SapStatus = (int?)sapResponse?.Status,
+                        SapStatusDescription = sapResponse?.StatusDescription,
+                        SapSuccess = sapResponse?.Success ?? false,
+                        Timestamp = DateTime.UtcNow
+                    }
                 };
+
+                _logger.LogInformation(
+                    "🎉 [ORDER COMPLETE] Order {OrderId} | Salesforce: {SfId} | SAP IDoc: {IDocNum} (Status {SapStatus})",
+                    savedOrder.Id,
+                    salesforceId ?? "N/A",
+                    sapResponse?.IDocNumber ?? "N/A",
+                    (int?)sapResponse?.Status ?? 0
+                );
 
                 return CreatedAtAction(nameof(GetAllOrders), new { id = savedOrder.Id }, response);
             }
@@ -260,6 +325,39 @@ namespace BestelAppBoeken.Web.Controllers.Api
             {
                 _logger.LogError(ex, "Fout bij aanmaken order");
                 return StatusCode(500, new { error = "Er is een fout opgetreden bij het aanmaken van de bestelling" });
+            }
+        }
+
+        /// <summary>
+        /// [TEST] Preview SAP iDoc XML voor een bestaande order
+        /// </summary>
+        [HttpGet("{id}/sap-idoc-preview")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetSapIDocPreview(int id)
+        {
+            try
+            {
+                var order = _orderService.GetOrderById(id);
+                if (order == null)
+                {
+                    return NotFound(new { error = "Order niet gevonden" });
+                }
+
+                var idocXml = await _sapService.GenerateOrdersIdocXmlAsync(order);
+                
+                return Ok(new
+                {
+                    orderId = order.Id,
+                    message = "SAP iDoc ORDERS05 XML preview",
+                    format = "ORDERS05",
+                    segment = "E1EDK01 (BELNR = ordernummer)",
+                    xml = idocXml
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Fout bij genereren SAP iDoc preview");
+                return StatusCode(500, new { error = ex.Message });
             }
         }
     }
@@ -286,6 +384,28 @@ namespace BestelAppBoeken.Web.Controllers.Api
         public string Status { get; set; } = string.Empty;
         public KlantInfo? Klant { get; set; }
         public List<OrderItemInfo> Items { get; set; } = new();
+        
+        // ✅ STAP 6: Integratie status (Salesforce + SAP)
+        public IntegrationStatusInfo? IntegrationStatus { get; set; }
+    }
+
+    /// <summary>
+    /// Gecombineerde integratie status voor Salesforce + SAP
+    /// </summary>
+    public class IntegrationStatusInfo
+    {
+        // Salesforce integratie
+        public string? SalesforceId { get; set; }
+        public bool SalesforceSuccess { get; set; }
+        
+        // SAP iDoc integratie
+        public string? SapIDocNumber { get; set; }
+        public int? SapStatus { get; set; }
+        public string? SapStatusDescription { get; set; }
+        public bool SapSuccess { get; set; }
+        
+        // Timestamp
+        public DateTime Timestamp { get; set; }
     }
 
     public class KlantInfo

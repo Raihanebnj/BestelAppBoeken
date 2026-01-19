@@ -2,3 +2,9 @@
 .vs/
 bin/
 obj/
+/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.AssemblyInfo.cs
+/.gitignore
+/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.AssemblyInfo.cs
+/.gitignore
+/BestelAppBoeken.Web/wwwroot/FRONTEND-MODERNIZATION-SUMMARY.md
+/BestelAppBoeken.Web/wwwroot/PAGINA-STRUCTUUR.md

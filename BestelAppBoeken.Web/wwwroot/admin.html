@@ -106,6 +106,40 @@
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 2px solid #f0f0f0;
+<<<<<<< HEAD
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .icon-blue {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .icon-green {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+        }
+
+        .icon-orange {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+        }
+
+        .icon-red {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+        }
+
+        .icon-purple {
+            background: linear-gradient(135deg, #9f7aea, #805ad5);
+=======
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
         }
 
         .card-icon {
@@ -154,9 +188,20 @@
             display: inline-block;
         }
 
+<<<<<<< HEAD
+        .status-active {
+            background: #48bb78;
+        }
+
+        .status-inactive {
+            background: #e53e3e;
+        }
+
+=======
         .status-active { background: #48bb78; }
         .status-inactive { background: #e53e3e; }
 
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
         .backup-timer {
             font-size: 14px;
             color: #666;
@@ -216,6 +261,18 @@
             transition: all 0.3s;
         }
 
+<<<<<<< HEAD
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+=======
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -226,6 +283,7 @@
             color: white;
         }
 
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
         .btn-success {
             background: linear-gradient(135deg, #48bb78, #38a169);
             color: white;
@@ -278,8 +336,20 @@
             justify-content: center;
         }
 
+<<<<<<< HEAD
+        .stock-minus {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .stock-plus {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+=======
         .stock-minus { background: #fed7d7; color: #742a2a; }
         .stock-plus { background: #c6f6d5; color: #22543d; }
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 
         .stock-value {
             min-width: 50px;
@@ -302,10 +372,17 @@
             font-size: 14px;
         }
 
+<<<<<<< HEAD
+            .form-input:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+=======
         .form-input:focus {
             outline: none;
             border-color: #667eea;
         }
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 
         .form-input-small {
             width: 120px;
@@ -362,8 +439,18 @@
             display: inline-block;
         }
 
+<<<<<<< HEAD
+        .connected {
+            background: #38a169;
+        }
+
+        .disconnected {
+            background: #e53e3e;
+        }
+=======
         .connected { background: #38a169; }
         .disconnected { background: #e53e3e; }
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 
         /* Database Info */
         .db-info {
@@ -462,6 +549,128 @@
     </style>
 </head>
 <body>
+<<<<<<< HEAD
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h1>Admin Panel - Bookstore Management</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-info" id="userInfo">
+                    <div class="user-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span id="usernameDisplay">Admin</span>
+                </div>
+                <button class="btn btn-primary" onclick="refreshAllData()">
+                    <i class="fas fa-sync-alt"></i> Vernieuw Alles
+                </button>
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Uitloggen
+                </button>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="messageContainer"></div>
+
+        <!-- Stats Cards -->
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon icon-blue">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="card-title">Database Beheer</div>
+                </div>
+                <div class="card-content">
+                    <div class="db-info">
+                        <div class="db-row">
+                            <span>Grootte:</span>
+                            <span id="dbSize">85.2 MB</span>
+                        </div>
+                        <div class="db-row">
+                            <span>Laatste update:</span>
+                            <span id="dbLastUpdate">Net</span>
+                        </div>
+                        <div class="db-row">
+                            <span>Aantal records:</span>
+                            <span id="dbRecords">1.248</span>
+                        </div>
+                    </div>
+
+                    <div class="export-options">
+                        <button class="btn btn-export" onclick="exportDatabase()">
+                            <i class="fas fa-download"></i> Database Downloaden
+                        </button>
+                        <button class="btn btn-success" onclick="generatePDF()">
+                            <i class="fas fa-file-pdf"></i> PDF Rapport
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon icon-green">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="card-title">Bestellingen</div>
+                </div>
+                <div class="card-content">
+                    <div style="font-size: 32px; font-weight: bold; color: #2c3e50;" id="totalOrders">0</div>
+                    <div style="color: #666; margin-top: 10px;">
+                        <i class="fas fa-info-circle"></i> Totaal alle bestellingen
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon icon-orange">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="card-title">Backup Status</div>
+                </div>
+                <div class="card-content">
+                    <div class="backup-info">
+                        <div class="backup-status">
+                            <span class="status-indicator status-active" id="backupStatus"></span>
+                            <span id="backupText">Backup actief</span>
+                        </div>
+                        <div class="backup-timer">
+                            <i class="fas fa-clock"></i> Laatste backup: <span id="lastBackup">Vandaag 14:30</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" onclick="manualBackup()" style="margin-top: 15px; width: 100%;">
+                        <i class="fas fa-save"></i> Handmatige Backup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voorraad Beheer met SAP -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #0f9d58, #0b8043);">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <div class="card-title">Voorraad Beheer met SAP R/3</div>
+            </div>
+
+            <!-- SAP Connection Status -->
+            <div class="sap-status">
+                <div class="sap-connection">
+                    <span class="connection-status connected" id="sapStatus"></span>
+                    <span id="sapStatusText">SAP R/3 Verbonden</span>
+                </div>
+                <div style="color: #666; font-size: 14px;">
+                    <i class="fas fa-info-circle"></i> Voorraadwijzigingen worden automatisch gesynchroniseerd met SAP via iDoc
+=======
 <div class="container">
     <!-- Header -->
     <div class="header">
@@ -496,9 +705,71 @@
             <div class="card-header">
                 <div class="card-icon icon-blue">
                     <i class="fas fa-database"></i>
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
                 </div>
                 <div class="card-title">Database Beheer</div>
             </div>
+<<<<<<< HEAD
+
+            <!-- Inventory Table -->
+            <div class="table-wrapper" style="margin-top: 20px;">
+                <div class="table-header">
+                    <h2 style="margin: 0;"><i class="fas fa-boxes"></i> Voorraad Overzicht</h2>
+                    <button class="btn btn-primary" onclick="refreshInventory()">
+                        <i class="fas fa-sync"></i> Vernieuw
+                    </button>
+                </div>
+
+                <table id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>ISBN</th>
+                            <th>Titel</th>
+                            <th>Auteur</th>
+                            <th>Prijs</th>
+                            <th>Huidige Voorraad</th>
+                            <th>Minimum</th>
+                            <th>Acties</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryBody">
+                        <!-- Data wordt hier ingeladen -->
+                    </tbody>
+                </table>
+                <div class="loading" id="inventoryLoading">
+                    <i class="fas fa-spinner fa-spin"></i> Voorraad laden...
+                </div>
+            </div>
+
+            <!-- Nieuwe tabel: Boek toevoegen -->
+            <div class="table-wrapper" style="margin-top: 20px; border: 2px dashed #c6f6d5;">
+                <div class="table-header" style="background: linear-gradient(135deg, #48bb78, #38a169);">
+                    <h2 style="margin: 0;"><i class="fas fa-plus-circle"></i> Nieuw Boek Toevoegen</h2>
+                    <button class="btn btn-success" onclick="addNewBook()">
+                        <i class="fas fa-plus"></i> Boek Toevoegen
+                    </button>
+                </div>
+
+                <div style="padding: 20px;">
+                    <div class="form-controls">
+                        <input type="text" id="newIsbn" class="form-input" placeholder="ISBN (bijv. 978-90-234-5678-9)" required>
+                        <input type="text" id="newTitle" class="form-input" placeholder="Titel" required>
+                        <input type="text" id="newAuthor" class="form-input" placeholder="Auteur" required>
+                    </div>
+                    <div class="form-controls">
+                        <input type="number" id="newPrice" class="form-input form-input-small" placeholder="Prijs (€)" step="0.01" min="0" required>
+                        <input type="number" id="newStock" class="form-input form-input-small" placeholder="Voorraad" min="0" required>
+                        <input type="number" id="newMinStock" class="form-input form-input-small" placeholder="Minimum" min="0" required>
+                        <input type="text" id="newSapId" class="form-input" placeholder="SAP Materiaal ID" required>
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="validateAndAddBook()">
+                            <i class="fas fa-check"></i> Opslaan
+                        </button>
+                        <button class="btn btn-warning" onclick="clearNewBookForm()">
+                            <i class="fas fa-times"></i> Wissen
+                        </button>
+=======
             <div class="card-content">
                 <div class="db-info">
                     <div class="db-row">
@@ -512,6 +783,7 @@
                     <div class="db-row">
                         <span>Aantal records:</span>
                         <span id="dbRecords">1.248</span>
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
                     </div>
                 </div>
 
@@ -563,8 +835,462 @@
                 </button>
             </div>
         </div>
+
+<<<<<<< HEAD
+        <!-- Recente Bestellingen -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon icon-blue">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="card-title">Recente Bestellingen</div>
+            </div>
+
+            <div class="table-wrapper" style="margin-top: 20px;">
+                <div class="table-header">
+                    <h2 style="margin: 0;"><i class="fas fa-shopping-cart"></i> Laatste Bestellingen</h2>
+                    <button class="btn btn-primary" onclick="refreshOrders()">
+                        <i class="fas fa-sync"></i> Vernieuw
+                    </button>
+                </div>
+
+                <table id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Klant</th>
+                            <th>Boeken</th>
+                            <th>Datum</th>
+                            <th>Bedrag</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersBody">
+                        <!-- Data wordt hier ingeladen -->
+                    </tbody>
+                </table>
+                <div class="loading" id="ordersLoading">
+                    <i class="fas fa-spinner fa-spin"></i> Bestellingen laden...
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup Logs -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon icon-green">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="card-title">Backup Geschiedenis</div>
+            </div>
+
+            <div style="max-height: 300px; overflow-y: auto; margin-top: 20px;">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="position: sticky; top: 0; background: #f8f9fa;">Tijd</th>
+                            <th style="position: sticky; top: 0; background: #f8f9fa;">Type</th>
+                            <th style="position: sticky; top: 0; background: #f8f9fa;">Bestand</th>
+                            <th style="position: sticky; top: 0; background: #f8f9fa;">Grootte</th>
+                            <th style="position: sticky; top: 0; background: #f8f9fa;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="backupLogs">
+                        <!-- Logs worden hier ingeladen -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 40px; color: white; padding: 20px;">
+            <p>Admin Panel - Bookstore Management System</p>
+            <p style="font-size: 12px; opacity: 0.8;">
+                <i class="fas fa-shield-alt"></i> Beveiligde omgeving
+            </p>
+        </div>
     </div>
 
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-prompt">
+            <div style="font-size: 48px; color: #667eea; margin-bottom: 20px;">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 style="color: #2c3e50; margin-bottom: 15px;">Niet ingelogd</h2>
+            <p style="color: #666; margin-bottom: 25px;">
+                U moet ingelogd zijn om deze pagina te bekijken.
+            </p>
+            <button class="btn btn-primary" onclick="redirectToLogin()" style="width: 100%;">
+                <i class="fas fa-sign-in-alt"></i> Naar Login Pagina
+            </button>
+        </div>
+    </div>
+
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <!-- jsPDF library voor PDF generatie -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        // Globale variabelen
+        let allOrdersData = [];
+        let inventoryData = [];
+
+        // Debug: toon localStorage status
+        console.log('Admin page loaded');
+        console.log('Current localStorage adminLoggedIn:', localStorage.getItem('adminLoggedIn'));
+        console.log('Current localStorage adminUser:', localStorage.getItem('adminUser'));
+
+        // Verbeterde login check
+        function checkLogin() {
+            const storedValue = localStorage.getItem('adminLoggedIn');
+
+            // Accepteer verschillende vormen van 'true'
+            const isLoggedIn = storedValue === 'true' || storedValue === true || storedValue === '1';
+
+            console.log('Login check - storedValue:', storedValue, 'isLoggedIn:', isLoggedIn);
+
+            if (!isLoggedIn) {
+                console.log('Not logged in, showing overlay');
+                // Toon login overlay in plaats van direct redirect
+                document.getElementById('loginOverlay').style.display = 'flex';
+
+                // Optioneel: redirect na korte delay
+                setTimeout(() => {
+                    if (!isLoggedIn) {
+                        console.log('Redirecting to login.html');
+                        window.location.href = 'login.html';
+                    }
+                }, 3000);
+
+                return false;
+            }
+
+            // Verberg overlay als ingelogd
+            document.getElementById('loginOverlay').style.display = 'none';
+
+            // Toon gebruikersnaam
+            const username = localStorage.getItem('adminUser') || 'Admin';
+            document.getElementById('usernameDisplay').textContent = username;
+
+            console.log('Login successful, user:', username);
+            return true;
+        }
+
+        // Redirect naar login
+        function redirectToLogin() {
+            window.location.href = 'login.html';
+        }
+
+        // Initial data load
+        window.addEventListener('DOMContentLoaded', function () {
+            // Eerst login check
+            if (checkLogin()) {
+                // Alleen data laden als ingelogd
+                loadAllData();
+                updateDatabaseInfo();
+                addMessage('Succesvol ingelogd!', 'success');
+            }
+        });
+
+        // Load all data
+        function loadAllData() {
+            loadStats();
+            loadInventory();
+            loadOrders();
+            loadBackupLogs();
+            updateSAPStatus();
+            updateDatabaseInfo();
+        }
+
+        // Update database info
+        function updateDatabaseInfo() {
+            const now = new Date();
+            const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+            document.getElementById('dbLastUpdate').textContent = timeString;
+            document.getElementById('dbRecords').textContent = allOrdersData.length + inventoryData.length;
+        }
+
+        // Manual backup
+        function manualBackup() {
+            if (!checkLogin()) return;
+
+            addMessage('Handmatige backup gestart...', 'info');
+
+            setTimeout(function () {
+                addMessage('Backup succesvol voltooid!', 'success');
+                addBackupLog('manual', 'backup_' + Date.now() + '.db', '85.2 MB');
+                loadBackupLogs();
+                updateDatabaseInfo();
+            }, 2000);
+        }
+
+        // Export database
+        function exportDatabase() {
+            if (!checkLogin()) return;
+
+            addMessage('Database wordt geëxporteerd...', 'info');
+
+            const dbContent = {
+                timestamp: new Date().toISOString(),
+                orders: allOrdersData,
+                inventory: inventoryData,
+                customers: getCustomersData(),
+                stats: getStatsData()
+            };
+
+            const jsonString = JSON.stringify(dbContent, null, 2);
+
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `boekhandel_database_${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            addMessage('Database succesvol geëxporteerd!', 'success');
+            addBackupLog('export', `database_${Date.now()}.json`, (jsonString.length / 1024 / 1024).toFixed(2) + ' MB');
+        }
+
+        // Generate PDF report
+        function generatePDF() {
+            if (!checkLogin()) return;
+
+            addMessage('PDF rapport wordt gegenereerd...', 'info');
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Add title
+            doc.setFontSize(20);
+            doc.text('Bookstore Management - Rapport', 20, 20);
+
+            // Add date
+            doc.setFontSize(12);
+            doc.text(`Datum: ${new Date().toLocaleDateString('nl-NL')}`, 20, 30);
+
+            // Add stats
+            doc.setFontSize(14);
+            doc.text('Statistieken:', 20, 45);
+            doc.setFontSize(11);
+            doc.text(`Totaal bestellingen: ${allOrdersData.length}`, 25, 55);
+            doc.text(`Totaal boeken: ${inventoryData.length}`, 25, 60);
+            doc.text(`Totaal klanten: ${getUniqueCustomers().length}`, 25, 65);
+            doc.text(`Totale omzet: €${calculateTotalRevenue().toFixed(2)}`, 25, 70);
+
+            // Add inventory table
+            doc.autoTable({
+                startY: 80,
+                head: [['ISBN', 'Titel', 'Auteur', 'Prijs', 'Voorraad']],
+                body: inventoryData.map(book => [
+                    book.isbn,
+                    book.title,
+                    book.author,
+                    `€${book.price}`,
+                    book.stock
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [48, 187, 120] }
+            });
+
+            // Get last Y position for next table
+            const lastY = doc.lastAutoTable.finalY || 80;
+
+            // Add orders table
+            doc.autoTable({
+                startY: lastY + 10,
+                head: [['Order ID', 'Klant', 'Datum', 'Aantal Boeken', 'Bedrag', 'Status']],
+                body: allOrdersData.map(order => [
+                    order.id,
+                    order.customer,
+                    order.date,
+                    order.books,
+                    order.amount,
+                    order.status
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [102, 126, 234] }
+            });
+
+            // Save PDF
+            doc.save(`boekhandel_rapport_${Date.now()}.pdf`);
+
+            addMessage('PDF rapport succesvol gegenereerd!', 'success');
+        }
+
+        // Helper functions for data
+        function getCustomersData() {
+            const customers = {};
+            allOrdersData.forEach(order => {
+                if (!customers[order.customer]) {
+                    customers[order.customer] = {
+                        orders: 0,
+                        totalSpent: 0
+                    };
+                }
+                customers[order.customer].orders++;
+                customers[order.customer].totalSpent += parseFloat(order.amount.replace('€', '').replace(',', '.'));
+            });
+            return customers;
+        }
+
+        function getStatsData() {
+            return {
+                totalOrders: allOrdersData.length,
+                totalBooks: inventoryData.length,
+                uniqueCustomers: getUniqueCustomers().length,
+                totalRevenue: calculateTotalRevenue(),
+                averageOrderValue: calculateTotalRevenue() / allOrdersData.length || 0
+            };
+        }
+
+        function getUniqueCustomers() {
+            const customers = new Set();
+            allOrdersData.forEach(order => customers.add(order.customer));
+            return Array.from(customers);
+        }
+
+        function calculateTotalRevenue() {
+            return allOrdersData.reduce((total, order) => {
+                return total + parseFloat(order.amount.replace('€', '').replace(',', '.'));
+            }, 0);
+        }
+
+        // Load statistics
+        function loadStats() {
+            setTimeout(function () {
+                document.getElementById('totalOrders').textContent = allOrdersData.length;
+                updateDatabaseInfo();
+            }, 500);
+        }
+
+        // Load inventory
+        function loadInventory() {
+            const inventoryBody = document.getElementById('inventoryBody');
+            const loadingElement = document.getElementById('inventoryLoading');
+
+            loadingElement.style.display = 'block';
+            inventoryBody.innerHTML = '';
+
+            setTimeout(function () {
+                // Start met standaard data
+                inventoryData = [
+                    { isbn: '9789023456789', title: 'De Nachtwachter', author: 'Sarah Blake', price: '€22.99', stock: 3, min: 10, sapId: 'MAT001' },
+                    { isbn: '9789044632567', title: 'Het Meisje in de Trein', author: 'Paula Hawkins', price: '€19.99', stock: 8, min: 5, sapId: 'MAT002' },
+                    { isbn: '9789023489121', title: 'Sapiens', author: 'Yuval Noah Harari', price: '€24.99', stock: 15, min: 5, sapId: 'MAT003' }
+                ];
+
+                // Voeg eventueel extra boeken toe uit localStorage
+                const savedBooks = localStorage.getItem('extraBooks');
+                if (savedBooks) {
+                    try {
+                        const extraBooks = JSON.parse(savedBooks);
+                        inventoryData = [...inventoryData, ...extraBooks];
+                    } catch (e) {
+                        console.error('Error loading extra books:', e);
+                    }
+                }
+
+                renderInventoryTable(inventoryData);
+                loadingElement.style.display = 'none';
+            }, 800);
+        }
+
+        // Render inventory table
+        function renderInventoryTable(data) {
+            const inventoryBody = document.getElementById('inventoryBody');
+            inventoryBody.innerHTML = '';
+
+            data.forEach(book => {
+                const row = document.createElement('tr');
+                const stockClass = book.stock < book.min ? 'style="color: #e53e3e; font-weight: bold;"' : '';
+
+                row.innerHTML = `
+            <td>${book.isbn}</td>
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.price}</td>
+            <td ${stockClass}>${book.stock}</td>
+            <td>${book.min}</td>
+            <td>
+              <div class="stock-controls">
+                <button class="stock-btn stock-minus" onclick="updateStock('${book.isbn}', '${book.sapId}', -1)">-</button>
+                <span class="stock-value">${book.stock}</span>
+                <button class="stock-btn stock-plus" onclick="updateStock('${book.isbn}', '${book.sapId}', 1)">+</button>
+                <button class="btn btn-sap" style="padding: 5px 10px; font-size: 12px;" onclick="syncWithSAP('${book.isbn}', '${book.sapId}')">
+                  <i class="fas fa-sync"></i> SAP
+                </button>
+                <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="removeBook('${book.isbn}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          `;
+                inventoryBody.appendChild(row);
+            });
+        }
+
+        // Nieuwe boek toevoegen functies
+        function validateAndAddBook() {
+            if (!checkLogin()) return;
+
+            const isbn = document.getElementById('newIsbn').value.trim();
+            const title = document.getElementById('newTitle').value.trim();
+            const author = document.getElementById('newAuthor').value.trim();
+            const price = parseFloat(document.getElementById('newPrice').value);
+            const stock = parseInt(document.getElementById('newStock').value);
+            const minStock = parseInt(document.getElementById('newMinStock').value);
+            const sapId = document.getElementById('newSapId').value.trim();
+
+            // Validatie
+            if (!isbn || !title || !author || !sapId) {
+                addMessage('Vul alle verplichte velden in!', 'error');
+                return;
+            }
+
+            if (isNaN(price) || price <= 0) {
+                addMessage('Voer een geldige prijs in!', 'error');
+                return;
+            }
+
+            if (isNaN(stock) || stock < 0) {
+                addMessage('Voer een geldige voorraad in!', 'error');
+                return;
+            }
+
+            if (isNaN(minStock) || minStock < 0) {
+                addMessage('Voer een geldig minimum voorraad in!', 'error');
+                return;
+            }
+
+            // Check of ISBN al bestaat
+            if (inventoryData.some(book => book.isbn === isbn)) {
+                addMessage('Een boek met dit ISBN bestaat al!', 'error');
+                return;
+            }
+
+            // Voeg boek toe
+            const newBook = {
+                isbn: isbn,
+                title: title,
+                author: author,
+                price: `€${price.toFixed(2)}`,
+                stock: stock,
+                min: minStock,
+                sapId: sapId
+            };
+
+            // Voeg toe aan inventoryData
+            inventoryData.push(newBook);
+
+            // Sla op in localStorage
+=======
     <!-- Voorraad Beheer met SAP -->
     <div class="card">
         <div class="card-header">
@@ -1151,11 +1877,293 @@
             inventoryData = inventoryData.filter(book => book.isbn !== isbn);
 
             // Update localStorage
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
             saveExtraBooks();
 
             // Update tabel
             renderInventoryTable(inventoryData);
 
+<<<<<<< HEAD
+            // Form leegmaken
+            clearNewBookForm();
+
+            // Toon succesbericht
+            addMessage(`Boek "${title}" succesvol toegevoegd!`, 'success');
+
+            // Update database info
+            updateDatabaseInfo();
+
+            // Sync met SAP
+            syncWithSAP(isbn, sapId, 0);
+        }
+
+        function saveExtraBooks() {
+            // Sla alleen de extra (toegevoegde) boeken op, niet de standaard
+            const extraBooks = inventoryData.filter(book =>
+                !['9789023456789', '9789044632567', '9789023489121'].includes(book.isbn)
+            );
+            localStorage.setItem('extraBooks', JSON.stringify(extraBooks));
+        }
+
+        function addNewBook() {
+            if (!checkLogin()) return;
+            validateAndAddBook();
+        }
+
+        function clearNewBookForm() {
+            document.getElementById('newIsbn').value = '';
+            document.getElementById('newTitle').value = '';
+            document.getElementById('newAuthor').value = '';
+            document.getElementById('newPrice').value = '';
+            document.getElementById('newStock').value = '';
+            document.getElementById('newMinStock').value = '';
+            document.getElementById('newSapId').value = '';
+            addMessage('Formulier gewist.', 'info');
+        }
+
+        function removeBook(isbn) {
+            if (!checkLogin()) return;
+
+            if (confirm('Weet u zeker dat u dit boek wilt verwijderen?')) {
+                // Verwijder uit array
+                inventoryData = inventoryData.filter(book => book.isbn !== isbn);
+
+                // Update localStorage
+                saveExtraBooks();
+
+                // Update tabel
+                renderInventoryTable(inventoryData);
+
+                // Update database info
+                updateDatabaseInfo();
+
+                addMessage('Boek succesvol verwijderd!', 'success');
+            }
+        }
+
+        // Load orders (all orders)
+        function loadOrders() {
+            const ordersBody = document.getElementById('ordersBody');
+            const loadingElement = document.getElementById('ordersLoading');
+
+            loadingElement.style.display = 'block';
+            ordersBody.innerHTML = '';
+
+            setTimeout(function () {
+                allOrdersData = [
+                    { id: 'ORD-2024-001', customer: 'Jan Janssen', books: '3', date: '15-01-2024 14:30', amount: '€89.97', status: 'Verwerkt' },
+                    { id: 'ORD-2024-002', customer: 'Marie Peters', books: '1', date: '15-01-2024 11:15', amount: '€24.99', status: 'Verwerkt' },
+                    { id: 'ORD-2024-003', customer: 'Thomas Verstraeten', books: '5', date: '14-01-2024 16:45', amount: '€149.95', status: 'Verzonden' },
+                    { id: 'ORD-2024-004', customer: 'Lisa De Smet', books: '2', date: '14-01-2024 09:20', amount: '€39.98', status: 'In behandeling' },
+                    { id: 'ORD-2024-005', customer: 'David Willems', books: '4', date: '13-01-2024 18:10', amount: '€119.96', status: 'Verwerkt' },
+                    { id: 'ORD-2024-006', customer: 'Peter Jacobs', books: '2', date: '13-01-2024 10:30', amount: '€45.98', status: 'Verwerkt' },
+                    { id: 'ORD-2024-007', customer: 'Sarah Maes', books: '1', date: '12-01-2024 15:20', amount: '€18.99', status: 'Verzonden' },
+                    { id: 'ORD-2024-008', customer: 'Michael Peeters', books: '3', date: '12-01-2024 11:45', amount: '€67.97', status: 'Verwerkt' }
+                ];
+
+                const recentOrders = allOrdersData.slice(0, 10);
+
+                recentOrders.forEach(order => {
+                    const row = document.createElement('tr');
+                    const statusClass = order.status === 'Verwerkt' ? 'style="color: #38a169; font-weight: bold;"' :
+                        order.status === 'Verzonden' ? 'style="color: #4299e1; font-weight: bold;"' :
+                            'style="color: #ed8936; font-weight: bold;"';
+
+                    row.innerHTML = `
+              <td>${order.id}</td>
+              <td>${order.customer}</td>
+              <td>${order.books}</td>
+              <td>${order.date}</td>
+              <td>${order.amount}</td>
+              <td ${statusClass}>${order.status}</td>
+            `;
+                    ordersBody.appendChild(row);
+                });
+
+                loadingElement.style.display = 'none';
+                updateDatabaseInfo();
+            }, 800);
+        }
+
+        // Update stock with SAP integration
+        function updateStock(isbn, sapId, change) {
+            if (!checkLogin()) return;
+
+            // Zoek boek
+            const bookIndex = inventoryData.findIndex(book => book.isbn === isbn);
+            if (bookIndex === -1) {
+                addMessage('Boek niet gevonden!', 'error');
+                return;
+            }
+
+            // Update voorraad
+            inventoryData[bookIndex].stock += change;
+            if (inventoryData[bookIndex].stock < 0) inventoryData[bookIndex].stock = 0;
+
+            // Update tabel
+            renderInventoryTable(inventoryData);
+
+            // Sla op in localStorage
+            saveExtraBooks();
+
+            addMessage(`Voorraad bijgewerkt voor ${inventoryData[bookIndex].title}`, 'success');
+
+            // Sync met SAP
+            syncWithSAP(isbn, sapId, change);
+            updateDatabaseInfo();
+        }
+
+        // Sync with SAP R/3
+        function syncWithSAP(isbn, sapId, change = 0) {
+            const message = change !== 0 ?
+                `SAP iDoc verzonden: Voorraadwijziging ${change} voor ${sapId}` :
+                `SAP synchronisatie voor ${sapId}`;
+
+            addMessage(message, 'info');
+
+            setTimeout(function () {
+                addMessage(`SAP R/3 geupdate voor materiaal ${sapId}`, 'success');
+                updateSAPStatus();
+            }, 1500);
+        }
+
+        // Update SAP connection status
+        function updateSAPStatus() {
+            const sapStatusElement = document.getElementById('sapStatus');
+            const sapStatusTextElement = document.getElementById('sapStatusText');
+
+            const isConnected = Math.random() > 0.1;
+
+            if (isConnected) {
+                sapStatusElement.className = 'connection-status connected';
+                sapStatusTextElement.textContent = 'SAP R/3 Verbonden - iDoc actief';
+            } else {
+                sapStatusElement.className = 'connection-status disconnected';
+                sapStatusTextElement.textContent = 'SAP R/3 Niet verbonden';
+                addMessage('Waarschuwing: SAP verbinding verbroken', 'error');
+            }
+        }
+
+        // Load backup logs
+        function loadBackupLogs() {
+            const backupLogsElement = document.getElementById('backupLogs');
+
+            const logs = [
+                { time: '15-01-2024 14:30:12', type: 'Auto', file: 'backup.db', size: '85.2 MB', status: 'Success' },
+                { time: '15-01-2024 14:20:05', type: 'Handmatig', file: 'backup_1705328405.db', size: '85.1 MB', status: 'Success' },
+                { time: '15-01-2024 14:10:18', type: 'Auto', file: 'backup.db', size: '85.0 MB', status: 'Success' },
+                { time: '15-01-2024 13:45:22', type: 'Export', file: 'database_export.json', size: '1.2 MB', status: 'Success' }
+            ];
+
+            backupLogsElement.innerHTML = '';
+            logs.forEach(log => {
+                const row = document.createElement('tr');
+                const statusClass = log.status === 'Success' ? 'style="color: #38a169;"' : 'style="color: #e53e3e;"';
+
+                row.innerHTML = `
+            <td>${log.time}</td>
+            <td>${log.type}</td>
+            <td>${log.file}</td>
+            <td>${log.size}</td>
+            <td ${statusClass}>${log.status}</td>
+          `;
+                backupLogsElement.appendChild(row);
+            });
+        }
+
+        // Add backup log
+        function addBackupLog(type, file, size) {
+            const now = new Date();
+            const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+            const backupLogsElement = document.getElementById('backupLogs');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+          <td>${timeString}</td>
+          <td>${type === 'manual' ? 'Handmatig' : type === 'export' ? 'Export' : 'Auto'}</td>
+          <td>${file}</td>
+          <td>${size}</td>
+          <td style="color: #38a169;">Success</td>
+        `;
+
+            backupLogsElement.insertBefore(row, backupLogsElement.firstChild);
+
+            while (backupLogsElement.children.length > 10) {
+                backupLogsElement.removeChild(backupLogsElement.lastChild);
+            }
+        }
+
+        // Add message
+        function addMessage(text, type) {
+            const messageContainer = document.getElementById('messageContainer');
+            const message = document.createElement('div');
+            message.className = `message message-${type}`;
+            message.innerHTML = `
+          <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+          <span>${text}</span>
+        `;
+
+            messageContainer.appendChild(message);
+
+            setTimeout(function () {
+                if (message.parentNode) {
+                    message.parentNode.removeChild(message);
+                }
+            }, 5000);
+        }
+
+        // Refresh functions
+        function refreshAllData() {
+            if (!checkLogin()) return;
+
+            addMessage('Alle data wordt vernieuwd...', 'info');
+            loadAllData();
+        }
+
+        function refreshInventory() {
+            if (!checkLogin()) return;
+
+            addMessage('Voorraad wordt vernieuwd...', 'info');
+            loadInventory();
+        }
+
+        function refreshOrders() {
+            if (!checkLogin()) return;
+
+            addMessage('Bestellingen worden vernieuwd...', 'info');
+            loadOrders();
+        }
+
+        // Verbeterde logout
+        function logout() {
+            // Verwijder ALLE login gerelateerde items
+            localStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('adminUser');
+            localStorage.removeItem('loginTime');
+
+            console.log('User logged out, localStorage cleared');
+
+            // Toon afmeldbericht
+            addMessage('Succesvol uitgelogd. Doorsturen naar login...', 'success');
+
+            // Redirect na korte delay
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1500);
+        }
+
+        // Test login via URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('debug') && urlParams.get('debug') === 'login') {
+            console.log('Debug mode: forcing login');
+            localStorage.setItem('adminLoggedIn', 'true');
+            localStorage.setItem('adminUser', 'debug-admin');
+            checkLogin();
+        }
+
+    </script>
+=======
             // Update database info
             updateDatabaseInfo();
 
@@ -1385,5 +2393,6 @@
     }
 
 </script>
+>>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 </body>
 </html>

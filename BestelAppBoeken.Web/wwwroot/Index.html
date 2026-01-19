@@ -1690,6 +1690,48 @@
         }
 
         // ============================================
+        // AUTHENTICATION CHECK - Moet eerst ingelogd zijn
+        // ============================================
+        (function checkAuthentication() {
+            const adminLoggedIn = localStorage.getItem('adminLoggedIn');
+            const isLoggedIn = adminLoggedIn === 'true';
+
+            console.log('Index.html - Auth check:', { adminLoggedIn, isLoggedIn });
+
+            if (!isLoggedIn) {
+                console.log('Not logged in - redirecting to login.html');
+                window.location.href = 'login.html';
+                return false;
+            }
+
+            console.log('User is logged in:', localStorage.getItem('adminUser'));
+            return true;
+        })();
+
+        // ============================================
+        // LOGOUT FUNCTIE
+        // ============================================
+        function logout() {
+            // Bevestig logout
+            if (confirm('Weet u zeker dat u wilt uitloggen?')) {
+                // Verwijder alle login gerelateerde items
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminUser');
+                localStorage.removeItem('loginTime');
+
+                console.log('User logged out, localStorage cleared');
+
+                // Toon bericht
+                showMessage('Succesvol uitgelogd. U wordt doorgestuurd naar de login pagina...', 'success');
+
+                // Redirect naar login na korte delay
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+            }
+        }
+
+        // ============================================
         // ANTI-FLICKER: Show body when ready
         // ============================================
         window.addEventListener('DOMContentLoaded', function() {

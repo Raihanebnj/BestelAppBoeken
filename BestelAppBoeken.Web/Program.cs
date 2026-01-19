@@ -25,7 +25,14 @@ builder.Services.AddDbContext<BookstoreDbContext>(options =>
 // Register Custom Services
 builder.Services.AddSingleton<IMessageQueueService, RabbitMqService>();
 builder.Services.AddScoped<ISalesforceService, SalesforceService>();
-builder.Services.AddScoped<ISapService, SapService>();
+
+// SAP Service met HttpClient voor iDoc verzending
+builder.Services.AddHttpClient<ISapService, SapService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+    client.DefaultRequestHeaders.Add("User-Agent", "Bookstore-SAP-iDoc/1.0");
+});
+
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IKlantService, KlantService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
