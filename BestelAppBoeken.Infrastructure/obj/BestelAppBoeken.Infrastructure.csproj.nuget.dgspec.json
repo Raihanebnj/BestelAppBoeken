@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj": {}
+    "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj": {
+    "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj",
+        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj",
         "projectName": "BestelAppBoeken.Core",
-        "projectPath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj",
-        "packagesPath": "C:\\Users\\Kimbe\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\obj\\",
+        "projectPath": "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj",
+        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Kimbe\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -66,7 +66,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -344,20 +344,20 @@
         }
       }
     },
-    "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj": {
+    "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
         "projectName": "BestelAppBoeken.Infrastructure",
-        "projectPath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\Kimbe\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\BestelAppBoeken.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Kimbe\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -373,8 +373,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj": {
-                "projectPath": "C:\\Users\\Kimbe\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj"
+              "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj": {
+                "projectPath": "C:\\Users\\admin\\source\\repos\\BestelAppBoeken\\BestelAppBoeken.Core\\BestelAppBoeken.Core.csproj"
               }
             }
           }
@@ -395,6 +395,14 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[10.0.2, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[10.0.2, )"
+            },
             "Microsoft.Extensions.Configuration.Abstractions": {
               "target": "Package",
               "version": "[10.0.2, )"
@@ -402,6 +410,10 @@
             "Microsoft.Extensions.Logging.Abstractions": {
               "target": "Package",
               "version": "[10.0.2, )"
+            },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2024.12.3, )"
             },
             "RabbitMQ.Client": {
               "target": "Package",
@@ -424,7 +436,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
