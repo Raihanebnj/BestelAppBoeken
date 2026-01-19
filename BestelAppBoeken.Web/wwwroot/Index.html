@@ -529,6 +529,100 @@
             font-size: 16px;
         }
 
+        /* Book Card Styles */
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+
+        .book-info {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .book-author {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 12px;
+        }
+
+        .book-details {
+            margin-top: auto;
+        }
+
+        .book-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .book-stock {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .book-stock.low-stock {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .btn-quick-add {
+            width: 100%;
+            background: linear-gradient(135deg, var(--success), #38a169);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-quick-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-quick-add:active {
+            transform: scale(0.95);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             body {
@@ -681,6 +775,60 @@
         </div>
     </section>
 
+    <!-- Boeken Menu met Grid/List Toggle -->
+    <section id="boeken-sectie" class="card fade-in" style="margin-top: 30px;">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-book"></i>
+                Beschikbare Boeken
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="btn btn-primary" onclick="switchBoekenView('grid')" id="btn-grid-view">
+                    <i class="fas fa-th"></i> Grid
+                </button>
+                <button class="btn btn-primary" onclick="switchBoekenView('list')" id="btn-list-view">
+                    <i class="fas fa-list"></i> Lijst
+                </button>
+                <a href="books.html" class="btn btn-primary">
+                    <i class="fas fa-book-open"></i> Alle Boeken
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="boeken-loading" class="loading" style="padding: 20px;">
+                <i class="fas fa-spinner fa-spin"></i> Boeken laden...
+            </div>
+            
+            <!-- Grid View -->
+            <div id="boeken-grid" style="display: none;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                    <!-- Boeken worden hier geladen -->
+                </div>
+            </div>
+
+            <!-- List View -->
+            <div id="boeken-list" style="display: none;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th><i class="fas fa-barcode"></i> ISBN</th>
+                            <th><i class="fas fa-book"></i> Titel</th>
+                            <th><i class="fas fa-user-edit"></i> Auteur</th>
+                            <th><i class="fas fa-euro-sign"></i> Prijs</th>
+                            <th><i class="fas fa-boxes"></i> Voorraad</th>
+                            <th><i class="fas fa-bolt"></i> Acties</th>
+                        </tr>
+                        </thead>
+                        <tbody id="boeken-list-body">
+                        <!-- Data wordt hier geladen -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="fade-in">
         <p style="font-weight: 600; margin-bottom: 10px;">
@@ -808,6 +956,261 @@
         // Verberg loading
         document.getElementById('bestellingen-loading').style.display = 'none';
         document.getElementById('bestellingen-container').style.display = 'block';
+
+        // Laad boeken
+        loadBoeken();
+    }
+
+    // ============================================
+    // BOEKEN LADEN & WEERGEVEN
+    // ============================================
+    let currentBoekenView = 'grid'; // default view
+
+    async function loadBoeken() {
+        console.log('Loading books...');
+        document.getElementById('boeken-loading').style.display = 'block';
+
+        try {
+            // Probeer van API te laden
+            const response = await fetch('/api/books');
+            if (response.ok) {
+                const books = await response.json();
+                renderBoeken(books);
+            } else {
+                throw new Error('API failed');
+            }
+        } catch (error) {
+            console.log('API failed, using sample data');
+            // Fallback: sample data
+            const sampleBooks = [
+                { id: 1, isbn: '9789023456789', title: 'De Nachtwachter', author: 'Sarah Blake', price: 22.99, stock: 15 },
+                { id: 2, isbn: '9789044632567', title: 'Het Meisje in de Trein', author: 'Paula Hawkins', price: 19.99, stock: 8 },
+                { id: 3, isbn: '9789023489121', title: 'Sapiens', author: 'Yuval Noah Harari', price: 24.99, stock: 12 },
+                { id: 4, isbn: '9789025872014', title: 'De Meeste Mensen Deugen', author: 'Rutger Bregman', price: 21.99, stock: 20 },
+                { id: 5, isbn: '9789460032486', title: 'Het Diner', author: 'Herman Koch', price: 18.99, stock: 5 },
+                { id: 6, isbn: '9789044970104', title: 'De Avond is Ongemak', author: 'Marieke Lucas Rijneveld', price: 20.50, stock: 0 }
+            ];
+            renderBoeken(sampleBooks);
+        }
+    }
+
+    function renderBoeken(books) {
+        console.log('Rendering', books.length, 'books');
+
+        // Render Grid View
+        const gridContainer = document.querySelector('#boeken-grid > div');
+        gridContainer.innerHTML = '';
+
+        books.forEach(book => {
+            const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
+            const stockClass = book.stock <= 5 ? 'low-stock' : '';
+            const stockText = book.stock === 0 ? 'Uitverkocht' : `${book.stock} op voorraad`;
+
+            const card = document.createElement('div');
+            card.className = 'book-card';
+            card.innerHTML = `
+                <div class="book-cover">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="book-info">
+                    <div class="book-title">${book.title}</div>
+                    <div class="book-author">door ${book.author}</div>
+                    <div class="book-details">
+                        <div class="book-price">${priceFormatted}</div>
+                        <div class="book-stock ${stockClass}">
+                            <i class="fas fa-${book.stock === 0 ? 'exclamation-triangle' : 'check-circle'}"></i> ${stockText}
+                        </div>
+                        <button class="btn-quick-add" onclick="quickAddToCart(${book.id}, '${book.title}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))})" ${book.stock === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>
+                            <i class="fas fa-cart-plus"></i> Snel Toevoegen
+                        </button>
+                    </div>
+                </div>
+            `;
+            gridContainer.appendChild(card);
+        });
+
+        // Render List View
+        const listBody = document.getElementById('boeken-list-body');
+        listBody.innerHTML = '';
+
+        books.forEach(book => {
+            const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
+            const stockClass = book.stock <= 5 ? 'style="color: #f56565; font-weight: bold;"' : '';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${book.isbn}</td>
+                <td><strong>${book.title}</strong></td>
+                <td>${book.author}</td>
+                <td><strong>${priceFormatted}</strong></td>
+                <td ${stockClass}>${book.stock}</td>
+                <td>
+                    <button class="btn btn-success" onclick="quickAddToCart(${book.id}, '${book.title}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))})" style="padding: 8px 16px;" ${book.stock === 0 ? 'disabled' : ''}>
+                        <i class="fas fa-cart-plus"></i> Toevoegen
+                    </button>
+                </td>
+            `;
+            listBody.appendChild(row);
+        });
+
+        // Verberg loading, toon default view (grid)
+        document.getElementById('boeken-loading').style.display = 'none';
+        switchBoekenView('grid');
+    }
+
+    // Switch tussen grid en list view
+    function switchBoekenView(view) {
+        currentBoekenView = view;
+
+        const gridView = document.getElementById('boeken-grid');
+        const listView = document.getElementById('boeken-list');
+        const btnGrid = document.getElementById('btn-grid-view');
+        const btnList = document.getElementById('btn-list-view');
+
+        if (view === 'grid') {
+            gridView.style.display = 'block';
+            listView.style.display = 'none';
+            btnGrid.style.opacity = '1';
+            btnList.style.opacity = '0.6';
+        } else {
+            gridView.style.display = 'none';
+            listView.style.display = 'block';
+            btnGrid.style.opacity = '0.6';
+            btnList.style.opacity = '1';
+        }
+
+        console.log('Switched to', view, 'view');
+    }
+
+    // Quick add to cart functie
+    function quickAddToCart(bookId, title, price) {
+        console.log('Quick add to cart:', bookId, title, price);
+
+        // Get huidige winkelmandje van localStorage
+        let cart = JSON.parse(localStorage.getItem('winkelmandje') || '[]');
+
+        // Check of boek al in cart zit
+        const existingItem = cart.find(item => item.boekId === bookId);
+
+        if (existingItem) {
+            existingItem.aantal++;
+            console.log('Increased quantity for', title);
+        } else {
+            cart.push({
+                boekId: bookId,
+                titel: title,
+                prijs: price,
+                aantal: 1
+            });
+            console.log('Added new item to cart:', title);
+        }
+
+        // Sla op in localStorage
+        localStorage.setItem('winkelmandje', JSON.stringify(cart));
+
+        // Update cart counter
+        updateCartCounter();
+
+        // Toon success bericht
+        showMessage(`✓ "${title}" toegevoegd aan winkelmandje!`, 'success');
+    }
+
+    // Update cart counter
+    function updateCartCounter() {
+        const cart = JSON.parse(localStorage.getItem('winkelmandje') || '[]');
+        const totalItems = cart.reduce((sum, item) => sum + item.aantal, 0);
+
+        const cartCountElement = document.getElementById('cart-count');
+        if (cartCountElement) {
+            if (totalItems > 0) {
+                cartCountElement.textContent = totalItems;
+                cartCountElement.style.display = 'inline-block';
+            } else {
+                cartCountElement.style.display = 'none';
+            }
+        }
+
+        console.log('Cart updated:', totalItems, 'items');
+    }
+
+    // Show message functie
+    function showMessage(text, type) {
+        const messageContainer = document.getElementById('message-container');
+        if (!messageContainer) {
+            console.log('Message:', text);
+            return;
+        }
+
+        const message = document.createElement('div');
+        message.className = `message message-${type}`;
+        message.style.cssText = `
+            padding: 15px 20px;
+            background: ${type === 'success' ? '#c6f6d5' : '#fed7d7'};
+            color: ${type === 'success' ? '#22543d' : '#742a2a'};
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid ${type === 'success' ? '#38a169' : '#f56565'};
+            animation: slideIn 0.3s ease-out;
+        `;
+        message.textContent = text;
+
+        messageContainer.appendChild(message);
+
+        setTimeout(() => {
+            message.style.opacity = '0';
+            message.style.transition = 'opacity 0.3s';
+            setTimeout(() => message.remove(), 300);
+        }, 3000);
+    }
+
+    // ============================================
+    // INITIAL LOAD
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Laad sample data
+        loadSampleData();
+
+        // Update cart counter
+        updateCartCounter();
+
+        // Toon body
+        document.body.classList.add('loaded');
+    });
+
+    function loadSampleData() {
+        // Voorbeeld bestellingen
+        const orders = [
+            { id: 'ORD-001', klant: 'Jan Janssen', datum: '15-01-2024', totaal: '€89.97', status: 'Verwerkt' },
+            { id: 'ORD-002', klant: 'Marie Peters', datum: '15-01-2024', totaal: '€24.99', status: 'Verwerkt' },
+            { id: 'ORD-003', klant: 'Thomas Verstraeten', datum: '14-01-2024', totaal: '€149.95', status: 'Verzonden' },
+            { id: 'ORD-004', klant: 'Lisa De Smet', datum: '14-01-2024', totaal: '€39.98', status: 'In behandeling' },
+            { id: 'ORD-005', klant: 'David Willems', datum: '13-01-2024', totaal: '€119.96', status: 'Verwerkt' }
+        ];
+
+        const tbody = document.getElementById('bestellingen-body');
+        orders.forEach(order => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${order.id}</td>
+                <td>${order.klant}</td>
+                <td>${order.datum}</td>
+                <td>${order.totaal}</td>
+                <td><span style="color: ${order.status === 'Verwerkt' ? '#38a169' : order.status === 'Verzonden' ? '#4299e1' : '#ed8936'}; font-weight: bold;">${order.status}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Update stats
+        document.getElementById('stat-orders').textContent = '125 Orders';
+        document.getElementById('stat-klanten').textContent = '89 Klanten';
+        document.getElementById('stat-boeken').textContent = '245 Boeken';
+
+        // Verberg loading
+        document.getElementById('bestellingen-loading').style.display = 'none';
+        document.getElementById('bestellingen-container').style.display = 'block';
+
+        // Laad boeken
+        loadBoeken();
     }
 
     // Fallback voor body display
