@@ -40,7 +40,7 @@ namespace BestelAppBoeken.Infrastructure.Services
             _sapEndpoint = configuration["SAP:Endpoint"] ?? "http://sap-server:8000/sap/bc/idoc";
             _sapClient = configuration["SAP:Client"] ?? "800";
             _sapSystem = configuration["SAP:System"] ?? "PRD";
-            _idocTimeout = configuration.GetValue<int>("SAP:TimeoutSeconds", 30);
+            _idocTimeout = int.TryParse(configuration["SAP:TimeoutSeconds"], out int timeout) ? timeout : 30;
             
             _httpClient.Timeout = TimeSpan.FromSeconds(_idocTimeout);
         }
@@ -196,34 +196,34 @@ namespace BestelAppBoeken.Infrastructure.Services
                             new XElement("E1EDKA1",
                                 new XAttribute("SEGMENT", "1"),
                                 new XElement("PARVW", "AG"), // Partner function: Sold-to party
-                                new XElement("PARTN", order.KlantId.ToString("D10")),
-                                new XElement("NAME1", order.Klant?.Naam ?? "Unknown Customer")
+                                new XElement("PARTN", order.Id.ToString("D10")), // Use Order ID as partner
+                                new XElement("NAME1", order.CustomerName ?? order.CustomerEmail ?? "Unknown Customer")
                             ),
                             
                             // E1EDP01: Line items (per boek)
-                            order.OrderItems?.Select((item, index) => 
+                            order.Items?.Select((item, index) => 
                                 new XElement("E1EDP01",
                                     new XAttribute("SEGMENT", "1"),
                                     new XElement("POSEX", (index + 1).ToString("D6")), // Position number
-                                    new XElement("MENGE", item.Aantal.ToString()), // Quantity
+                                    new XElement("MENGE", item.Quantity.ToString()), // Quantity
                                     new XElement("MENEE", "ST"), // Unit: Stuks
                                     new XElement("WERKS", "1000"), // Plant
                                     new XElement("LPRIO", "02"), // Delivery priority
                                     
-                                    // E1EDP19: Item object identification (ISBN)
+                                    // E1EDP19: Item object identification (Book ID as material)
                                     new XElement("E1EDP19",
                                         new XAttribute("SEGMENT", "1"),
                                         new XElement("QUALF", "001"), // Qualifier: Material number
-                                        new XElement("IDTNR", item.Book?.ISBN ?? "UNKNOWN"),
-                                        new XElement("KTEXT", item.Book?.Titel ?? "Unknown Book")
+                                        new XElement("IDTNR", item.BookId.ToString("D10")),
+                                        new XElement("KTEXT", item.BookTitle ?? "Unknown Book")
                                     ),
                                     
                                     // E1EDP26: Item price
                                     new XElement("E1EDP26",
                                         new XAttribute("SEGMENT", "1"),
                                         new XElement("QUALF", "003"), // Qualifier: Net price
-                                        new XElement("BETRG", (item.Book?.Prijs ?? 0).ToString("F2")),
-                                        new XElement("KRATE", item.Aantal.ToString()),
+                                        new XElement("BETRG", item.UnitPrice.ToString("F2")),
+                                        new XElement("KRATE", item.Quantity.ToString()),
                                         new XElement("WAERS", "EUR")
                                     )
                                 )
@@ -234,7 +234,7 @@ namespace BestelAppBoeken.Infrastructure.Services
                         new XElement("E1EDS01",
                             new XAttribute("SEGMENT", "1"),
                             new XElement("SUMID", "001"),
-                            new XElement("SUMME", order.TotaalBedrag.ToString("F2")),
+                            new XElement("SUMME", order.TotalAmount.ToString("F2")),
                             new XElement("SUNIT", "EUR")
                         )
                     )
