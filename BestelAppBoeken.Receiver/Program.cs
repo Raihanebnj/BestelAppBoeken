@@ -4,8 +4,9 @@ using BestelAppBoeken.Receiver.Services;
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddHttpClient<SalesforceClient>();
+builder.Services.AddSingleton<SalesforceClient>(); 
 builder.Services.AddHostedService<Worker>();
-builder.Services.AddSingleton<SalesforceClient>(); // Register as singleton or transient for worker to use
+builder.Services.AddHostedService<SalesforcePollingService>();
 
 var host = builder.Build();
 host.Run();
