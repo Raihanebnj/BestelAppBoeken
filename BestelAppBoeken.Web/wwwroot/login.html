@@ -202,6 +202,12 @@
       border-left: 4px solid var(--danger);
     }
 
+    .success {
+      background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+      color: #22543d;
+      border-left: 4px solid #38a169;
+    }
+
     .security-note {
       margin-top: 25px;
       padding: 15px;
@@ -216,6 +222,17 @@
     .security-note i {
       color: var(--primary);
       margin-right: 5px;
+    }
+
+    /* Shake animation */
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
     }
 
     @media (max-width: 768px) {
@@ -289,7 +306,7 @@
           <label for="username">
             <i class="fas fa-user"></i> Gebruikersnaam
           </label>
-          <input type="text" id="username" placeholder="Voer gebruikersnaam in" required>
+          <input type="text" id="username" placeholder="Voer gebruikersnaam in" required value="admin">
         </div>
 
         <div class="form-group">
@@ -297,7 +314,7 @@
             <i class="fas fa-lock"></i> Wachtwoord
           </label>
           <div class="password-input">
-            <input type="password" id="password" placeholder="Voer wachtwoord in" required>
+            <input type="password" id="password" placeholder="Voer wachtwoord in" required value="admin123">
             <button type="button" class="toggle-password" id="toggle-password">
               <i class="fas fa-eye"></i>
             </button>
@@ -322,6 +339,10 @@
 </div>
 
 <script>
+  // Debug: toon localStorage status
+  console.log('Login page loaded');
+  console.log('Current localStorage adminLoggedIn:', localStorage.getItem('adminLoggedIn'));
+
   // Toggle password visibility
   const togglePassword = document.getElementById('toggle-password');
   const passwordInput = document.getElementById('password');
@@ -338,7 +359,7 @@
   document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const username = document.getElementById('username').value;
+    const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
 
     // Eenvoudige validatie - in productie gebruik je een backend
@@ -347,12 +368,20 @@
       'admin': 'admin123',
       'beheerder': 'boekhandel2024',
       'supervisor': 'EHB123!',
-      // Je kunt hier meer gebruikers toevoegen
     };
 
     if (validCredentials[username] && validCredentials[username] === password) {
-      // Succesvol ingelogd - redirect naar admin pagina
+      // SUCCESVOL INGELOGD
+      console.log('Login successful for user:', username);
+
+      // Zet localStorage items - BELANGRIJK: als string 'true'
+      localStorage.setItem('adminLoggedIn', 'true');  // Als STRING
+      localStorage.setItem('adminUser', username);
+      localStorage.setItem('loginTime', new Date().getTime());
+
       errorMessage.style.display = 'none';
+      errorMessage.className = 'message success';
+      errorText.textContent = 'Inloggen succesvol! Doorsturen...';
 
       // Toon laadbericht
       const submitBtn = this.querySelector('button[type="submit"]');
@@ -360,52 +389,58 @@
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inloggen...';
       submitBtn.disabled = true;
 
-      // Simuleer een korte vertraging voor UX
+      // Debug: toon wat we hebben opgeslagen
+      console.log('Set localStorage adminLoggedIn to:', localStorage.getItem('adminLoggedIn'));
+      console.log('Type:', typeof localStorage.getItem('adminLoggedIn'));
+
+      // Simuleer een korte vertraging voor UX, dan redirect
       setTimeout(() => {
+        console.log('Redirecting to admin.html...');
         window.location.href = 'admin.html';
-      }, 1000);
+      }, 1500);
+
+      return true;
     } else {
-      // Toon foutmelding
+      // FOUT - Toon foutmelding
+      console.log('Login failed for user:', username);
       errorText.textContent = 'Ongeldige gebruikersnaam of wachtwoord';
+      errorMessage.className = 'message error';
       errorMessage.style.display = 'flex';
 
       // Voeg shake animatie toe
       this.classList.add('shake');
       setTimeout(() => this.classList.remove('shake'), 500);
 
-      // Voeg CSS voor shake animatie
-      if (!document.querySelector('#shake-style')) {
-        const style = document.createElement('style');
-        style.id = 'shake-style';
-        style.textContent = `
-                        .shake {
-                            animation: shake 0.5s ease-in-out;
-                        }
-                        @keyframes shake {
-                            0%, 100% { transform: translateX(0); }
-                            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                            20%, 40%, 60%, 80% { transform: translateX(5px); }
-                        }
-                    `;
-        document.head.appendChild(style);
-      }
+      return false;
     }
   });
 
-  // Auto-focus op gebruikersnaam veld
-  document.getElementById('username').focus();
+  // Auto-focus op wachtwoord veld als gebruikersnaam al ingevuld is
+  if (document.getElementById('username').value) {
+    document.getElementById('password').focus();
+  } else {
+    document.getElementById('username').focus();
+  }
 
   // Enter key navigatie
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       const activeElement = document.activeElement;
       if (activeElement.tagName === 'INPUT') {
-        if (activeElement.id === 'password') {
+        if (activeElement.id === 'password' || activeElement.id === 'username') {
           document.getElementById('login-form').requestSubmit();
         }
       }
     }
   });
+
+  // Test login via URL parameter (voor debug)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('debug') && urlParams.get('debug') === 'login') {
+    console.log('Debug mode: auto-filling form');
+    document.getElementById('username').value = 'admin';
+    document.getElementById('password').value = 'admin123';
+  }
 
 </script>
 </body>
