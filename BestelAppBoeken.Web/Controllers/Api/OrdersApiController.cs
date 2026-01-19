@@ -185,16 +185,9 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 // Opslaan in database
                 var savedOrder = _orderService.CreateOrder(order);
 
-                // 1. Publish to RabbitMQ
-                try
-                {
-                    await _messageQueue.PublishOrderAsync(savedOrder);
-                    _logger.LogInformation("Order {OrderId} gepubliceerd naar RabbitMQ", savedOrder.Id);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Fout bij publiceren order {OrderId} naar RabbitMQ", savedOrder.Id);
-                }
+                // 1. Publish to RabbitMQ (Handled by SalesforceService for now, or redundant)
+                // Removed to fix double-order bug
+
 
                 // 2. Sync to Salesforce (Async)
                 try

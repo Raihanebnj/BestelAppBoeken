@@ -32,6 +32,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 
 // ? Database Backup Service (nieuw toegevoegd)
 builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
+builder.Services.AddHostedService<BestelAppBoeken.Web.Services.OrderUpdateConsumer>();
 
 var app = builder.Build();
 
