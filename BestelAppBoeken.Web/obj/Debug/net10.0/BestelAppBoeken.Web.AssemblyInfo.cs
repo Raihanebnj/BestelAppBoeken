@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BestelAppBoeken.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b7f98a0649c6499b96037bcd855e24329c3c886b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff85d794196ba4de8ac3e20d7db8b6d0c76158fb")]
 [assembly: System.Reflection.AssemblyProductAttribute("BestelAppBoeken.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BestelAppBoeken.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
