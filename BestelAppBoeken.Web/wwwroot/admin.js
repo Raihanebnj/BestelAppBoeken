@@ -9,6 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loadBooks();
     setupForm();
     updateStatistics();
+    
+    // Load backups if on admin page
+    if (document.getElementById('backup-list-container')) {
+        loadBackups();
+    }
 });
 
 // Setup form
@@ -247,74 +252,119 @@ function closeModal() {
     document.getElementById('book-form').reset();
 }
 
-// Database functions
-async function createBackup() {
-    try {
-        const response = await fetch(`${API_BASE}/backup/create`, {
-            method: 'POST'
-        });
-        
-        if (!response.ok) throw new Error('Backup maken mislukt');
-        
-        const result = await response.json();
-        showSuccess('? Backup succesvol gemaakt!');
-    } catch (error) {
-        console.error('Error creating backup:', error);
-        showError('Kon backup niet maken');
-    }
-}
-
-async function exportData() {
-    try {
-        showSuccess('Export wordt voorbereid...');
-        
-        // Export JSON
-        const response = await fetch(`${API_BASE}/backup/export-json`, {
-            method: 'POST'
-        });
-        
-        if (!response.ok) throw new Error('Export mislukt');
-        
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `bookstore_export_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        
-        showSuccess('? Data succesvol geëxporteerd!');
-    } catch (error) {
-        console.error('Error exporting data:', error);
-        showError('Kon data niet exporteren');
-    }
-}
-
-// Show messages
+// Show messages - Toast Notification System
 function showSuccess(message) {
-    const container = document.getElementById('message-container');
-    container.innerHTML = `
-        <div class="message success">
-            <i class="fas fa-check-circle"></i>
-            <span>${escapeHtml(message)}</span>
-        </div>
-    `;
-    setTimeout(() => container.innerHTML = '', 5000);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast(message, 'success');
 }
 
 function showError(message) {
-    const container = document.getElementById('message-container');
-    container.innerHTML = `
-        <div class="message error">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>${escapeHtml(message)}</span>
-        </div>
+    showToast(message, 'error');
+}
+
+function showToast(message, type = 'success') {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        `;
+        document.body.appendChild(toastContainer);
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+    const bgColor = type === 'success' ? 
+        'linear-gradient(135deg, #48bb78, #38a169)' : 
+        'linear-gradient(135deg, #f56565, #e53e3e)';
+    
+    toast.style.cssText = `
+        background: ${bgColor};
+        color: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 300px;
+        animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 4.7s;
+        font-size: 14px;
+        font-weight: 600;
     `;
-    setTimeout(() => container.innerHTML = '', 5000);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    toast.innerHTML = `
+        <i class="fas ${icon}" style="font-size: 20px;"></i>
+        <span style="flex: 1;">${escapeHtml(message)}</span>
+        <button onclick="this.parentElement.remove()" style="
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: background 0.2s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+           onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
+    `;
+    
+    // Add CSS animations if not already added
+    if (!document.getElementById('toast-animations')) {
+        const style = document.createElement('style');
+        style.id = 'toast-animations';
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    toastContainer.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.remove();
+        }
+    }, 5000);
+}
+
+// Escape HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // ============================================
@@ -374,39 +424,16 @@ async function exportOrdersTxt() {
 }
 
 async function exportOrdersPdf() {
+    console.log('exportOrdersPdf() aangeroepen');
     try {
-        showSuccess('PDF export gestart...');
+        showSuccess('?? PDF export gestart...');
+        console.log('Opening /api/backup/export/orders/pdf');
         window.open('/api/backup/export/orders/pdf', '_blank');
-        setTimeout(() => showSuccess('PDF export compleet!'), 500);
+        setTimeout(() => showSuccess('? PDF export compleet!'), 1000);
     } catch (error) {
-        showError('Fout bij PDF export');
+        console.error('Error in exportOrdersPdf:', error);
+        showError('? Fout bij PDF export: ' + error.message);
     }
-}
-
-// Load backups on page load
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('backup-list-container')) {
-        loadBackups();
-    }
-});
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('book-modal');
-    if (event.target === modal) {
-        closeModal();
-    }
-}
-    setTimeout(() => container.innerHTML = '', 5000);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// Escape HTML
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
 }
 
 // Close modal when clicking outside

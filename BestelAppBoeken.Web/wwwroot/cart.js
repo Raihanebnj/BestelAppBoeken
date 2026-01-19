@@ -32,21 +32,48 @@ function saveCartToStorage() {
 // Load klanten for dropdown
 async function loadKlanten() {
     try {
+        console.log('🔄 [CART] Laden van klanten...');
+        console.log('API URL:', `${API_BASE}/klanten`);
+        
         const response = await fetch(`${API_BASE}/klanten`);
+        console.log('Response status:', response.status);
+        console.log('Response OK:', response.ok);
+        
         if (!response.ok) throw new Error('Kon klanten niet laden');
         
         klanten = await response.json();
+        
+        // EXTRA DEBUG: Log de RAW response
+        console.log('📦 RAW API Response:', JSON.stringify(klanten, null, 2));
+        console.log('✓ [CART] Klanten geladen:', klanten.length, 'klanten');
+        
+        if (klanten.length > 0) {
+            console.log('📋 Eerste klant details:');
+            console.log('  - ID:', klanten[0].id, '(type:', typeof klanten[0].id, ')');
+            console.log('  - Naam:', klanten[0].naam);
+            console.log('  - Email:', klanten[0].email);
+            console.log('📋 Alle klant IDs:', klanten.map(k => `${k.id} (${typeof k.id})`));
+        }
+        
         updateKlantDropdown();
     } catch (error) {
-        console.error('Error loading klanten:', error);
-        showError('Kon klanten niet laden');
+        console.error('❌ [CART] Error loading klanten:', error);
+        showError('Kon klanten niet laden: ' + error.message);
     }
 }
 
 function updateKlantDropdown() {
     const select = document.getElementById('order-klant');
-    select.innerHTML = '<option value="">Selecteer een klant</option>' +
-        klanten.map(k => `<option value="${k.id}">${escapeHtml(k.naam)} - ${escapeHtml(k.email)}</option>`).join('');
+    console.log('📝 Updating klant dropdown, select element:', select ? 'gevonden' : 'NIET GEVONDEN');
+    console.log('Aantal klanten om toe te voegen:', klanten.length);
+    
+    select.innerHTML = '<option value="">Kies een klant om een bestelling te plaatsen</option>' +
+        klanten.map(k => {
+            console.log(`Adding klant option: ID=${k.id}, Naam=${k.naam}`);
+            return `<option value="${k.id}">${escapeHtml(k.naam)} - ${escapeHtml(k.email)}</option>`;
+        }).join('');
+    
+    console.log('✓ Dropdown updated met', klanten.length, 'opties');
 }
 
 // Display cart items
@@ -151,10 +178,13 @@ function updateSummary() {
 
 // Place order
 async function plaatsOrder() {
+    console.log('🎬 [CART] plaatsOrder() gestart');
+    
     const klantId = document.getElementById('order-klant').value;
+    console.log('📝 Dropdown value:', klantId, '(type:', typeof klantId, ')');
 
     if (!klantId) {
-        showError('Selecteer een klant');
+        showError('Kies een klant om een bestelling te plaatsen');
         return;
     }
 
@@ -163,11 +193,40 @@ async function plaatsOrder() {
         return;
     }
 
-    const klant = klanten.find(k => k.id == klantId);
+    // SUPER DEBUG logging
+    console.log('🔍 [CART] Zoeken naar klant...');
+    console.log('Geselecteerde klantId:', klantId, 'Type:', typeof klantId);
+    console.log('Aantal klanten in array:', klanten.length);
+    console.log('📋 Alle klanten in array:');
+    klanten.forEach((k, idx) => {
+        console.log(`  [${idx}] ID: ${k.id} (${typeof k.id}), Naam: ${k.naam}, Email: ${k.email}`);
+    });
+
+    // TRY MULTIPLE WAYS TO FIND THE CUSTOMER
+    console.log('🔎 Methode 1: parseInt vergelijking...');
+    let klant = klanten.find(k => parseInt(k.id) === parseInt(klantId));
+    
     if (!klant) {
-        showError('Klant niet gevonden');
+        console.log('❌ Methode 1 faalt. Probeer Methode 2: strict equality...');
+        klant = klanten.find(k => k.id == klantId);
+    }
+    
+    if (!klant) {
+        console.log('❌ Methode 2 faalt. Probeer Methode 3: string vergelijking...');
+        klant = klanten.find(k => String(k.id) === String(klantId));
+    }
+    
+    if (!klant) {
+        console.error('💥 [CART] ALLE METHODES GEFAALD! Klant niet gevonden!');
+        console.error('Gezocht naar ID:', klantId, '(type:', typeof klantId, ')');
+        console.error('Beschikbare klanten:', JSON.stringify(klanten, null, 2));
+        
+        showError(`Klant niet gevonden! Debug info: Gezocht ID=${klantId} (type=${typeof klantId}), Aantal klanten=${klanten.length}. Check de browser console voor details.`);
         return;
     }
+    
+    console.log('✅ [CART] Klant gevonden!');
+    console.log('📋 Klant details:', JSON.stringify(klant, null, 2));
 
     const orderData = {
         customerName: klant.naam,

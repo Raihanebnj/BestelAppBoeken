@@ -188,13 +188,19 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 // ============================================
 
 async function loadKlanten() {
-    try {
-        // Echte API call naar backend
-        klanten = await apiCall('/klanten');
+try {
+    // Echte API call naar backend
+    console.log('🔄 [INDEX] Laden van klanten...');
+    klanten = await apiCall('/klanten');
 
-        displayKlanten();
-        updateKlantDropdown();
-        updateQuickStats();
+    console.log('✓ [INDEX] Klanten geladen:', klanten.length, 'klanten');
+    if (klanten.length > 0) {
+        console.log('Eerste klant:', klanten[0]);
+    }
+
+    displayKlanten();
+    updateKlantDropdown();
+    updateQuickStats();
         
         // Check if elements exist before updating
         const klantenLoading = document.getElementById('klanten-loading');
@@ -258,7 +264,7 @@ function updateKlantDropdown() {
     
     console.log(`Updating klant dropdown met ${klanten.length} klanten`);
     
-    select.innerHTML = '<option value="">Selecteer een klant</option>' +
+    select.innerHTML = '<option value="">Kies een klant om een bestelling te plaatsen</option>' +
         klanten.map(k => `<option value="${k.id}">${escapeHtml(k.naam)} - ${escapeHtml(k.email)}</option>`).join('');
 }
 
@@ -1138,23 +1144,36 @@ function displayOrders() {
 }
 
 async function plaatsOrder() {
-    const klantId = parseInt(document.getElementById('order-klant').value);
+const klantId = parseInt(document.getElementById('order-klant').value);
 
-    if (!klantId || isNaN(klantId)) {
-        showError('Selecteer een klant');
-        return;
-    }
+if (!klantId || isNaN(klantId)) {
+    showError('Selecteer een klant');
+    return;
+}
 
-    if (winkelmandje.length === 0) {
-        showError('Winkelmandje is leeg');
-        return;
-    }
+if (winkelmandje.length === 0) {
+    showError('Winkelmandje is leeg');
+    return;
+}
 
-    const klant = klanten.find(k => k.id === klantId);
-    if (!klant) {
-        showError('Klant niet gevonden');
-        return;
-    }
+// Debug logging
+console.log('🔍 [INDEX] Zoeken naar klant...');
+console.log('Geselecteerde klantId:', klantId, 'Type:', typeof klantId);
+console.log('Aantal klanten geladen:', klanten.length);
+console.log('Klanten IDs:', klanten.map(k => ({ id: k.id, type: typeof k.id, naam: k.naam })));
+
+// Convert both to numbers for comparison
+const klant = klanten.find(k => parseInt(k.id) === parseInt(klantId));
+    
+if (!klant) {
+    console.error('❌ [INDEX] Klant niet gevonden!');
+    console.error('Gezocht naar ID:', klantId);
+    console.error('Beschikbare klanten:', klanten);
+    showError('Klant niet gevonden. Probeer de pagina te herladen.');
+    return;
+}
+    
+console.log('✓ [INDEX] Klant gevonden:', klant);
 
     const orderData = {
         klantId: klantId,
