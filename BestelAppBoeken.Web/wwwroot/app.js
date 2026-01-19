@@ -10,22 +10,104 @@ let orders = [];
 
 // Check of we op de juiste pagina zijn (index.html dashboard)
 const isDashboardPage = () => {
-    return document.getElementById('klanten-body') !== null;
+    return document.getElementById('bestellingen-body') !== null;
 };
+
+// Load cart from localStorage
+function loadCartFromStorage() {
+    const stored = localStorage.getItem('winkelmandje');
+    if (stored) {
+        try {
+            winkelmandje = JSON.parse(stored);
+        } catch (e) {
+            console.error('Error loading cart:', e);
+            winkelmandje = [];
+        }
+    }
+}
+
+// Save cart to localStorage
+function saveCartToStorage() {
+    localStorage.setItem('winkelmandje', JSON.stringify(winkelmandje));
+    updateCartCounter();
+}
+
+// Update cart counter in navigation
+function updateCartCounter() {
+    const cartCount = document.getElementById('cart-count');
+    const cartItemCount = document.getElementById('cart-item-count');
+    const total = winkelmandje.reduce((sum, item) => sum + item.aantal, 0);
+    
+    if (cartCount) {
+        if (total > 0) {
+            cartCount.textContent = total;
+            cartCount.style.display = 'flex';
+        } else {
+            cartCount.style.display = 'none';
+        }
+    }
+    
+    if (cartItemCount) {
+        cartItemCount.textContent = `${total} item${total !== 1 ? 's' : ''}`;
+    }
+    
+    updateCartSummary();
+}
+
+// Update cart summary on main page
+function updateCartSummary() {
+    const quickView = document.getElementById('winkelmandje-quick-view');
+    if (!quickView) return;
+    
+    if (winkelmandje.length === 0) {
+        quickView.innerHTML = `
+            <p style="color: #999; text-align: center; padding: 20px;">
+                <i class="fas fa-shopping-cart" style="font-size: 24px; opacity: 0.5; display: block; margin-bottom: 10px;"></i>
+                Geen items in winkelmandje
+            </p>
+        `;
+        return;
+    }
+    
+    const total = winkelmandje.reduce((sum, item) => sum + (item.prijs * item.aantal), 0);
+    const itemCount = winkelmandje.reduce((sum, item) => sum + item.aantal, 0);
+    
+    quickView.innerHTML = `
+        <div style="background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <strong><i class="fas fa-shopping-bag"></i> Aantal items:</strong>
+                <span>${itemCount}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 18px; color: var(--success); font-weight: 700;">
+                <strong><i class="fas fa-euro-sign"></i> Totaal:</strong>
+                <span>EUR ${total.toFixed(2)}</span>
+            </div>
+        </div>
+        <div style="font-size: 12px; color: var(--gray);">
+            ${winkelmandje.slice(0, 3).map(item => 
+                `• ${escapeHtml(item.titel)} (${item.aantal}x)`
+            ).join('<br>')}
+            ${winkelmandje.length > 3 ? `<br>... en ${winkelmandje.length - 3} meer` : ''}
+        </div>
+    `;
+}
 
 // Initialisatie bij laden van de pagina
 document.addEventListener('DOMContentLoaded', () => {
     // Alleen uitvoeren als we op het dashboard zijn
     if (isDashboardPage()) {
-        console.log('?? Dashboard gedetecteerd - app.js wordt geïnitialiseerd');
+        console.log('📚 Dashboard gedetecteerd - app.js wordt geïnitialiseerd');
+        loadCartFromStorage();
+        updateCartCounter();
         loadKlanten();
         loadBoeken();
+        loadBoekenMenu(); // Load boeken menu voor snelle bestelling
         loadOrders();
-        loadBackups(); // ? Load backups on startup
+        loadBackups(); // 🔄 Load backups on startup
         setupForms();
         setupTableScrollIndicators();
     } else {
-        console.log('?? Geen dashboard pagina - app.js wordt niet geladen');
+        console.log('❌ Geen dashboard pagina - app.js wordt niet geladen');
     }
 });
 
@@ -112,18 +194,37 @@ async function loadKlanten() {
 
         displayKlanten();
         updateKlantDropdown();
-        document.getElementById('klanten-loading').style.display = 'none';
-        document.getElementById('klanten-tabel').style.display = 'table';
+        updateQuickStats();
+        
+        // Check if elements exist before updating
+        const klantenLoading = document.getElementById('klanten-loading');
+        const klantenTabel = document.getElementById('klanten-tabel');
+        
+        if (klantenLoading) {
+            klantenLoading.style.display = 'none';
+        }
+        if (klantenTabel) {
+            klantenTabel.style.display = 'table';
+        }
+        
         updateHeaderStats();
     } catch (error) {
         console.error('Fout bij laden klanten:', error);
-        document.getElementById('klanten-loading').innerHTML =
-            '<div class="error">Kon klanten niet laden. Probeer later opnieuw.</div>';
+        const klantenLoading = document.getElementById('klanten-loading');
+        if (klantenLoading) {
+            klantenLoading.innerHTML = '<div class="error">Kon klanten niet laden. Probeer later opnieuw.</div>';
+        }
     }
 }
 
 function displayKlanten(klantenLijst = klanten) {
     const tbody = document.getElementById('klanten-body');
+    
+    // Only display if element exists (not on index page)
+    if (!tbody) {
+        console.log('Klanten tabel niet gevonden - wordt overgeslagen (normaal op index page)');
+        return;
+    }
 
     if (klantenLijst.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #999;">Geen klanten gevonden</td></tr>';
@@ -149,6 +250,14 @@ function displayKlanten(klantenLijst = klanten) {
 
 function updateKlantDropdown() {
     const select = document.getElementById('order-klant');
+    
+    if (!select) {
+        console.log('Klant dropdown niet gevonden - wordt overgeslagen');
+        return;
+    }
+    
+    console.log(`Updating klant dropdown met ${klanten.length} klanten`);
+    
     select.innerHTML = '<option value="">Selecteer een klant</option>' +
         klanten.map(k => `<option value="${k.id}">${escapeHtml(k.naam)} - ${escapeHtml(k.email)}</option>`).join('');
 }
@@ -225,6 +334,17 @@ function closeKlantModal() {
     document.getElementById('klant-modal').style.display = 'none';
 }
 
+// Open Quick Klant Modal (from winkelmandje)
+function openQuickKlantModal() {
+    document.getElementById('klant-modal-title').innerHTML = '<i class="fas fa-user-plus"></i> Nieuwe Klant Aanmaken';
+    document.getElementById('klant-modal-form').reset();
+    document.getElementById('modal-klant-id').value = '';
+    document.getElementById('klant-modal').style.display = 'block';
+    
+    // Show helpful message
+    showSuccess('💡 Vul de klantgegevens in. Na opslaan wordt de klant automatisch geselecteerd!');
+}
+
 async function submitKlantModalForm(e) {
     e.preventDefault();
 
@@ -237,16 +357,40 @@ async function submitKlantModalForm(e) {
     };
 
     try {
+        let newKlantId = null;
+        
         if (id) {
             await apiCall(`/klanten/${id}`, 'PUT', klantData);
-            showSuccess('Klant succesvol bijgewerkt');
+            showSuccess('✓ Klant succesvol bijgewerkt');
+            newKlantId = parseInt(id);
         } else {
-            await apiCall('/klanten', 'POST', klantData);
-            showSuccess('Klant succesvol toegevoegd');
+            const result = await apiCall('/klanten', 'POST', klantData);
+            showSuccess(`✓ Klant "${klantData.naam}" succesvol toegevoegd!`);
+            newKlantId = result.id;
         }
 
         closeKlantModal();
-        loadKlanten();
+        await loadKlanten(); // Reload klanten list
+        
+        // Auto-select the new/updated customer in dropdown
+        if (newKlantId) {
+            const orderKlantSelect = document.getElementById('order-klant');
+            if (orderKlantSelect) {
+                orderKlantSelect.value = newKlantId;
+                
+                // Visual feedback
+                orderKlantSelect.style.borderColor = 'var(--success)';
+                orderKlantSelect.style.boxShadow = '0 0 0 3px rgba(72, 187, 120, 0.2)';
+                
+                setTimeout(() => {
+                    orderKlantSelect.style.borderColor = '';
+                    orderKlantSelect.style.boxShadow = '';
+                }, 2000);
+                
+                // Show confirmation
+                showSuccess(`🎉 Klant "${klantData.naam}" is nu geselecteerd! Voeg boeken toe aan je winkelmandje.`);
+            }
+        }
     } catch (error) {
         console.error('Fout bij opslaan klant:', error);
     }
@@ -273,18 +417,38 @@ async function loadBoeken() {
 
         displayBoeken();
         updateBoekDropdown();
-        document.getElementById('boeken-loading').style.display = 'none';
-        document.getElementById('boeken-tabel').style.display = 'table';
+        loadBoekenMenu(); // Load boeken menu cards
+        updateQuickStats(); // Update quick stats cards
+        
+        // Check if elements exist before updating
+        const boekenLoading = document.getElementById('boeken-loading');
+        const boekenTabel = document.getElementById('boeken-tabel');
+        
+        if (boekenLoading) {
+            boekenLoading.style.display = 'none';
+        }
+        if (boekenTabel) {
+            boekenTabel.style.display = 'table';
+        }
+        
         updateHeaderStats();
     } catch (error) {
         console.error('Fout bij laden boeken:', error);
-        document.getElementById('boeken-loading').innerHTML =
-            '<div class="error">Kon boeken niet laden. Probeer later opnieuw.</div>';
+        const boekenLoading = document.getElementById('boeken-loading');
+        if (boekenLoading) {
+            boekenLoading.innerHTML = '<div class="error">Kon boeken niet laden. Probeer later opnieuw.</div>';
+        }
     }
 }
 
 function displayBoeken(boekenLijst = boeken) {
     const tbody = document.getElementById('boeken-body');
+    
+    // Only display if element exists (not on index page)
+    if (!tbody) {
+        console.log('Boeken tabel niet gevonden - wordt overgeslagen (normaal op index page)');
+        return;
+    }
 
     if (boekenLijst.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #999;">Geen boeken gevonden</td></tr>';
@@ -318,6 +482,14 @@ function displayBoeken(boekenLijst = boeken) {
 
 function updateBoekDropdown() {
     const select = document.getElementById('order-boek');
+    
+    if (!select) {
+        console.log('Boek dropdown niet gevonden - wordt overgeslagen');
+        return;
+    }
+    
+    console.log(`Updating boek dropdown met ${boeken.length} boeken`);
+    
     select.innerHTML = '<option value="">Selecteer een boek</option>' +
         boeken.map(b => `
             <option value="${b.id}">
@@ -404,6 +576,442 @@ async function submitBoekModalForm(e) {
     }
 }
 
+// Load Boeken Menu (Simple grid view for quick ordering)
+async function loadBoekenMenu() {
+    try {
+        const boekenData = await apiCall('/books');
+        
+        const boekenMenu = boekenData.map(boek => ({
+            id: boek.id,
+            titel: boek.title,
+            auteur: boek.author,
+            prijs: boek.price,
+            voorraadAantal: boek.voorraadAantal,
+            isbn: boek.isbn
+        }));
+        
+        displayBoekenMenu(boekenMenu);
+        
+        const boekenLoading = document.getElementById('boeken-loading');
+        if (boekenLoading) {
+            boekenLoading.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Fout bij laden boeken menu:', error);
+        const boekenLoading = document.getElementById('boeken-loading');
+        if (boekenLoading) {
+            boekenLoading.innerHTML = '<div class="error"><i class="fas fa-exclamation-circle"></i> Kon boeken niet laden</div>';
+        }
+    }
+}
+
+function displayBoekenMenu(boekenLijst) {
+    const container = document.getElementById('boeken-menu-grid');
+    const dropdown = document.getElementById('boeken-dropdown');
+    
+    if (!container || !dropdown) {
+        console.log('Boeken menu containers niet gevonden');
+        return;
+    }
+    
+    if (boekenLijst.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 40px;">Geen boeken beschikbaar</p>';
+        dropdown.innerHTML = '<option value="">Geen boeken beschikbaar</option>';
+        return;
+    }
+    
+    // Populate Grid View (Compact Cards)
+    container.innerHTML = boekenLijst.map(boek => {
+        const stockClass = boek.voorraadAantal < 15 ? 'low' : '';
+        const stockIcon = boek.voorraadAantal < 15 ? 
+            '<i class="fas fa-exclamation-triangle"></i>' : 
+            '<i class="fas fa-check-circle"></i>';
+        
+        return `
+            <div class="boek-card-compact" onclick="selectBoekFromCard(${boek.id})" style="background: white; border: 2px solid var(--border); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s;">
+                <div style="font-weight: 700; font-size: 14px; color: var(--dark); margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(boek.titel)}</div>
+                <div style="font-size: 12px; color: var(--gray); margin-bottom: 10px;">${escapeHtml(boek.auteur)}</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div style="font-size: 20px; font-weight: 700; color: var(--success);">€${boek.prijs.toFixed(2)}</div>
+                    <div style="font-size: 11px; color: ${boek.voorraadAantal < 15 ? 'var(--danger)' : 'var(--success)'};">${stockIcon} ${boek.voorraadAantal}</div>
+                </div>
+                <button class="btn btn-primary" onclick="event.stopPropagation(); quickAddToCart(${boek.id})" style="width: 100%; padding: 8px; font-size: 13px;">
+                    <i class="fas fa-cart-plus"></i> Toevoegen
+                </button>
+            </div>
+        `;
+    }).join('');
+    
+    // Populate Dropdown
+    dropdown.innerHTML = '<option value="">-- Kies een boek --</option>' + 
+        boekenLijst.map(boek => {
+            const voorraadText = boek.voorraadAantal < 15 ? 
+                `⚠️ Laag (${boek.voorraadAantal})` : 
+                `✓ ${boek.voorraadAantal}`;
+            
+            return `<option value="${boek.id}" data-book='${JSON.stringify(boek)}'>
+                ${escapeHtml(boek.titel)} - ${escapeHtml(boek.auteur)} | €${boek.prijs.toFixed(2)} | ${voorraadText}
+            </option>`;
+        }).join('');
+    
+    // Setup dropdown change handler
+    dropdown.removeEventListener('change', handleDropdownChangeSimple);
+    dropdown.addEventListener('change', handleDropdownChangeSimple);
+}
+
+function selectBoekForOrder(boekId) {
+    // Deprecated - gebruik quickAddToCart of selectBoekFromCard
+    quickAddToCart(boekId);
+}
+
+function quickAddToCart(boekId) {
+    const boek = boeken.find(b => b.id === boekId);
+    if (!boek) return;
+    
+    // Check if already in cart
+    const bestaandItem = winkelmandje.find(item => item.id === boekId);
+    if (bestaandItem) {
+        if (bestaandItem.aantal + 1 > boek.voorraadAantal) {
+            showError(`Maximum voorraad bereikt (${boek.voorraadAantal})`);
+            return;
+        }
+        bestaandItem.aantal += 1;
+    } else {
+        winkelmandje.push({
+            id: boekId,
+            titel: boek.titel,
+            auteur: boek.auteur,
+            prijs: boek.prijs,
+            aantal: 1
+        });
+    }
+    
+    saveCartToStorage();
+    showSuccess(`✓ ${boek.titel} toegevoegd aan winkelmandje`);
+}
+
+// Toggle tussen Grid en Dropdown view
+function toggleBoekenView() {
+    const gridView = document.getElementById('boeken-menu-grid');
+    const dropdownView = document.getElementById('boeken-dropdown-view');
+    const toggleBtn = document.getElementById('toggle-view-btn');
+    
+    if (!gridView || !dropdownView) return;
+    
+    if (gridView.style.display === 'none') {
+        // Switch to Grid View
+        gridView.style.display = 'grid';
+        dropdownView.style.display = 'none';
+        toggleBtn.innerHTML = '<i class="fas fa-list"></i> Wissel Weergave';
+    } else {
+        // Switch to Dropdown View
+        gridView.style.display = 'none';
+        dropdownView.style.display = 'block';
+        toggleBtn.innerHTML = '<i class="fas fa-th"></i> Wissel Weergave';
+    }
+}
+
+// Simple dropdown handler for combined view
+function handleDropdownChangeSimple(event) {
+    const selectedOption = event.target.options[event.target.selectedIndex];
+    const previewContainer = document.getElementById('selected-book-preview');
+    
+    if (!previewContainer) return;
+    
+    if (!selectedOption.value) {
+        previewContainer.style.display = 'none';
+        return;
+    }
+    
+    try {
+        const boek = JSON.parse(selectedOption.getAttribute('data-book'));
+        displaySimpleBookPreview(boek);
+    } catch (error) {
+        console.error('Error parsing book data:', error);
+    }
+}
+
+// Display simple book preview
+function displaySimpleBookPreview(boek) {
+    const previewContainer = document.getElementById('selected-book-preview');
+    if (!previewContainer) return;
+    
+    const stockClass = boek.voorraadAantal < 15 ? 'color: var(--danger);' : 'color: var(--success);';
+    const stockIcon = boek.voorraadAantal < 15 ? 
+        '<i class="fas fa-exclamation-triangle"></i>' : 
+        '<i class="fas fa-check-circle"></i>';
+    
+    previewContainer.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div style="flex: 1; min-width: 200px;">
+                <div style="font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 5px;">${escapeHtml(boek.titel)}</div>
+                <div style="font-size: 14px; color: var(--gray); margin-bottom: 10px;">${escapeHtml(boek.auteur)}</div>
+                <div style="font-size: 13px; ${stockClass} font-weight: 600;">
+                    ${stockIcon} Voorraad: ${boek.voorraadAantal}
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 32px; font-weight: 700; color: var(--success); margin-bottom: 10px;">
+                    €${boek.prijs.toFixed(2)}
+                </div>
+                <button class="btn btn-success" onclick="quickAddToCart(${boek.id})" style="padding: 10px 20px;">
+                    <i class="fas fa-cart-plus"></i> Direct Toevoegen
+                </button>
+            </div>
+        </div>
+    `;
+    
+    previewContainer.style.display = 'block';
+}
+
+// Select book from card click
+function selectBoekFromCard(boekId) {
+    // Update aantal input
+    const aantalInput = document.getElementById('order-aantal');
+    if (aantalInput) {
+        aantalInput.value = 1;
+    }
+    
+    // Scroll to cart summary
+    const cartSummary = document.getElementById('winkelmandje-summary');
+    if (cartSummary) {
+        cartSummary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    // Add to cart immediately
+    quickAddToCart(boekId);
+}
+
+// Handle dropdown selection (OLD - keep for compatibility)
+function handleDropdownChange(event) {
+    handleDropdownChangeSimple(event);
+}
+
+// Display selected book details (OLD - keep for compatibility)
+function displaySelectedBookDetails(boek) {
+    displaySimpleBookPreview(boek);
+}
+
+// ===================================================
+// VIEW SWITCHING - Bestellen vs Overzicht
+// ===================================================
+
+// View switching functions
+function switchToBestellenView() {
+    const bestellenView = document.getElementById('bestellen-view');
+    const overzichtView = document.getElementById('overzicht-view');
+    const btnBestellen = document.getElementById('btn-bestellen-view');
+    const btnOverzicht = document.getElementById('btn-overzicht-view');
+    
+    if (!bestellenView || !overzichtView) return;
+    
+    bestellenView.style.display = 'block';
+    overzichtView.style.display = 'none';
+    
+    if (btnBestellen) {
+        btnBestellen.style.opacity = '1';
+        btnBestellen.style.transform = 'scale(1.05)';
+    }
+    if (btnOverzicht) {
+        btnOverzicht.style.opacity = '0.7';
+        btnOverzicht.style.transform = 'scale(1)';
+    }
+}
+
+function switchToOverzichtView() {
+    const bestellenView = document.getElementById('bestellen-view');
+    const overzichtView = document.getElementById('overzicht-view');
+    const btnBestellen = document.getElementById('btn-bestellen-view');
+    const btnOverzicht = document.getElementById('btn-overzicht-view');
+    
+    if (!bestellenView || !overzichtView) return;
+    
+    bestellenView.style.display = 'none';
+    overzichtView.style.display = 'block';
+    
+    if (btnOverzicht) {
+        btnOverzicht.style.opacity = '1';
+        btnOverzicht.style.transform = 'scale(1.05)';
+    }
+    if (btnBestellen) {
+        btnBestellen.style.opacity = '0.7';
+        btnBestellen.style.transform = 'scale(1)';
+    }
+}
+
+function toggleDetailView() {
+    const simpleView = document.getElementById('boeken-simple-view');
+    const detailView = document.getElementById('boeken-detail-view');
+    const toggleBtn = document.getElementById('toggle-detail-btn');
+    
+    if (!simpleView || !detailView) return;
+    
+    if (simpleView.style.display === 'none') {
+        simpleView.style.display = 'block';
+        detailView.style.display = 'none';
+        if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-th-large"></i> Details';
+    } else {
+        simpleView.style.display = 'none';
+        detailView.style.display = 'block';
+        if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-list"></i> Lijst';
+    }
+}
+
+// ===================================================
+// BOEKEN DISPLAY FUNCTIONS
+// ===================================================
+
+let boekenOverzichtData = [];
+
+// Update loadBoekenMenu to populate both views
+async function loadBoekenMenu() {
+    try {
+        const boekenData = await apiCall('/books');
+        
+        const boekenMenu = boekenData.map(boek => ({
+            id: boek.id,
+            titel: boek.title,
+            auteur: boek.author,
+            prijs: boek.price,
+            voorraadAantal: boek.voorraadAantal,
+            isbn: boek.isbn
+        }));
+        
+        boekenOverzichtData = boekenMenu;
+        
+        // Populate Bestellen view
+        displayBoekenQuickGrid(boekenMenu);
+        
+        // Populate Overzicht view
+        displayBoekenSimpleView(boekenMenu);
+        displayBoekenDetailView(boekenMenu);
+        
+        // Hide loading indicators
+        const quickLoading = document.getElementById('boeken-quick-loading');
+        const overzichtLoading = document.getElementById('boeken-overzicht-loading');
+        
+        if (quickLoading) quickLoading.style.display = 'none';
+        if (overzichtLoading) overzichtLoading.style.display = 'none';
+        
+        // Setup search
+        setupBoekenSearch();
+    } catch (error) {
+        console.error('Fout bij laden boeken menu:', error);
+    }
+}
+
+// Quick Grid for Bestellen View (compact, fast add)
+function displayBoekenQuickGrid(boekenLijst) {
+    const container = document.getElementById('boeken-quick-grid');
+    if (!container) return;
+    
+    if (boekenLijst.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px; grid-column: 1/-1;">Geen boeken beschikbaar</p>';
+        return;
+    }
+    
+    container.innerHTML = boekenLijst.map(boek => `
+        <div onclick="quickAddToCart(${boek.id})" style="background: white; border: 2px solid ${boek.voorraadAantal < 15 ? 'var(--danger)' : 'var(--border)'}; border-radius: 10px; padding: 12px; cursor: pointer; transition: all 0.2s; text-align: center;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div style="font-weight: 700; font-size: 13px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(boek.titel)}">${escapeHtml(boek.titel)}</div>
+            <div style="font-size: 11px; color: var(--gray); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(boek.auteur)}</div>
+            <div style="font-size: 18px; font-weight: 700; color: var(--success); margin-bottom: 8px;">€${boek.prijs.toFixed(2)}</div>
+            <div style="font-size: 10px; color: ${boek.voorraadAantal < 15 ? 'var(--danger)' : 'var(--success)'}; font-weight: 600;">
+                ${boek.voorraadAantal < 15 ? '⚠️' : '✓'} ${boek.voorraadAantal}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Simple List View for Overzicht
+function displayBoekenSimpleView(boekenLijst) {
+    const container = document.getElementById('boeken-list-container');
+    if (!container) return;
+    
+    if (boekenLijst.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 40px;">Geen boeken gevonden</p>';
+        return;
+    }
+    
+    container.innerHTML = boekenLijst.map(boek => {
+        const stockColor = boek.voorraadAantal < 15 ? 'var(--danger)' : 'var(--success)';
+        const stockIcon = boek.voorraadAantal < 15 ? 'fa-exclamation-triangle' : 'fa-check-circle';
+        
+        return `
+            <div style="background: white; border: 2px solid var(--border); border-radius: 10px; padding: 15px; display: flex; justify-content: space-between; align-items: center; gap: 15px; transition: all 0.3s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-weight: 700; font-size: 16px; color: var(--dark); margin-bottom: 3px;">${escapeHtml(boek.titel)}</div>
+                    <div style="font-size: 13px; color: var(--gray);">${escapeHtml(boek.auteur)}</div>
+                </div>
+                <div style="text-align: center; min-width: 80px;">
+                    <div style="font-size: 20px; font-weight: 700; color: var(--success);">€${boek.prijs.toFixed(2)}</div>
+                    <div style="font-size: 11px; color: ${stockColor};"><i class="fas ${stockIcon}"></i> ${boek.voorraadAantal}</div>
+                </div>
+                <button class="btn btn-primary" onclick="quickAddToCart(${boek.id})" style="padding: 10px 20px; white-space: nowrap;">
+                    <i class="fas fa-cart-plus"></i> Toevoegen
+                </button>
+            </div>
+        `;
+    }).join('');
+}
+
+// Detailed Card View for Overzicht
+function displayBoekenDetailView(boekenLijst) {
+    const container = document.getElementById('boeken-detail-container');
+    if (!container) return;
+    
+    if (boekenLijst.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 40px; grid-column: 1/-1;">Geen boeken gevonden</p>';
+        return;
+    }
+    
+    container.innerHTML = boekenLijst.map(boek => {
+        const stockColor = boek.voorraadAantal < 15 ? 'var(--danger)' : 'var(--success)';
+        const stockIcon = boek.voorraadAantal < 15 ? 'fa-exclamation-triangle' : 'fa-check-circle';
+        
+        return `
+            <div style="background: white; border: 2px solid var(--border); border-radius: 12px; padding: 20px; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
+                <div style="margin-bottom: 15px;">
+                    <div style="font-weight: 700; font-size: 18px; color: var(--dark); margin-bottom: 5px;">${escapeHtml(boek.titel)}</div>
+                    <div style="font-size: 14px; color: var(--gray); font-style: italic;">door ${escapeHtml(boek.auteur)}</div>
+                </div>
+                <div style="margin: 15px 0; padding: 15px; background: var(--light); border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: var(--gray); font-size: 13px;"><i class="fas fa-barcode"></i> ISBN</span>
+                        <code style="font-size: 12px;">${escapeHtml(boek.isbn)}</code>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: var(--gray); font-size: 13px;"><i class="fas fa-boxes"></i> Voorraad</span>
+                        <span style="font-size: 13px; color: ${stockColor}; font-weight: 600;"><i class="fas ${stockIcon}"></i> ${boek.voorraadAantal} stuks</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--gray); font-size: 13px;"><i class="fas fa-euro-sign"></i> Prijs</span>
+                        <span style="font-size: 20px; font-weight: 700; color: var(--success);">€${boek.prijs.toFixed(2)}</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="quickAddToCart(${boek.id})" style="width: 100%; padding: 12px; font-size: 15px;">
+                    <i class="fas fa-cart-plus"></i> Toevoegen aan Winkelmandje
+                </button>
+            </div>
+        `;
+    }).join('');
+}
+
+// Setup search functionality
+function setupBoekenSearch() {
+    const searchInput = document.getElementById('search-boeken-input');
+    if (!searchInput) return;
+    
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const filtered = boekenOverzichtData.filter(b => 
+            b.titel.toLowerCase().includes(query) ||
+            b.auteur.toLowerCase().includes(query)
+        );
+        displayBoekenSimpleView(filtered);
+        displayBoekenDetailView(filtered);
+    });
+}
+
 // ============================================
 // WINKELMANDJE - Functies
 // ============================================
@@ -430,7 +1038,7 @@ function toevoegenAanWinkelmandje() {
 
     // Check voorraad
     const huidigAantalInMandje = winkelmandje
-        .filter(item => item.boekId === boekId)
+        .filter(item => item.id === boekId)
         .reduce((sum, item) => sum + item.aantal, 0);
 
     if (huidigAantalInMandje + aantal > boek.voorraadAantal) {
@@ -439,12 +1047,12 @@ function toevoegenAanWinkelmandje() {
     }
 
     // Toevoegen aan winkelmandje
-    const bestaandItem = winkelmandje.find(item => item.boekId === boekId);
+    const bestaandItem = winkelmandje.find(item => item.id === boekId);
     if (bestaandItem) {
         bestaandItem.aantal += aantal;
     } else {
         winkelmandje.push({
-            boekId: boekId,
+            id: boekId,
             titel: boek.titel,
             auteur: boek.auteur,
             prijs: boek.prijs,
@@ -452,55 +1060,16 @@ function toevoegenAanWinkelmandje() {
         });
     }
 
-    displayWinkelmandje();
+    saveCartToStorage();
     document.getElementById('order-aantal').value = 1;
     showSuccess(`<i class="fas fa-check-circle"></i> ${boek.titel} (${aantal}x) toegevoegd aan winkelmandje`);
 }
 
-function displayWinkelmandje() {
-    const container = document.getElementById('winkelmandje-items');
+// displayWinkelmandje function removed - cart now handled on cart.html page
 
-    if (winkelmandje.length === 0) {
-        container.innerHTML = `
-            <p style="color: #999; text-align: center; padding: 20px;">
-                <i class="fas fa-shopping-cart" style="font-size: 24px; opacity: 0.5; display: block; margin-bottom: 10px;"></i>
-                Geen items in winkelmandje
-            </p>
-        `;
-        document.getElementById('totaal-bedrag').innerHTML = '<i class="fas fa-euro-sign"></i> Totaal: EUR 0.00';
-        return;
-    }
+// verwijderenUitWinkelmandje function removed - cart now handled on cart.html page
 
-    container.innerHTML = winkelmandje.map((item, index) => `
-        <div class="cart-item">
-            <div>
-                <strong>${escapeHtml(item.titel)}</strong><br>
-                <small style="color: #666;">${escapeHtml(item.auteur)}</small><br>
-                <small>EUR ${item.prijs.toFixed(2)} × ${item.aantal} = <strong>EUR ${(item.prijs * item.aantal).toFixed(2)}</strong></small>
-            </div>
-            <button class="btn btn-icon btn-verwijderen" onclick="verwijderenUitWinkelmandje(${index})" title="Verwijderen">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `).join('');
-
-    const totaal = winkelmandje.reduce((sum, item) => sum + (item.prijs * item.aantal), 0);
-    const aantalItems = winkelmandje.reduce((sum, item) => sum + item.aantal, 0);
-
-    document.getElementById('totaal-bedrag').innerHTML = `
-        <i class="fas fa-euro-sign"></i> Totaal: EUR ${totaal.toFixed(2)} 
-        <small style="font-size: 14px; font-weight: normal;">(${aantalItems} item${aantalItems !== 1 ? 's' : ''})</small>
-    `;
-}
-
-function verwijderenUitWinkelmandje(index) {
-    const item = winkelmandje[index];
-    if (confirm(`${item.titel} verwijderen uit winkelmandje?`)) {
-        winkelmandje.splice(index, 1);
-        displayWinkelmandje();
-        showSuccess('Item verwijderd uit winkelmandje');
-    }
-}
+// plaatsOrder function removed - order placement now handled on cart.html page
 
 // ============================================
 // ORDERS - Bestelling Functies
@@ -801,6 +1370,30 @@ function updateHeaderStats() {
     }, 100);
 }
 
+// Update Quick Stats Cards (on index page)
+function updateQuickStats() {
+    // Only run if on index page
+    if (!isDashboardPage()) return;
+    
+    // Update orders stat
+    const ordersStat = document.getElementById('stat-orders');
+    if (ordersStat && bestellingen) {
+        ordersStat.textContent = bestellingen.length;
+    }
+    
+    // Update klanten stat  
+    const klantenStat = document.getElementById('stat-klanten');
+    if (klantenStat && klanten) {
+        klantenStat.textContent = klanten.length;
+    }
+    
+    // Update boeken stat
+    const boekenStat = document.getElementById('stat-boeken');
+    if (boekenStat && boeken) {
+        boekenStat.textContent = boeken.length;
+    }
+}
+
 // ============================================
 // DATABASE BACKUP FUNCTIES
 // ============================================
@@ -956,6 +1549,22 @@ async function exportOrdersTxt() {
         }, 500);
     } catch (error) {
         showError('Fout bij exporteren naar TXT: ' + error.message);
+    }
+}
+
+async function exportOrdersPdf() {
+    try {
+        showSuccess('?? Bestellingen worden geëxporteerd naar PDF...');
+
+        // Direct download trigger
+        const exportUrl = '/api/backup/export/orders/pdf';
+        window.open(exportUrl, '_blank');
+
+        setTimeout(() => {
+            showSuccess('? PDF export gestart! Controleer je downloads folder.');
+        }, 500);
+    } catch (error) {
+        showError('Fout bij exporteren naar PDF: ' + error.message);
     }
 }
 

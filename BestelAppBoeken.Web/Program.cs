@@ -29,10 +29,14 @@ builder.Services.AddScoped<ISapService, SapService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IKlantService, KlantService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
-// ? Database Backup Service (nieuw toegevoegd)
+// ?? Database Backup Service (nieuw toegevoegd)
 builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
 builder.Services.AddHostedService<BestelAppBoeken.Web.Services.OrderUpdateConsumer>();
+
+// ?? PDF Export Service
+builder.Services.AddScoped<PdfExportService>();
 
 var app = builder.Build();
 

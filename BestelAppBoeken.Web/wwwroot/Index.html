@@ -37,6 +37,7 @@
             scroll-behavior: smooth;
         }
 
+        /* Anti-Flicker: Hide body until JS is ready */
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -45,6 +46,12 @@
             color: var(--dark);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+
+        body.loaded {
+            opacity: 1;
         }
 
         .container {
@@ -110,6 +117,61 @@
             .stat-badge i {
                 color: var(--primary);
             }
+
+        /* Navigation Menu */
+        .nav-menu {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            min-height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .cart-badge {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
 
         /* Info Banner */
         .info-banner {
@@ -1115,13 +1177,153 @@
 
         /* Animations */
         .fade-in {
-            animation: fadeIn 0.5s ease-in;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        /* Prevent layout shift */
+        .loading, .card-body, .table-container {
+            min-height: 100px;
+            will-change: contents;
+        }
+
+        /* Smooth content loading */
+        [style*="display: none"] {
+            transition: opacity 0.2s ease-in-out;
         }
 
         /* Number Input */
         .aantal-selector {
             width: 100px;
             margin-left: 0;
+        }
+
+        /* Boeken Menu Cards */
+        .boek-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .boek-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .boek-card-header {
+            margin-bottom: 15px;
+        }
+
+        .boek-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .boek-card-author {
+            font-size: 14px;
+            color: var(--gray);
+            font-style: italic;
+        }
+
+        .boek-card-body {
+            margin: 15px 0;
+        }
+
+        .boek-card-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+
+        .boek-card-stock {
+            font-size: 13px;
+            color: var(--gray);
+            padding: 8px;
+            background: var(--light);
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .boek-card-stock.low {
+            background: #fed7d7;
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .boek-card-footer {
+            margin-top: 15px;
+        }
+
+        .boek-card-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Selected Book Details (Dropdown View) */
+        #selected-book-details {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .book-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: var(--light);
+            border-radius: 8px;
+        }
+
+        .book-detail-label {
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .book-detail-value {
+            font-size: 16px;
+            color: var(--dark);
+        }
+
+        .book-detail-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .book-detail-stock-ok {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .book-detail-stock-low {
+            color: var(--danger);
+            font-weight: 700;
         }
     </style>
 </head>
@@ -1156,39 +1358,80 @@
             </div>
         </div>
 
+        <!-- Navigation Menu -->
+        <div class="nav-menu fade-in">
+            <a href="orders.html" class="nav-btn">
+                <i class="fas fa-clipboard-list"></i> Alle Bestellingen
+            </a>
+            <a href="books.html" class="nav-btn">
+                <i class="fas fa-book-open"></i> Boeken Catalogus
+            </a>
+            <a href="customers.html" class="nav-btn">
+                <i class="fas fa-users"></i> Klantenbeheer
+            </a>
+            <a href="admin.html" class="nav-btn" style="background: linear-gradient(135deg, var(--warning), var(--danger));">
+                <i class="fas fa-user-shield"></i> Admin Panel
+            </a>
+            <a href="cart.html" class="nav-btn cart-badge">
+                <i class="fas fa-shopping-cart"></i> Winkelmandje
+                <span class="cart-count" id="cart-count" style="display:none;">0</span>
+            </a>
+        </div>
+
         <!-- Info Banner -->
         <div class="info-banner fade-in">
             <i class="fas fa-info-circle"></i>
             <div class="info-banner-content">
-                <h3><i class="fas fa-bullseye"></i> Doel van dit Dashboard</h3>
-                <p>Als verkoper kun je hier snel orders plaatsen voor klanten. Alle gegevens worden via RabbitMQ naar Salesforce en via SAP iDoc naar SAP R/3 gestuurd. Beheer klanten, boeken en bekijk alle bestellingen op een centrale plek.</p>
+                <h3><i class="fas fa-bullseye"></i> Snel Bestellen Dashboard</h3>
+                <p>Plaats snel orders voor klanten. Gegevens worden automatisch gesynchroniseerd met RabbitMQ, Salesforce en SAP R/3.</p>
             </div>
         </div>
 
         <div id="message-container"></div>
 
-        <!-- Bestellingen Sectie -->
+        <!-- Quick Stats -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
+                <i class="fas fa-shopping-cart" style="font-size: 32px; color: var(--primary); margin-bottom: 10px;"></i>
+                <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-orders">0</div>
+                <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Orders</div>
+            </div>
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
+                <i class="fas fa-users" style="font-size: 32px; color: var(--success); margin-bottom: 10px;"></i>
+                <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-klanten">0</div>
+                <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Klanten</div>
+            </div>
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
+                <i class="fas fa-book-open" style="font-size: 32px; color: var(--info); margin-bottom: 10px;"></i>
+                <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-boeken">0</div>
+                <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Boeken</div>
+            </div>
+        </div>
+
+        <!-- Recente Bestellingen Sectie (Compact) -->
         <section id="bestellingen-sectie" class="card fade-in">
             <div class="card-header">
                 <div class="card-title">
                     <i class="fas fa-clipboard-list"></i>
-                    Bestellingen
+                    Laatste 5 Bestellingen
                 </div>
+                <a href="orders.html" class="btn btn-primary">
+                    <i class="fas fa-list"></i> Alle Bestellingen
+                </a>
             </div>
             <div class="card-body">
-                <div id="bestellingen-loading" class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Bestellingen laden
+                <div id="bestellingen-loading" class="loading" style="padding: 20px;">
+                    <i class="fas fa-spinner fa-spin"></i> Laden...
                 </div>
-                <div class="table-container">
-                    <table id="bestellingen-tabel" style="display:none;">
+                <div class="table-container" id="bestellingen-container" style="display:none;">
+                    <table id="bestellingen-tabel">
                         <thead>
                             <tr>
                                 <th><i class="fas fa-hashtag"></i> ID</th>
                                 <th><i class="fas fa-user"></i> Klant</th>
-                                <th><i class="fas fa-book"></i> Boek(en)</th>
                                 <th><i class="fas fa-calendar"></i> Datum</th>
                                 <th><i class="fas fa-euro-sign"></i> Totaal</th>
-                                <th><i class="fas fa-cog"></i> Acties</th>
+                                <th><i class="fas fa-info-circle"></i> Status</th>
                             </tr>
                         </thead>
                         <tbody id="bestellingen-body">
@@ -1198,218 +1441,125 @@
             </div>
         </section>
 
-        <!-- Klantenbeheer Sectie -->
-        <section id="klanten-sectie" class="card fade-in">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fas fa-users"></i>
-                    Klantenbeheer
-                </div>
-                <button class="btn btn-success" onclick="openNieuweKlantModal()">
-                    <i class="fas fa-plus"></i> Nieuwe Klant
-                </button>
-            </div>
-            <div class="card-body">
-                <!-- Zoekbalk -->
-                <div class="search-container">
-                    <input type="text" id="klanten-search-input" class="search-input" placeholder="Zoek op naam, email of telefoon...">
-                    <button class="btn btn-search" onclick="searchKlanten()">
-                        <i class="fas fa-search"></i> Zoeken
-                    </button>
-                    <button class="btn btn-clear" onclick="clearKlantenSearch()">
-                        <i class="fas fa-times"></i> Reset
-                    </button>
-                </div>
-                <div id="klanten-search-results" class="search-results"></div>
+        <!-- Removed Klantenbeheer section - Now on separate page (customers.html) -->
+        <!-- Removed Boeken section - Now on separate page (books.html) -->
 
-                <div id="klanten-loading" class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Klanten laden
-                </div>
-                <div class="table-container">
-                    <table id="klanten-tabel" style="display:none;">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-user"></i> Naam</th>
-                                <th><i class="fas fa-envelope"></i> Email</th>
-                                <th><i class="fas fa-phone"></i> Telefoon</th>
-                                <th><i class="fas fa-cog"></i> Acties</th>
-                            </tr>
-                        </thead>
-                        <tbody id="klanten-body">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        <!-- View Mode Selector -->
+        <div style="background: white; padding: 15px 30px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 30px; display: flex; justify-content: center; gap: 15px;">
+            <button class="btn btn-success" onclick="switchToBestellenView()" id="btn-bestellen-view" style="font-size: 16px; padding: 12px 30px;">
+                <i class="fas fa-shopping-cart"></i> Bestellen
+            </button>
+            <button class="btn btn-info" onclick="switchToOverzichtView()" id="btn-overzicht-view" style="font-size: 16px; padding: 12px 30px;">
+                <i class="fas fa-list"></i> Boeken Overzicht
+            </button>
+        </div>
 
-        <!-- Klant Details Sectie -->
-        <section id="klant-details-sectie" class="form-section fade-in">
-            <h2 style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-user-edit"></i> Klant Details
-            </h2>
-            <p style="color: var(--gray); margin-bottom: 20px; font-size: 14px;">
-                <i class="fas fa-info-circle"></i> Gebruik dit formulier om een nieuwe klant toe te voegen of bestaande klant aan te passen.
-            </p>
-            <form id="klant-form">
-                <input type="hidden" id="klant-id">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Naam</label>
-                    <input type="text" id="klant-naam" placeholder="Voer klantnaam in" required>
+        <!-- BESTELLEN VIEW -->
+        <div id="bestellen-view" style="display: block;">
+            <!-- Gecombineerde Bestel Sectie -->
+            <section id="bestel-sectie" class="card fade-in">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-shopping-cart"></i>
+                        Snel Bestellen
+                    </div>
+                    <a href="admin.html" class="btn btn-warning">
+                        <i class="fas fa-user-shield"></i> Admin Panel
+                    </a>
                 </div>
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="klant-email" placeholder="Voer klantemail in" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-phone"></i> Telefoon</label>
-                    <input type="text" id="klant-telefoon" placeholder="Voer telefoonnummer in" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> Adres</label>
-                    <input type="text" id="klant-adres" placeholder="Voer adres in" required>
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Opslaan
-                </button>
-                <button type="button" class="btn btn-clear" onclick="resetKlantForm()">
-                    <i class="fas fa-redo"></i> Nieuwe klant
-                </button>
-            </form>
-        </section>
+                <div class="card-body">
+                    <!-- Step 1: Klant Selecteren -->
+                    <div style="background: linear-gradient(135deg, #e6f3ff, #cce7ff); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--primary);">
+                        <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 18px;">
+                            <i class="fas fa-user"></i> Stap 1: Selecteer of Maak Klant
+                        </h3>
+                        <div style="display: flex; gap: 10px; align-items: stretch;">
+                            <select id="order-klant" style="flex: 1; padding: 12px; font-size: 16px; border: 2px solid var(--primary); border-radius: 10px;">
+                                <option value="">-- Kies een klant --</option>
+                            </select>
+                            <button class="btn btn-success" onclick="openQuickKlantModal()" title="Nieuwe klant aanmaken" style="padding: 12px 20px; white-space: nowrap;">
+                                <i class="fas fa-user-plus"></i> Nieuwe Klant
+                            </button>
+                        </div>
+                    </div>
 
-        <!-- Boeken Sectie -->
-        <section id="boeken-sectie" class="card fade-in">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fas fa-book-open"></i>
-                    Boeken
-                </div>
-                <button class="btn btn-success" onclick="openNieuwBoekModal()">
-                    <i class="fas fa-plus"></i> Nieuw Boek
-                </button>
-            </div>
-            <div class="card-body">
-                <!-- Zoekbalk -->
-                <div class="search-container">
-                    <input type="text" id="boeken-search-input" class="search-input" placeholder="Zoek op titel, auteur of ISBN...">
-                    <button class="btn btn-search" onclick="searchBoeken()">
-                        <i class="fas fa-search"></i> Zoeken
-                    </button>
-                    <button class="btn btn-clear" onclick="clearBoekenSearch()">
-                        <i class="fas fa-times"></i> Reset
-                    </button>
-                </div>
-                <div id="boeken-search-results" class="search-results"></div>
+                    <!-- Step 2: Snel Toevoegen -->
+                    <div style="background: linear-gradient(135deg, #e6ffe6, #ccffcc); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--success);">
+                        <h3 style="color: var(--success); margin-bottom: 15px; font-size: 18px;">
+                            <i class="fas fa-bolt"></i> Stap 2: Snel Toevoegen
+                        </h3>
+                        <div id="boeken-quick-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px;">
+                            <!-- Quick add boeken cards -->
+                        </div>
+                        <div id="boeken-quick-loading" class="loading" style="padding: 20px;">
+                            <i class="fas fa-spinner fa-spin"></i> Laden...
+                        </div>
+                    </div>
 
-                <div id="boeken-loading" class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Boeken laden
-                </div>
-                <div class="table-container">
-                    <table id="boeken-tabel" style="display:none;">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-book"></i> Titel</th>
-                                <th><i class="fas fa-pen"></i> Auteur</th>
-                                <th><i class="fas fa-euro-sign"></i> Prijs</th>
-                                <th><i class="fas fa-boxes"></i> Voorraad</th>
-                                <th><i class="fas fa-barcode"></i> ISBN</th>
-                                <th><i class="fas fa-cog"></i> Acties</th>
-                            </tr>
-                        </thead>
-                        <tbody id="boeken-body">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Bestel een boek Sectie -->
-        <section id="order-sectie" class="form-section fade-in">
-            <h2 style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-shopping-cart"></i> Bestel een boek
-            </h2>
-            <p style="color: var(--gray); margin-bottom: 20px; font-size: 14px;">
-                <i class="fas fa-info-circle"></i> Selecteer klant en boek(en), voeg toe aan winkelmandje en plaats de bestelling.
-            </p>
-            <div class="order-form">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Klant</label>
-                    <select id="order-klant" required>
-                        <option value="">Selecteer een klant</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-book"></i> Boek</label>
-                    <select id="order-boek" required>
-                        <option value="">Selecteer een boek</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-calculator"></i> Aantal</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <input type="number" id="order-aantal" value="1" min="1" class="aantal-selector">
-                    <button type="button" class="btn btn-primary" onclick="toevoegenAanWinkelmandje()">
-                        <i class="fas fa-cart-plus"></i> Toevoegen aan winkelmandje
-                    </button>
-                </div>
-            </div>
-
-            <div id="winkelmandje">
-                <h3><i class="fas fa-shopping-basket"></i> Winkelmandje</h3>
-                <div id="winkelmandje-items" class="cart-items">
-                    <p style="color: #999; text-align: center; padding: 20px;">
-                        <i class="fas fa-shopping-cart" style="font-size: 24px; opacity: 0.5; display: block; margin-bottom: 10px;"></i>
-                        Geen items in winkelmandje
-                    </p>
-                </div>
-                <div class="totaal-bedrag" id="totaal-bedrag">
-                    <i class="fas fa-euro-sign"></i> Totaal: EUR 0.00
-                </div>
-                <button type="button" class="btn btn-success" onclick="plaatsOrder()" style="width: 100%; margin-top: 10px; font-size: 16px; padding: 14px;">
-                    <i class="fas fa-check-circle"></i> Bestelling Plaatsen
-                </button>
-            </div>
-        </section>
-
-        <!-- Database Backup Sectie -->
-        <section id="backup-sectie" class="card fade-in">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fas fa-database"></i>
-                    Database Backup & Export
-                </div>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="createBackup()">
-                        <i class="fas fa-save"></i> Database Backup
-                    </button>
-                    <button class="btn btn-success" onclick="exportOrdersJson()">
-                        <i class="fas fa-file-code"></i> Export JSON
-                    </button>
-                    <button class="btn btn-info" onclick="exportOrdersTxt()">
-                        <i class="fas fa-file-alt"></i> Export TXT
-                    </button>
-                </div>
-            </div>
-            <div class="card-body">
-                <div style="background: linear-gradient(135deg, #e6fffa, #b2f5ea); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid var(--success);">
-                    <p style="margin: 0; color: var(--dark); font-size: 14px;">
-                        <i class="fas fa-info-circle"></i> <strong>Backup Opties:</strong><br>
-                        <span style="font-size: 13px; opacity: 0.9;">
-                            • <strong>Database Backup (.db)</strong>: Volledige database kopie voor herstel<br>
-                            • <strong>Export JSON (.json)</strong>: Bestellingen in machine-leesbaar formaat<br>
-                            • <strong>Export TXT (.txt)</strong>: Leesbaar rapport van alle bestellingen
-                        </span>
-                    </p>
-                </div>
-
-                <div id="backup-list-container">
-                    <div class="loading">
-                        <i class="fas fa-spinner fa-spin"></i> Backups laden...
+                    <!-- Winkelmandje Samenvatting -->
+                    <div id="winkelmandje-summary" style="background: white; padding: 20px; border-radius: 12px; border: 2px solid var(--primary); box-shadow: var(--shadow);">
+                        <h3 style="color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+                            <span><i class="fas fa-shopping-basket"></i> Winkelmandje</span>
+                            <span id="cart-item-count" style="font-size: 16px; background: var(--danger); color: white; padding: 4px 12px; border-radius: 20px;">0 items</span>
+                        </h3>
+                        <div id="winkelmandje-quick-view" style="margin: 15px 0;">
+                            <p style="color: #999; text-align: center; padding: 20px;">
+                                <i class="fas fa-shopping-cart" style="font-size: 24px; opacity: 0.5; display: block; margin-bottom: 10px;"></i>
+                                Geen items in winkelmandje
+                            </p>
+                        </div>
+                        <a href="cart.html" class="btn btn-success" style="width: 100%; margin-top: 10px; font-size: 16px; padding: 14px; justify-content: center; text-decoration: none;">
+                            <i class="fas fa-shopping-cart"></i> Ga naar Winkelmandje & Bestel
+                        </a>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
+
+        <!-- OVERZICHT VIEW -->
+        <div id="overzicht-view" style="display: none;">
+            <!-- Boeken Overzicht Sectie -->
+            <section class="card fade-in">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-book"></i>
+                        Boeken Catalogus
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-info" onclick="toggleDetailView()" id="toggle-detail-btn">
+                            <i class="fas fa-th-large"></i> Details
+                        </button>
+                        <a href="admin.html" class="btn btn-warning">
+                            <i class="fas fa-cog"></i> Beheer
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Search -->
+                    <div style="margin-bottom: 20px;">
+                        <input type="text" id="search-boeken-input" placeholder="🔍 Zoek op titel of auteur..." style="width: 100%; padding: 12px; font-size: 16px; border: 2px solid var(--border); border-radius: 10px;">
+                    </div>
+
+                    <div id="boeken-overzicht-loading" class="loading" style="padding: 20px;">
+                        <i class="fas fa-spinner fa-spin"></i> Laden...
+                    </div>
+
+                    <!-- Simple List View (Default) -->
+                    <div id="boeken-simple-view">
+                        <div id="boeken-list-container" style="display: grid; gap: 15px;">
+                            <!-- Simple cards -->
+                        </div>
+                    </div>
+
+                    <!-- Detailed View -->
+                    <div id="boeken-detail-view" style="display: none;">
+                        <div id="boeken-detail-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                            <!-- Detailed cards -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
 
         <!-- Footer -->
         <footer class="fade-in">
@@ -1525,6 +1675,7 @@
             }, 500);
         }
 
+
         // Monitor data changes
         if (typeof MutationObserver !== 'undefined') {
             const observer = new MutationObserver(updateHeaderStats);
@@ -1537,6 +1688,19 @@
                 });
             }, 1000);
         }
+
+        // ============================================
+        // ANTI-FLICKER: Show body when ready
+        // ============================================
+        window.addEventListener('DOMContentLoaded', function() {
+            // Add loaded class to prevent flicker
+            document.body.classList.add('loaded');
+        });
+
+        // Fallback: Show body after max 1 second
+        setTimeout(function() {
+            document.body.classList.add('loaded');
+        }, 1000);
     </script>
 </body>
 </html>
