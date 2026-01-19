@@ -37,22 +37,12 @@ builder.Services.AddDbContext<BookstoreDbContext>(options =>
 builder.Services.AddSingleton<IMessageQueueService, RabbitMqService>();
 builder.Services.AddScoped<ISalesforceService, SalesforceService>();
 
-// ✅ ALLEEN RABBITMQ + SALESFORCE (ACTIEF)
-// 💡 SAP iDoc INTEGRATIE (COMMENTED - BESCHIKBAAR VOOR LATER)
-/* 
- * Om SAP iDoc te enablen:
- * 1. Uncomment onderstaande code
- * 2. Voeg ISapService toe aan OrdersApiController constructor
- * 3. Uncomment SAP code in OrdersApiController.CreateOrder
- * 4. Update appsettings.json met SAP credentials
- */
-
-// SAP Service met HttpClient voor iDoc verzending (COMMENTED)
-// builder.Services.AddHttpClient<ISapService, SapService>(client =>
-// {
-//     client.Timeout = TimeSpan.FromSeconds(30);
-//     client.DefaultRequestHeaders.Add("User-Agent", "Bookstore-SAP-iDoc/1.0");
-// });
+// ✅ SAP iDoc Service (ACTIEF)
+builder.Services.AddHttpClient<ISapService, SapService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+    client.DefaultRequestHeaders.Add("User-Agent", "Bookstore-SAP-iDoc/1.0");
+});
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IKlantService, KlantService>();

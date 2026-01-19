@@ -12,7 +12,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
         private readonly IOrderService _orderService;
         private readonly IMessageQueueService _messageQueue;
         private readonly ISalesforceService _salesforceService;
-        // ❌ SAP iDoc VERWIJDERD - Alleen RabbitMQ en Salesforce
+        private readonly ISapService _sapService; // ✅ SAP iDoc Service (ACTIEF)
         private readonly IKlantService _klantService;
         private readonly IBookService _bookService;
         private readonly IEmailService _emailService;
@@ -22,7 +22,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
             IOrderService orderService,
             IMessageQueueService messageQueue,
             ISalesforceService salesforceService,
-            // ❌ ISapService VERWIJDERD
+            ISapService sapService, // ✅ SAP iDoc Service (ACTIEF)
             IKlantService klantService,
             IBookService bookService,
             IEmailService emailService,
@@ -31,7 +31,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
             _orderService = orderService;
             _messageQueue = messageQueue;
             _salesforceService = salesforceService;
-            // ❌ _sapService VERWIJDERD
+            _sapService = sapService; // ✅ SAP iDoc Service (ACTIEF)
             _klantService = klantService;
             _bookService = bookService;
             _emailService = emailService;
@@ -191,62 +191,52 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 _logger.LogInformation("✅ Order {OrderId} opgeslagen in database", savedOrder.Id);
 
                 // ============================================
-                // STAP 2: INTEGRATIE - ALLEEN RABBITMQ + SALESFORCE
+                // STAP 2: INTEGRATIE (SALESFORCE + SAP iDoc)
                 // ============================================
-                // ℹ️ SAP iDoc code is beschikbaar in SapService.cs voor toekomstig gebruik
                 string? salesforceId = null;
+                SapIDocResponse? sapResponse = null;
 
-                // RabbitMQ → Salesforce (eenzijdige communicatie)
+                // ✅ Salesforce Sync (via RabbitMQ polling)
                 try
                 {
                     await _salesforceService.SyncOrderAsync(savedOrder);
-                    _logger.LogInformation("📨 [RabbitMQ] Order {OrderId} gepubliceerd naar queue 'salesforce_orders'", savedOrder.Id);
+                    _logger.LogInformation("📨 [Salesforce] Order {OrderId} sync gestart", savedOrder.Id);
                     
                     // Simuleer Salesforce ID (in productie komt dit van Salesforce)
                     salesforceId = $"SF-{DateTime.Now:yyyyMMddHHmmss}-{savedOrder.Id}";
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "⚠️ [RabbitMQ] Fout bij publiceren naar Salesforce queue");
+                    _logger.LogWarning(ex, "⚠️ [Salesforce] Fout bij sync");
                 }
 
-                /* ============================================
-                 * 🔒 SAP iDoc INTEGRATIE - DISABLED (BESCHIKBAAR VOOR LATER)
-                 * ============================================
-                 * 
-                 * Om SAP iDoc te enablen:
-                 * 1. Uncomment onderstaande code
-                 * 2. Voeg ISapService toe aan constructor
-                 * 3. Update IntegrationStatusInfo in response
-                 * 
-                 * Code:
-                 * 
-                 * var sapTask = Task.Run(async () =>
-                 * {
-                 *     try
-                 *     {
-                 *         _logger.LogInformation("🔄 [SAP iDoc] START - Transformeren Order {OrderId}", savedOrder.Id);
-                 *         var response = await _sapService.SendOrderIDocAsync(savedOrder);
-                 *         _logger.LogInformation("✅ [SAP iDoc] SUCCESS - IDoc {IDocNumber}", response.IDocNumber);
-                 *         return response;
-                 *     }
-                 *     catch (Exception ex)
-                 *     {
-                 *         _logger.LogError(ex, "❌ [SAP iDoc] FOUT bij verzenden");
-                 *         return new SapIDocResponse
-                 *         {
-                 *             IDocNumber = "ERROR",
-                 *             Status = SapIDocStatus.Error,
-                 *             StatusDescription = "SAP integratie gefaald: " + ex.Message,
-                 *             Timestamp = DateTime.UtcNow
-                 *         };
-                 *     }
-                 * });
-                 * 
-                 * await Task.WhenAll(rabbitMqTask, sapTask);
-                 * sapResponse = sapTask.Result;
-                 * 
-                 * ============================================ */
+                // ✅ SAP iDoc verzenden (tweezijdige communicatie: Request-Response)
+                try
+                {
+                    _logger.LogInformation("📤 [SAP iDoc] START - Transformeren Order {OrderId} naar ORDERS05 XML", savedOrder.Id);
+                    
+                    sapResponse = await _sapService.SendOrderIDocAsync(savedOrder);
+                    
+                    _logger.LogInformation(
+                        "✅ [SAP iDoc] SUCCESS - IDoc {IDocNumber} | Status: {Status} | {Description}",
+                        sapResponse.IDocNumber,
+                        (int)sapResponse.Status,
+                        sapResponse.StatusDescription
+                    );
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "❌ [SAP iDoc] FOUT bij verzenden naar SAP R/3");
+                    
+                    // Return error response
+                    sapResponse = new SapIDocResponse
+                    {
+                        IDocNumber = "ERROR",
+                        Status = SapIDocStatus.Error,
+                        StatusDescription = "SAP integratie gefaald: " + ex.Message,
+                        Timestamp = DateTime.UtcNow
+                    };
+                }
 
                 // 3. Send confirmation email (Async, niet blokkerend)
                 _ = Task.Run(async () =>
@@ -268,7 +258,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 });
 
                 // ============================================
-                // STAP 3: RESPONSE (ALLEEN SALESFORCE)
+                // STAP 6: GECOMBINEERDE RESPONSE (Salesforce + SAP)
                 // ============================================
                 var response = new OrderResponse
                 {
@@ -291,24 +281,25 @@ namespace BestelAppBoeken.Web.Controllers.Api
                         Prijs = i.UnitPrice
                     }).ToList(),
                     
-                    // ℹ️ Alleen Salesforce integratie status
+                    // ✅ STAP 3: Gecombineerde integratie status (Salesforce + SAP)
                     IntegrationStatus = new IntegrationStatusInfo
                     {
                         SalesforceId = salesforceId,
                         SalesforceSuccess = salesforceId != null,
-                        // SAP velden zijn null (disabled)
-                        SapIDocNumber = null,
-                        SapStatus = null,
-                        SapStatusDescription = "SAP disabled - code beschikbaar in SapService.cs",
-                        SapSuccess = false,
+                        SapIDocNumber = sapResponse?.IDocNumber,
+                        SapStatus = (int?)sapResponse?.Status,
+                        SapStatusDescription = sapResponse?.StatusDescription,
+                        SapSuccess = sapResponse?.Status == SapIDocStatus.Success,
                         Timestamp = DateTime.UtcNow
                     }
                 };
 
                 _logger.LogInformation(
-                    "🎉 [ORDER COMPLETE] Order {OrderId} | Salesforce: {SfId} | SAP: DISABLED",
+                    "🎉 [ORDER COMPLETE] Order {OrderId} | Salesforce: {SfId} | SAP IDoc: {IDocNum} (Status {SapStatus})",
                     savedOrder.Id,
-                    salesforceId ?? "N/A"
+                    salesforceId ?? "N/A",
+                    sapResponse?.IDocNumber ?? "N/A",
+                    (int?)sapResponse?.Status ?? 0
                 );
 
                 return CreatedAtAction(nameof(GetAllOrders), new { id = savedOrder.Id }, response);
@@ -320,11 +311,6 @@ namespace BestelAppBoeken.Web.Controllers.Api
             }
         }
 
-        /* ============================================
-         * 🔒 SAP iDoc PREVIEW ENDPOINT - DISABLED
-         * ============================================
-         * Om te enablen: uncomment dit endpoint en voeg ISapService toe aan constructor
-         * 
         /// <summary>
         /// [TEST] Preview SAP iDoc XML voor een bestaande order
         /// </summary>
