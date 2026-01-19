@@ -1076,16 +1076,31 @@
             // Toon bericht
             showMessage('Succesvol uitgelogd!', 'success');
 
-            // Refresh de pagina (blijf op index)
+            // ✅ Redirect naar login pagina
             setTimeout(() => {
-                window.location.reload();
-            }, 1500);
+                window.location.href = 'login.html';
+            }, 1000);
         }
     }
 
     // ============================================
     // HELPER FUNCTIONS
     // ============================================
+    function showWarning(message) {
+        console.warn('⚠️', message);
+        showMessage(message, 'error');
+    }
+    
+    function showSuccess(message) {
+        console.log('✅', message);
+        showMessage(message, 'success');
+    }
+    
+    function showError(message) {
+        console.error('❌', message);
+        showMessage(message, 'error');
+    }
+
     function showMessage(text, type) {
         const container = document.getElementById('message-container');
         const message = document.createElement('div');
@@ -1394,7 +1409,7 @@
     // ============================================
     // 🛒 BESTEL BOEK (Add to cart with BESTEL button)
     // ============================================
-    function bestelBoek(bookId, title, price, author, maxStock, currentCartQuantity) {
+    async function bestelBoek(bookId, title, price, author, maxStock, currentCartQuantity) {
         console.log('🛒 Bestel boek:', bookId, title, price);
         
         // Get quantity for this book
@@ -1451,20 +1466,22 @@
         // Get total items in cart
         const totalInCart = cart.find(item => item.boekId === bookId).aantal;
         
-        // Show success toast
-        showSuccess(`✅ ${quantity}x "${title}" toegevoegd! (Totaal: ${totalInCart}x in mandje)`);
-        
-        // 🎯 SHOW POPUP MODAL
-        showCartAddedModal(title, quantity, totalInCart);
-        
         // Reset book quantity to 1
         bookQuantities[bookId] = 1;
         
-        // Update cart counter
+        // ✅ EERST: Update cart counter
         updateCartCounter();
         
-        // Re-render to show updated cart status
-        loadBoeken();
+        // ✅ DAN: Re-render boeken lijst (toont "In mandje: Xx" badge)
+        await loadBoeken();
+        
+        // ✅ TENSLOTTE: Show toast en modal
+        showSuccess(`✅ ${quantity}x "${title}" toegevoegd! (Totaal: ${totalInCart}x in mandje)`);
+        
+        // 🎯 SHOW POPUP MODAL (na refresh, zodat gebruiker updated lijst ziet)
+        setTimeout(() => {
+            showCartAddedModal(title, quantity, totalInCart);
+        }, 100);
     }
 
     // ✅ Update book quantity met +/- knoppen END VOORRAAD CHECK
@@ -1687,6 +1704,10 @@
                         <i class="fas fa-shopping-bag"></i> Verder Winkelen
                     </button>
                 </div>
+                
+                <p style="color: var(--gray); font-size: 13px; margin-top: 20px; opacity: 0.8;">
+                    Sluit automatisch in <strong><span id="modal-countdown">5</span></strong> seconden...
+                </p>
             </div>
         `;
         
@@ -1699,13 +1720,26 @@
             }
         });
         
-        // Auto close after 10 seconds
-        setTimeout(() => {
-            if (modal.parentNode) {
-                modal.style.animation = 'fadeOut 0.3s';
-                setTimeout(() => modal.remove(), 300);
+        // ⏰ AUTO CLOSE with COUNTDOWN
+        let countdown = 5;
+        const countdownElement = modal.querySelector('#modal-countdown');
+        
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdownElement) {
+                countdownElement.textContent = countdown;
             }
-        }, 10000);
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                if (modal.parentNode) {
+                    modal.style.animation = 'fadeOut 0.3s';
+                    setTimeout(() => modal.remove(), 300);
+                }
+            }
+        }, 1000);
+        
+        console.log('✅ Centered modal shown - auto close in 5 seconds');
     }
 
     // Show message functie - MODERNE TOAST NOTIFICATIONS
@@ -1803,6 +1837,40 @@
     setTimeout(() => {
         document.body.classList.add('loaded');
     }, 1000);
+    
+    // ============================================
+    // 🚨 EMERGENCY FALLBACK - FORCE SHOW CONTENT
+    // ============================================
+    (function() {
+        console.log('🚨 Emergency fallback activated');
+        
+        // Force show body after 1 second (prevents white screen)
+        setTimeout(() => {
+            if (!document.body.classList.contains('loaded')) {
+                console.warn('⚠️ FALLBACK: Forcing body visible');
+                document.body.style.opacity = '1';
+                document.body.classList.add('loaded');
+            }
+        }, 1000);
+        
+        // Check if books loaded after 5 seconds
+        setTimeout(() => {
+            const loadingElement = document.getElementById('boeken-loading');
+            if (loadingElement && loadingElement.style.display !== 'none') {
+                console.error('❌ Books loading timeout - showing error');
+                loadingElement.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--danger);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                        <h3>Fout bij laden van boeken</h3>
+                        <p style="margin: 15px 0;">API niet bereikbaar of JavaScript error.</p>
+                        <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 15px;">
+                            <i class="fas fa-redo"></i> Probeer opnieuw
+                        </button>
+                    </div>
+                `;
+            }
+        }, 5000);
+    })();
 </script>
 </body>
 </html>

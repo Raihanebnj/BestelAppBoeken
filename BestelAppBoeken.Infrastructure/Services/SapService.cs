@@ -149,9 +149,8 @@ namespace BestelAppBoeken.Infrastructure.Services
                 var idocNumber = GenerateIDocNumber();
                 var orderNumber = $"ORD-{order.Id:D6}"; // Format: ORD-000001
 
-                // SAP iDoc ORDERS05 XML structuur
+                // SAP iDoc ORDERS05 XML structuur - ZONDER namespace op root (veroorzaakt conflict)
                 var idocXml = new XElement("ORDERS05",
-                    new XAttribute("xmlns", "http://sap.com/idoc/orders05"),
                     
                     // Control Record (verplicht)
                     new XElement("IDOC",
@@ -187,7 +186,6 @@ namespace BestelAppBoeken.Infrastructure.Services
                             new XElement("HWAER", "EUR"),
                             new XElement("AUGRU", "001"), // Order reason
                             new XElement("BSART", "OR"),  // Document type: Order
-                            new XElement("BELNR", orderNumber),
                             new XElement("NTGEW", "0"), // Net weight
                             new XElement("BRGEW", "0"), // Gross weight
                             new XElement("GEWEI", "KG"), // Weight unit

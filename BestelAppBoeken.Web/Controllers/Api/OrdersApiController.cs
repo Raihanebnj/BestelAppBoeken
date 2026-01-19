@@ -12,7 +12,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
         private readonly IOrderService _orderService;
         private readonly IMessageQueueService _messageQueue;
         private readonly ISalesforceService _salesforceService;
-        private readonly ISapService _sapService;
+        // ❌ SAP iDoc VERWIJDERD - Alleen RabbitMQ en Salesforce
         private readonly IKlantService _klantService;
         private readonly IBookService _bookService;
         private readonly IEmailService _emailService;
@@ -22,7 +22,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
             IOrderService orderService,
             IMessageQueueService messageQueue,
             ISalesforceService salesforceService,
-            ISapService sapService,
+            // ❌ ISapService VERWIJDERD
             IKlantService klantService,
             IBookService bookService,
             IEmailService emailService,
@@ -31,7 +31,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
             _orderService = orderService;
             _messageQueue = messageQueue;
             _salesforceService = salesforceService;
-            _sapService = sapService;
+            // ❌ _sapService VERWIJDERD
             _klantService = klantService;
             _bookService = bookService;
             _emailService = emailService;
@@ -191,71 +191,64 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 _logger.LogInformation("✅ Order {OrderId} opgeslagen in database", savedOrder.Id);
 
                 // ============================================
-                // STAP 2: PARALLELLE VERWERKING (RabbitMQ + SAP)
+                // STAP 2: INTEGRATIE - ALLEEN RABBITMQ + SALESFORCE
                 // ============================================
+                // ℹ️ SAP iDoc code is beschikbaar in SapService.cs voor toekomstig gebruik
                 string? salesforceId = null;
-                SapIDocResponse? sapResponse = null;
 
-                // Start beide processen parallel voor snelheid
-                var rabbitMqTask = Task.Run(async () =>
+                // RabbitMQ → Salesforce (eenzijdige communicatie)
+                try
                 {
-                    try
-                    {
-                        // 3a) RabbitMQ → Salesforce (eenzijdige communicatie)
-                        await _salesforceService.SyncOrderAsync(savedOrder);
-                        _logger.LogInformation("📨 [RabbitMQ] Order {OrderId} gepubliceerd naar queue 'salesforce_orders'", savedOrder.Id);
-                        
-                        // Simuleer Salesforce ID (in productie komt dit van Salesforce)
-                        salesforceId = $"SF-{DateTime.Now:yyyyMMddHHmmss}-{savedOrder.Id}";
-                        return salesforceId;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "⚠️ [RabbitMQ] Fout bij publiceren naar Salesforce queue");
-                        return null;
-                    }
-                });
-
-                var sapTask = Task.Run(async () =>
+                    await _salesforceService.SyncOrderAsync(savedOrder);
+                    _logger.LogInformation("📨 [RabbitMQ] Order {OrderId} gepubliceerd naar queue 'salesforce_orders'", savedOrder.Id);
+                    
+                    // Simuleer Salesforce ID (in productie komt dit van Salesforce)
+                    salesforceId = $"SF-{DateTime.Now:yyyyMMddHHmmss}-{savedOrder.Id}";
+                }
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        // 3b) SAP iDoc → SAP R/3 (tweezijdige communicatie: Request-Response)
-                        _logger.LogInformation("🔄 [SAP iDoc] START - Transformeren Order {OrderId} naar ORDERS05 XML", savedOrder.Id);
-                        
-                        var response = await _sapService.SendOrderIDocAsync(savedOrder);
-                        
-                        _logger.LogInformation(
-                            "✅ [SAP iDoc] SUCCESS - IDoc {IDocNumber} | Status: {Status} | {Description}",
-                            response.IDocNumber,
-                            (int)response.Status,
-                            response.StatusDescription
-                        );
-                        
-                        return response;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "❌ [SAP iDoc] FOUT bij verzenden naar SAP R/3");
-                        
-                        // Return error response
-                        return new SapIDocResponse
-                        {
-                            IDocNumber = "ERROR",
-                            Status = SapIDocStatus.Error,
-                            StatusDescription = "SAP integratie gefaald: " + ex.Message,
-                            Timestamp = DateTime.UtcNow
-                        };
-                    }
-                });
+                    _logger.LogWarning(ex, "⚠️ [RabbitMQ] Fout bij publiceren naar Salesforce queue");
+                }
 
-                // Wacht op beide taken (max 10 seconden)
-                await Task.WhenAll(rabbitMqTask, sapTask);
-                
-                salesforceId = rabbitMqTask.Result;
-                sapResponse = sapTask.Result;
+                /* ============================================
+                 * 🔒 SAP iDoc INTEGRATIE - DISABLED (BESCHIKBAAR VOOR LATER)
+                 * ============================================
+                 * 
+                 * Om SAP iDoc te enablen:
+                 * 1. Uncomment onderstaande code
+                 * 2. Voeg ISapService toe aan constructor
+                 * 3. Update IntegrationStatusInfo in response
+                 * 
+                 * Code:
+                 * 
+                 * var sapTask = Task.Run(async () =>
+                 * {
+                 *     try
+                 *     {
+                 *         _logger.LogInformation("🔄 [SAP iDoc] START - Transformeren Order {OrderId}", savedOrder.Id);
+                 *         var response = await _sapService.SendOrderIDocAsync(savedOrder);
+                 *         _logger.LogInformation("✅ [SAP iDoc] SUCCESS - IDoc {IDocNumber}", response.IDocNumber);
+                 *         return response;
+                 *     }
+                 *     catch (Exception ex)
+                 *     {
+                 *         _logger.LogError(ex, "❌ [SAP iDoc] FOUT bij verzenden");
+                 *         return new SapIDocResponse
+                 *         {
+                 *             IDocNumber = "ERROR",
+                 *             Status = SapIDocStatus.Error,
+                 *             StatusDescription = "SAP integratie gefaald: " + ex.Message,
+                 *             Timestamp = DateTime.UtcNow
+                 *         };
+                 *     }
+                 * });
+                 * 
+                 * await Task.WhenAll(rabbitMqTask, sapTask);
+                 * sapResponse = sapTask.Result;
+                 * 
+                 * ============================================ */
 
-                // 4. Send confirmation email (Async, niet blokkerend)
+                // 3. Send confirmation email (Async, niet blokkerend)
                 _ = Task.Run(async () =>
                 {
                     try
@@ -275,7 +268,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 });
 
                 // ============================================
-                // STAP 6: GECOMBINEERDE RESPONSE (Salesforce + SAP)
+                // STAP 3: RESPONSE (ALLEEN SALESFORCE)
                 // ============================================
                 var response = new OrderResponse
                 {
@@ -298,25 +291,24 @@ namespace BestelAppBoeken.Web.Controllers.Api
                         Prijs = i.UnitPrice
                     }).ToList(),
                     
-                    // ✅ STAP 6: Gecombineerde response (Salesforce + SAP)
+                    // ℹ️ Alleen Salesforce integratie status
                     IntegrationStatus = new IntegrationStatusInfo
                     {
                         SalesforceId = salesforceId,
                         SalesforceSuccess = salesforceId != null,
-                        SapIDocNumber = sapResponse?.IDocNumber,
-                        SapStatus = (int?)sapResponse?.Status,
-                        SapStatusDescription = sapResponse?.StatusDescription,
-                        SapSuccess = sapResponse?.Success ?? false,
+                        // SAP velden zijn null (disabled)
+                        SapIDocNumber = null,
+                        SapStatus = null,
+                        SapStatusDescription = "SAP disabled - code beschikbaar in SapService.cs",
+                        SapSuccess = false,
                         Timestamp = DateTime.UtcNow
                     }
                 };
 
                 _logger.LogInformation(
-                    "🎉 [ORDER COMPLETE] Order {OrderId} | Salesforce: {SfId} | SAP IDoc: {IDocNum} (Status {SapStatus})",
+                    "🎉 [ORDER COMPLETE] Order {OrderId} | Salesforce: {SfId} | SAP: DISABLED",
                     savedOrder.Id,
-                    salesforceId ?? "N/A",
-                    sapResponse?.IDocNumber ?? "N/A",
-                    (int?)sapResponse?.Status ?? 0
+                    salesforceId ?? "N/A"
                 );
 
                 return CreatedAtAction(nameof(GetAllOrders), new { id = savedOrder.Id }, response);
@@ -328,6 +320,11 @@ namespace BestelAppBoeken.Web.Controllers.Api
             }
         }
 
+        /* ============================================
+         * 🔒 SAP iDoc PREVIEW ENDPOINT - DISABLED
+         * ============================================
+         * Om te enablen: uncomment dit endpoint en voeg ISapService toe aan constructor
+         * 
         /// <summary>
         /// [TEST] Preview SAP iDoc XML voor een bestaande order
         /// </summary>

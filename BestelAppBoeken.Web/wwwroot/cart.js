@@ -1,4 +1,4 @@
-// Cart.js - Shopping Cart Page Logic
+// Cart.js - Shopping Cart Page Logic (SIMPLIFIED VERSION)
 
 const API_BASE = '/api';
 let winkelmandje = [];
@@ -6,6 +6,7 @@ let klanten = [];
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Cart.js geladen');
     loadCartFromStorage();
     loadKlanten();
     displayCart();
@@ -504,79 +505,15 @@ function showLoadingModal() {
                 from { opacity: 0; }
                 to { opacity: 1; }
             }
-        </style>
-    `;
-    
-    document.body.appendChild(modal);
-    console.log('⏳ Loading modal shown');
-    return modal;
-}
-
-// ============================================
-// 🎯 SHOW LOADING MODAL (Tijdens API call)
-// ============================================
-function showLoadingModal() {
-    const modal = document.createElement('div');
-    modal.className = 'loading-modal-overlay';
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.85);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        animation: fadeIn 0.3s;
-    `;
-    
-    modal.innerHTML = `
-        <div style="
-            background: white;
-            padding: 50px 60px;
-            border-radius: 24px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.5);
-            text-align: center;
-        ">
-            <div style="
-                width: 100px;
-                height: 100px;
-                border: 8px solid #e2e8f0;
-                border-top-color: #667eea;
-                border-radius: 50%;
-                margin: 0 auto 30px;
-                animation: spin 1s linear infinite;
-            "></div>
-            
-            <h2 style="color: var(--primary); margin-bottom: 15px; font-size: 28px; font-weight: 800;">
-                Bestelling Plaatsen... 🚀
-            </h2>
-            
-            <p style="color: var(--gray); font-size: 16px; line-height: 1.6;">
-                Even geduld terwijl we uw bestelling verwerken en synchroniseren met onze systemen.
-            </p>
-            
-            <div style="
-                margin-top: 25px;
-                padding: 15px;
-                background: linear-gradient(135deg, #bee3f8, #90cdf4);
-                border-radius: 10px;
-                border-left: 4px solid #4299e1;
-            ">
-                <p style="color: #2c5282; font-size: 14px; margin: 0; font-weight: 600;">
-                    <i class="fas fa-sync-alt fa-spin"></i> Verbinden met RabbitMQ...
-                </p>
-            </div>
-        </div>
-        
-        <style>
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
+            @keyframes slideUp {
+                from {
+                    transform: translateY(50px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
             }
         </style>
     `;
