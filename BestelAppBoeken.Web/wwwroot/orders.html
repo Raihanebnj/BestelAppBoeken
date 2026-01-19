@@ -7,6 +7,8 @@
     <meta name="theme-color" content="#667eea">
     <title>Bestellingen - Bookstore Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toast Notifications CSS -->
+    <link rel="stylesheet" href="/css/toast-notifications.css">
     <style>
         :root {
             --primary: #667eea;
@@ -338,6 +340,9 @@
 </head>
 <body>
     <div class="container">
+        <!-- Message Container voor Toast Notifications -->
+        <div id="message-container"></div>
+        
         <!-- Header -->
         <div class="header">
             <div class="header-left">
@@ -351,9 +356,14 @@
                     </p>
                 </div>
             </div>
-            <a href="Index.html" class="btn btn-primary">
-                <i class="fas fa-arrow-left"></i> Terug naar Dashboard
-            </a>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-info" onclick="refreshOrders()" title="Ververs orders">
+                    <i class="fas fa-sync-alt"></i> Ververs
+                </button>
+                <a href="Index.html" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Terug naar Dashboard
+                </a>
+            </div>
         </div>
 
         <!-- Statistics -->
@@ -426,6 +436,8 @@
         </div>
     </div>
 
+    <!-- Toast Notifications Script -->
+    <script src="/js/toast-notifications.js"></script>
     <script src="orders.js"></script>
 </body>
 </html>

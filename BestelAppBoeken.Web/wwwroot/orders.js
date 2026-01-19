@@ -5,25 +5,87 @@ let orders = [];
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('?? Orders.html page loaded');
+    
+    // Check if we came from a successful order placement
+    const hasNewOrder = checkForNewOrder();
+    
+    // Always load orders (even if no new order)
     loadOrders();
+    
+    // If new order was detected, schedule a refresh after load
+    if (hasNewOrder) {
+        console.log('?? New order detected, will refresh after 2 seconds...');
+        setTimeout(() => {
+            console.log('?? Refreshing orders to ensure new order is visible...');
+            loadOrders();
+        }, 2000);
+    }
 });
+
+// ? Check for new order notification from cart.html
+function checkForNewOrder() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const newOrder = urlParams.get('newOrder');
+    const orderId = urlParams.get('orderId');
+    
+    if (newOrder === 'true') {
+        console.log('? New order detected from URL params!', { orderId });
+        
+        // Show success notification
+        setTimeout(() => {
+            if (typeof showSuccess === 'function') {
+                showSuccess(`? Bestelling succesvol geplaatst!${orderId ? ` Order ID: ${orderId}` : ''}`);
+            } else {
+                console.log('Success notification:', `Order ${orderId} placed successfully`);
+            }
+            
+            // Clean URL (remove query params)
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }, 500);
+        
+        return true;
+    }
+    
+    return false;
+}
 
 // Load all orders
 async function loadOrders() {
     try {
+        console.log('?? Loading orders from API...');
         const response = await fetch(`${API_BASE}/orders`);
         if (!response.ok) throw new Error('Kon bestellingen niet laden');
         
         orders = await response.json();
+        console.log(`? Loaded ${orders.length} orders`);
+        
         displayOrders();
         updateStatistics();
         
         document.getElementById('orders-loading').style.display = 'none';
         document.getElementById('orders-table-container').style.display = 'block';
     } catch (error) {
-        console.error('Error loading orders:', error);
+        console.error('? Error loading orders:', error);
         document.getElementById('orders-loading').innerHTML = 
             '<div style="color: var(--danger); text-align: center;"><i class="fas fa-exclamation-circle"></i> Kon bestellingen niet laden</div>';
+        
+        if (typeof showError === 'function') {
+            showError('Kon bestellingen niet laden: ' + error.message);
+        }
+    }
+}
+
+// ? Refresh orders (can be called from UI button)
+async function refreshOrders() {
+    console.log('?? Refreshing orders...');
+    document.getElementById('orders-loading').style.display = 'block';
+    document.getElementById('orders-table-container').style.display = 'none';
+    
+    await loadOrders();
+    
+    if (typeof showInfo === 'function') {
+        showInfo('?? Orders bijgewerkt!');
     }
 }
 

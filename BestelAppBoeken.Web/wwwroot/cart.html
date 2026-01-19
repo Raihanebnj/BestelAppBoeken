@@ -7,6 +7,8 @@
     <meta name="theme-color" content="#667eea">
     <title>Winkelmandje - Bookstore Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Toast Notifications CSS -->
+    <link rel="stylesheet" href="/css/toast-notifications.css">
     <style>
         :root {
             --primary: #667eea;
@@ -320,6 +322,36 @@
             border-left: 4px solid var(--danger);
         }
 
+        /* Toast Notifications */
+        .toast {
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+            color: #22543d;
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+            color: #742a2a;
+            border-left: 4px solid var(--danger);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             body {
@@ -436,6 +468,8 @@
         </div>
     </div>
 
+    <!-- Toast Notifications Script -->
+    <script src="/js/toast-notifications.js"></script>
     <script src="cart.js"></script>
 </body>
 </html>
