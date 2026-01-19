@@ -1,4 +1,4 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
@@ -928,11 +928,11 @@
     function loadSampleData() {
         // Voorbeeld bestellingen
         const orders = [
-            { id: 'ORD-001', klant: 'Jan Janssen', datum: '15-01-2024', totaal: 'â‚¬89.97', status: 'Verwerkt' },
-            { id: 'ORD-002', klant: 'Marie Peters', datum: '15-01-2024', totaal: 'â‚¬24.99', status: 'Verwerkt' },
-            { id: 'ORD-003', klant: 'Thomas Verstraeten', datum: '14-01-2024', totaal: 'â‚¬149.95', status: 'Verzonden' },
-            { id: 'ORD-004', klant: 'Lisa De Smet', datum: '14-01-2024', totaal: 'â‚¬39.98', status: 'In behandeling' },
-            { id: 'ORD-005', klant: 'David Willems', datum: '13-01-2024', totaal: 'â‚¬119.96', status: 'Verwerkt' }
+            { id: 'ORD-001', klant: 'Jan Janssen', datum: '15-01-2024', totaal: '€89.97', status: 'Verwerkt' },
+            { id: 'ORD-002', klant: 'Marie Peters', datum: '15-01-2024', totaal: '€24.99', status: 'Verwerkt' },
+            { id: 'ORD-003', klant: 'Thomas Verstraeten', datum: '14-01-2024', totaal: '€149.95', status: 'Verzonden' },
+            { id: 'ORD-004', klant: 'Lisa De Smet', datum: '14-01-2024', totaal: '€39.98', status: 'In behandeling' },
+            { id: 'ORD-005', klant: 'David Willems', datum: '13-01-2024', totaal: '€119.96', status: 'Verwerkt' }
         ];
 
         const tbody = document.getElementById('bestellingen-body');
@@ -981,7 +981,7 @@
             }
         } catch (error) {
             console.log('API failed, using sample data');
-            // Fallback: sample data
+            // Fallback: sample data met Open Library book covers
             const sampleBooks = [
                 { id: 1, isbn: '9789023456789', title: 'De Nachtwachter', author: 'Sarah Blake', price: 22.99, stock: 15 },
                 { id: 2, isbn: '9789044632567', title: 'Het Meisje in de Trein', author: 'Paula Hawkins', price: 19.99, stock: 8 },
@@ -1002,15 +1002,22 @@
         gridContainer.innerHTML = '';
 
         books.forEach(book => {
-            const priceFormatted = typeof book.price === 'number' ? `â‚¬${book.price.toFixed(2)}` : book.price;
+            const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
             const stockClass = book.stock <= 5 ? 'low-stock' : '';
             const stockText = book.stock === 0 ? 'Uitverkocht' : `${book.stock} op voorraad`;
+            
+            // ? Gebruik ALLEEN ISBN - geen imageUrl of image property checks!
+            // Open Library Covers API: direct via ISBN
+            const coverUrl = `https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`;
 
             const card = document.createElement('div');
             card.className = 'book-card';
             card.innerHTML = `
-                <div class="book-cover">
-                    <i class="fas fa-book-open"></i>
+                <div class="book-cover" style="position: relative; background: #f0f0f0; overflow: hidden;">
+                    <img src="${coverUrl}" 
+                         alt="${book.title}" 
+                         style="width: 100%; height: 100%; object-fit: cover;"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 400 600%27%3E%3Crect fill=%27%23667eea%27 width=%27400%27 height=%27600%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 fill=%27white%27 font-size=%2748%27 text-anchor=%27middle%27 dominant-baseline=%27middle%27 font-family=%27Arial%27%3E%3Ctspan x=%2750%25%27 dy=%27-20%27%3E??%3C/tspan%3E%3Ctspan x=%2750%25%27 dy=%2760%27 font-size=%2720%27%3E${book.title.substring(0, 15)}...%3C/tspan%3E%3C/text%3E%3C/svg%3E';">
                 </div>
                 <div class="book-info">
                     <div class="book-title">${book.title}</div>
@@ -1020,7 +1027,7 @@
                         <div class="book-stock ${stockClass}">
                             <i class="fas fa-${book.stock === 0 ? 'exclamation-triangle' : 'check-circle'}"></i> ${stockText}
                         </div>
-                        <button class="btn-quick-add" onclick="quickAddToCart(${book.id}, '${book.title}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('â‚¬', ''))})" ${book.stock === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>
+                        <button class="btn-quick-add" onclick="quickAddToCart(${book.id}, '${book.title.replace(/'/g, "\\'")}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))})" ${book.stock === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>
                             <i class="fas fa-cart-plus"></i> Snel Toevoegen
                         </button>
                     </div>
@@ -1034,7 +1041,7 @@
         listBody.innerHTML = '';
 
         books.forEach(book => {
-            const priceFormatted = typeof book.price === 'number' ? `â‚¬${book.price.toFixed(2)}` : book.price;
+            const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
             const stockClass = book.stock <= 5 ? 'style="color: #f56565; font-weight: bold;"' : '';
 
             const row = document.createElement('tr');
@@ -1045,7 +1052,7 @@
                 <td><strong>${priceFormatted}</strong></td>
                 <td ${stockClass}>${book.stock}</td>
                 <td>
-                    <button class="btn btn-success" onclick="quickAddToCart(${book.id}, '${book.title}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('â‚¬', ''))})" style="padding: 8px 16px;" ${book.stock === 0 ? 'disabled' : ''}>
+                    <button class="btn btn-success" onclick="quickAddToCart(${book.id}, '${book.title}', ${typeof book.price === 'number' ? book.price : parseFloat(book.price.replace('€', ''))})" style="padding: 8px 16px;" ${book.stock === 0 ? 'disabled' : ''}>
                         <i class="fas fa-cart-plus"></i> Toevoegen
                     </button>
                 </td>
@@ -1112,7 +1119,7 @@
         updateCartCounter();
 
         // Toon success bericht
-        showMessage(`âœ“ "${title}" toegevoegd aan winkelmandje!`, 'success');
+        showMessage(`? "${title}" toegevoegd aan winkelmandje!`, 'success');
     }
 
     // Update cart counter
@@ -1180,11 +1187,11 @@
     function loadSampleData() {
         // Voorbeeld bestellingen
         const orders = [
-            { id: 'ORD-001', klant: 'Jan Janssen', datum: '15-01-2024', totaal: 'â‚¬89.97', status: 'Verwerkt' },
-            { id: 'ORD-002', klant: 'Marie Peters', datum: '15-01-2024', totaal: 'â‚¬24.99', status: 'Verwerkt' },
-            { id: 'ORD-003', klant: 'Thomas Verstraeten', datum: '14-01-2024', totaal: 'â‚¬149.95', status: 'Verzonden' },
-            { id: 'ORD-004', klant: 'Lisa De Smet', datum: '14-01-2024', totaal: 'â‚¬39.98', status: 'In behandeling' },
-            { id: 'ORD-005', klant: 'David Willems', datum: '13-01-2024', totaal: 'â‚¬119.96', status: 'Verwerkt' }
+            { id: 'ORD-001', klant: 'Jan Janssen', datum: '15-01-2024', totaal: '€89.97', status: 'Verwerkt' },
+            { id: 'ORD-002', klant: 'Marie Peters', datum: '15-01-2024', totaal: '€24.99', status: 'Verwerkt' },
+            { id: 'ORD-003', klant: 'Thomas Verstraeten', datum: '14-01-2024', totaal: '€149.95', status: 'Verzonden' },
+            { id: 'ORD-004', klant: 'Lisa De Smet', datum: '14-01-2024', totaal: '€39.98', status: 'In behandeling' },
+            { id: 'ORD-005', klant: 'David Willems', datum: '13-01-2024', totaal: '€119.96', status: 'Verwerkt' }
         ];
 
         const tbody = document.getElementById('bestellingen-body');
