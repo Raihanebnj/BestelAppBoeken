@@ -112,11 +112,27 @@
             border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-            .stat-badge i {
-                color: var(--primary);
-            }
+        .stat-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-badge.logout {
+            background: linear-gradient(135deg, var(--danger), #e53e3e);
+            color: white;
+        }
+
+        .stat-badge.logout i {
+            color: white;
+        }
+
+        .stat-badge i {
+            color: var(--primary);
+        }
 
         /* Navigation Menu */
         .nav-menu {
@@ -153,6 +169,10 @@
             box-shadow: var(--shadow-lg);
         }
 
+        .nav-btn.admin {
+            background: linear-gradient(135deg, var(--warning), var(--danger));
+        }
+
         .cart-badge {
             position: relative;
         }
@@ -179,17 +199,17 @@
             color: white;
             padding: 20px 30px;
             border-radius: 16px;
-            margin-bottom: 30px;
             box-shadow: var(--shadow);
+            margin-bottom: 30px;
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-            .info-banner i {
-                font-size: 24px;
-                opacity: 0.9;
-            }
+        .info-banner i {
+            font-size: 24px;
+            opacity: 0.9;
+        }
 
         .info-banner-content h3 {
             font-size: 16px;
@@ -234,10 +254,10 @@
             color: var(--dark);
         }
 
-            .card-title i {
-                color: var(--primary);
-                font-size: 24px;
-            }
+        .card-title i {
+            color: var(--primary);
+            font-size: 24px;
+        }
 
         .card-body {
             padding: 30px;
@@ -257,23 +277,22 @@
             border-radius: 10px;
             font-size: 14px;
             transition: all 0.3s;
-            /* Touch-friendly */
             min-height: 44px;
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
         }
 
-            .search-input:focus {
-                outline: none;
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
 
         /* All input fields touch-friendly */
         input, select, textarea {
             min-height: 44px;
-            font-size: 16px; /* Prevents iOS zoom on focus */
+            font-size: 16px;
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
@@ -288,89 +307,28 @@
             padding-right: 40px;
         }
 
-        .search-results {
-            color: var(--gray);
-            font-size: 13px;
-            margin: 10px 0;
-            padding: 10px;
-            background: var(--light);
-            border-radius: 8px;
-        }
-
         /* Table */
         .table-container {
-            overflow-x: auto !important; /* Force horizontal scroll */
+            overflow-x: auto !important;
             overflow-y: visible;
             -webkit-overflow-scrolling: touch;
             border-radius: 10px;
             margin: 0 -5px;
             position: relative;
             border: 2px solid var(--border);
-            /* Scroll shadow indicators */
-            background: linear-gradient(90deg, white 30%, rgba(255,255,255,0)), linear-gradient(90deg, rgba(255,255,255,0), white 70%) 100% 0, radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.2), rgba(0,0,0,0)), radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)) 100% 0;
-            background-repeat: no-repeat;
-            background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
-            background-attachment: local, local, scroll, scroll;
-        }
-
-            /* Scroll hint - visible on load */
-            .table-container::before {
-                content: '→';
-                position: absolute;
-                right: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                background: var(--primary);
-                color: white;
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 18px;
-                font-weight: bold;
-                pointer-events: none;
-                animation: pulse 2s infinite;
-                z-index: 10;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-                transform: translateY(-50%) scale(1);
-            }
-
-            50% {
-                opacity: 0.7;
-                transform: translateY(-50%) scale(1.1);
-            }
-        }
-
-        /* Hide scroll indicator when scrolled or not scrollable */
-        .table-container.scrolled::before,
-        .table-container.no-scroll::before {
-            opacity: 0;
-            transition: opacity 0.3s;
         }
 
         table {
             width: 100%;
-            min-width: 700px; /* Force horizontal scroll on mobile */
+            min-width: 700px;
             border-collapse: separate;
             border-spacing: 0;
-            table-layout: auto; /* Allow table to expand beyond container */
+            table-layout: auto;
         }
 
         thead {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            display: table-header-group; /* Ensure proper display */
-        }
-
-        tbody {
-            display: table-row-group; /* Ensure proper display */
         }
 
         th {
@@ -380,32 +338,32 @@
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            white-space: nowrap; /* Prevent text wrapping */
+            white-space: nowrap;
         }
 
-            th:first-child {
-                border-top-left-radius: 10px;
-            }
+        th:first-child {
+            border-top-left-radius: 10px;
+        }
 
-            th:last-child {
-                border-top-right-radius: 10px;
-            }
+        th:last-child {
+            border-top-right-radius: 10px;
+        }
 
         td {
             padding: 16px;
             font-size: 14px;
             border-bottom: 1px solid var(--border);
-            white-space: nowrap; /* Prevent text wrapping - force scroll */
+            white-space: nowrap;
         }
 
         tbody tr {
             transition: all 0.2s;
         }
 
-            tbody tr:hover {
-                background: var(--light);
-                transform: translateX(2px);
-            }
+        tbody tr:hover {
+            background: var(--light);
+            transform: translateX(2px);
+        }
 
         /* Buttons */
         .btn {
@@ -419,7 +377,6 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            /* Touch-friendly */
             min-height: 44px;
             min-width: 44px;
             -webkit-tap-highlight-color: transparent;
@@ -427,26 +384,13 @@
             user-select: none;
         }
 
-            .btn:active {
-                transform: scale(0.95);
-            }
+        .btn:active {
+            transform: scale(0.95);
+        }
 
-            .btn:hover {
-                transform: translateY(-2px);
-                box-shadow: var(--shadow);
-            }
-
-        /* Mobile: Remove hover effects, keep active */
-        @media (hover: none) and (pointer: coarse) {
-            .btn:hover {
-                transform: none;
-                box-shadow: none;
-            }
-
-            .btn:active {
-                transform: scale(0.95);
-                opacity: 0.9;
-            }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
 
         .btn-primary {
@@ -459,179 +403,14 @@
             color: white;
         }
 
-        .btn-bewerken {
+        .btn-warning {
             background: linear-gradient(135deg, var(--warning), #dd6b20);
             color: white;
         }
 
-        .btn-verwijderen {
+        .btn-danger {
             background: linear-gradient(135deg, var(--danger), #e53e3e);
             color: white;
-        }
-
-        .btn-search {
-            background: linear-gradient(135deg, var(--info), #3182ce);
-            color: white;
-        }
-
-        .btn-clear {
-            background: var(--gray);
-            color: white;
-        }
-
-        .btn-icon {
-            padding: 8px 12px;
-            margin-right: 5px;
-        }
-
-        /* Forms */
-        .form-section {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 14px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-            input:focus, select:focus {
-                outline: none;
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            }
-
-        .order-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        /* Shopping Cart */
-        #winkelmandje {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            border: 3px solid var(--primary);
-            margin-top: 20px;
-            box-shadow: var(--shadow);
-        }
-
-            #winkelmandje h3 {
-                color: var(--primary);
-                margin-bottom: 15px;
-                font-size: 20px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: var(--light);
-            margin-bottom: 12px;
-            border-radius: 12px;
-            border: 2px solid var(--border);
-            transition: all 0.2s;
-        }
-
-            .cart-item:hover {
-                border-color: var(--primary);
-                transform: translateX(4px);
-            }
-
-        .cart-items {
-            margin-top: 15px;
-        }
-
-        .totaal-bedrag {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--success);
-            text-align: right;
-            margin-top: 20px;
-            padding: 15px;
-            background: linear-gradient(135deg, #f0fff4, #c6f6d5);
-            border-radius: 12px;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-nieuw {
-            background: linear-gradient(135deg, #bee3f8, #90cdf4);
-            color: #2c5282;
-        }
-
-        .status-verwerkt {
-            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
-            color: #22543d;
-        }
-
-        .voorraad-info {
-            font-size: 12px;
-            color: var(--gray);
-            font-style: italic;
-        }
-
-        .voorraad-laag {
-            color: var(--danger);
-            font-weight: 700;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--gray);
-            font-size: 16px;
-        }
-
-            .loading::after {
-                content: '...';
-                animation: loading 1.5s infinite;
-            }
-
-        @keyframes loading {
-            0%, 20% {
-                content: '.';
-            }
-
-            40% {
-                content: '..';
-            }
-
-            60%, 100% {
-                content: '...';
-            }
         }
 
         /* Messages */
@@ -674,13 +453,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
@@ -701,7 +475,6 @@
                 transform: translateY(50px);
                 opacity: 0;
             }
-
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -718,15 +491,9 @@
             line-height: 1;
         }
 
-            .close:hover {
-                color: var(--danger);
-                transform: rotate(90deg);
-            }
-
-        .modal-content h2 {
-            color: var(--primary);
-            margin-bottom: 25px;
-            font-size: 24px;
+        .close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
         }
 
         /* Footer */
@@ -741,60 +508,37 @@
             box-shadow: var(--shadow);
         }
 
-            footer a {
-                color: var(--primary);
-                text-decoration: none;
-                margin: 0 10px;
-                font-weight: 600;
-                transition: all 0.2s;
-            }
-
-                footer a:hover {
-                    color: var(--secondary);
-                    text-decoration: underline;
-                }
-
-        /* Responsive Design - Mobile First */
-
-        /* Tablets en kleine laptops (max-width: 1024px) */
-        @media (max-width: 1024px) {
-            .container {
-                max-width: 100%;
-                padding: 0 15px;
-            }
-
-            .books-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 20px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: 600;
+            transition: all 0.2s;
         }
 
-        /* Tablets portrait (max-width: 768px) */
+        footer a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+            font-size: 16px;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
             }
 
-            /* Header responsiveness */
             .header {
                 flex-direction: column;
                 gap: 15px;
                 padding: 20px;
-            }
-
-            .header-left {
-                flex-direction: column;
-                text-align: center;
-                width: 100%;
-            }
-
-            h1 {
-                font-size: 22px;
             }
 
             .header-stats {
@@ -804,945 +548,272 @@
                 gap: 10px;
             }
 
-            .stat-badge {
-                font-size: 12px;
-                padding: 6px 12px;
-            }
-
-            /* Search container */
-            .search-container {
+            .nav-menu {
                 flex-direction: column;
-                gap: 15px;
             }
 
-                .search-container input,
-                .search-container select,
-                .search-container button {
-                    width: 100%;
-                }
-
-            /* Books grid */
-            .books-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
             }
-
-            /* Stats grid */
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            /* Tables */
-            .table-container {
-                overflow-x: auto !important;
-                -webkit-overflow-scrolling: touch;
-                border-radius: 8px;
-                box-shadow: inset 0 0 0 1px var(--border);
-                margin: 0; /* Remove negative margin on tablet */
-                /* Force scroll behavior */
-                scroll-behavior: smooth;
-            }
-
-                /* Make scroll arrow more visible on tablet */
-                .table-container::before {
-                    width: 35px;
-                    height: 35px;
-                    font-size: 20px;
-                    right: 10px;
-                }
-
-                /* Table scroll hint */
-                .table-container::after {
-                    content: '← Swipe om meer te zien →';
-                    display: block;
-                    text-align: center;
-                    padding: 8px;
-                    background: var(--light);
-                    color: var(--gray);
-                    font-size: 11px;
-                    font-style: italic;
-                    border-top: 1px solid var(--border);
-                }
-
-            table {
-                font-size: 12px;
-                min-width: 700px !important; /* Ensure table is wider than container */
-                width: max-content; /* Allow table to be its natural width */
-            }
-
-            th, td {
-                padding: 10px 8px;
-                white-space: nowrap;
-            }
-
-                /* Compact column widths */
-                th:first-child, td:first-child {
-                    min-width: 60px; /* ID column */
-                }
-
-                th:nth-child(2), td:nth-child(2) {
-                    min-width: 120px; /* Name/Title column */
-                }
-
-                th:last-child, td:last-child {
-                    min-width: 100px; /* Actions column */
-                }
-
-                /* Action buttons in table - stack vertically */
-                td .btn {
-                    display: block;
-                    margin: 4px 0;
-                    width: 100%;
-                }
-
-            /* Order form */
-            .order-form {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            /* Modal */
-            .modal-content {
-                width: 95%;
-                padding: 20px;
-                margin: 20px auto;
-            }
-
-                .modal-content h2 {
-                    font-size: 20px;
-                }
-
-            /* Buttons */
-            .btn {
-                padding: 10px 20px;
-                font-size: 13px;
-            }
-
-            /* Cart */
-            .cart-badge {
-                top: -8px;
-                right: -8px;
-                width: 20px;
-                height: 20px;
-                font-size: 11px;
-            }
-        }
-
-        /* Mobile phones (max-width: 480px) */
-        @media (max-width: 480px) {
-            body {
-                padding: 5px;
-            }
-
-            /* Header */
-            .header {
-                padding: 15px;
-                border-radius: 12px;
-            }
-
-            h1 {
-                font-size: 18px;
-            }
-
-            .logo {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-
-            /* Cards */
-            .card {
-                padding: 15px;
-                border-radius: 12px;
-            }
-
-                .card h2 {
-                    font-size: 18px;
-                }
-
-            /* Book cards */
-            .book-card {
-                padding: 15px;
-            }
-
-                .book-card h3 {
-                    font-size: 16px;
-                }
-
-                .book-card .author {
-                    font-size: 12px;
-                }
-
-                .book-card .price {
-                    font-size: 20px;
-                }
-
-            /* Stat cards */
-            .stat-card h3 {
-                font-size: 14px;
-            }
-
-            .stat-value {
-                font-size: 28px;
-            }
-
-            /* Tables - Compact mobile layout */
-            .table-container {
-                margin: 0 -15px; /* Full width on mobile */
-                border-radius: 0; /* Remove border radius for full width */
-                overflow-x: auto !important; /* Critical: force scroll */
-                overflow-y: visible;
-                -webkit-overflow-scrolling: touch !important;
-            }
-
-                /* Stronger scroll indicator on mobile */
-                .table-container::before {
-                    width: 40px;
-                    height: 40px;
-                    font-size: 24px;
-                    right: 5px;
-                    animation: pulse 1.5s infinite, bounce 2s infinite;
-                    z-index: 100; /* Ensure it's on top */
-                }
-
-            @keyframes bounce {
-                0%, 100% {
-                    right: 5px;
-                }
-
-                50% {
-                    right: 10px;
-                }
-            }
-
-            table {
-                font-size: 11px;
-                min-width: 600px !important; /* Ensure enough width for all columns */
-                width: max-content !important; /* Force table to be wider than container */
-                display: table !important; /* Override any flex/grid */
-            }
-
-            th, td {
-                padding: 8px 5px;
-                font-size: 10px;
-            }
-
-                th i, td i {
-                    font-size: 10px;
-                    margin-right: 2px;
-                }
-
-            /* Abbreviate column headers on mobile */
-            th {
-                font-size: 9px;
-                letter-spacing: 0;
-            }
-
-                /* Make first column sticky for context */
-                th:first-child, td:first-child {
-                    position: sticky;
-                    left: 0;
-                    background: white;
-                    z-index: 2;
-                    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
-                    min-width: 50px;
-                }
-
-            thead th:first-child {
-                background: linear-gradient(135deg, var(--primary), var(--secondary));
-                z-index: 3;
-            }
-
-            /* Compact price/number columns */
-            .price-col, .number-col {
-                text-align: right;
-                min-width: 60px;
-            }
-
-            /* Hide less important columns on very small screens */
-            .mobile-hide {
-                display: none;
-            }
-
-            /* Buttons */
-            .btn {
-                padding: 8px 16px;
-                font-size: 12px;
-            }
-
-                .btn i {
-                    font-size: 12px;
-                }
-
-            /* Search */
-            .search-container input {
-                font-size: 14px;
-            }
-
-            /* Modal */
-            .modal-content {
-                padding: 15px;
-                margin: 10px auto;
-                max-height: 90vh;
-            }
-
-            /* Form fields */
-            input, select, textarea {
-                font-size: 14px;
-                padding: 10px;
-            }
-
-            /* Footer */
-            footer {
-                padding: 20px 15px;
-                font-size: 12px;
-            }
-
-                footer a {
-                    display: block;
-                    margin: 5px 0;
-                }
-
-            /* Stat badge smaller */
-            .stat-badge {
-                font-size: 11px;
-                padding: 5px 10px;
-            }
-
-            /* Shopping cart button */
-            .btn-cart {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-
-            /* Number inputs */
-            .aantal-selector {
-                width: 80px;
-            }
-        }
-
-        /* Very small devices (max-width: 360px) */
-        @media (max-width: 360px) {
-            h1 {
-                font-size: 16px;
-            }
-
-            .stat-badge {
-                font-size: 10px;
-                padding: 4px 8px;
-            }
-
-            .btn {
-                font-size: 11px;
-                padding: 6px 12px;
-            }
-
-            table {
-                min-width: 400px;
-            }
-        }
-
-        /* Landscape orientation */
-        @media (max-height: 600px) and (orientation: landscape) {
-            .modal-content {
-                max-height: 95vh;
-                margin: 10px auto;
-            }
-
-            body {
-                padding: 10px;
-            }
-        }
-
-        /* Print styles */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-
-            .header-stats,
-            .search-container,
-            .btn,
-            footer {
-                display: none;
-            }
-
-            .card {
-                box-shadow: none;
-                border: 1px solid #ccc;
-            }
-        }
-
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        /* Prevent layout shift */
-        .loading, .card-body, .table-container {
-            min-height: 100px;
-            will-change: contents;
-        }
-
-        /* Smooth content loading */
-        [style*="display: none"] {
-            transition: opacity 0.2s ease-in-out;
-        }
-
-        /* Number Input */
-        .aantal-selector {
-            width: 100px;
-            margin-left: 0;
-        }
-
-        /* Boeken Menu Cards */
-        .boek-card {
-            background: white;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .boek-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .boek-card-header {
-            margin-bottom: 15px;
-        }
-
-        .boek-card-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 5px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .boek-card-author {
-            font-size: 14px;
-            color: var(--gray);
-            font-style: italic;
-        }
-
-        .boek-card-body {
-            margin: 15px 0;
-        }
-
-        .boek-card-price {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--success);
-            margin-bottom: 10px;
-        }
-
-        .boek-card-stock {
-            font-size: 13px;
-            color: var(--gray);
-            padding: 8px;
-            background: var(--light);
-            border-radius: 6px;
-            display: inline-block;
-        }
-
-        .boek-card-stock.low {
-            background: #fed7d7;
-            color: var(--danger);
-            font-weight: 600;
-        }
-
-        .boek-card-footer {
-            margin-top: 15px;
-        }
-
-        .boek-card-btn {
-            width: 100%;
-            justify-content: center;
-        }
-
-        /* Selected Book Details (Dropdown View) */
-        #selected-book-details {
-            animation: slideDown 0.3s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .book-detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            margin: 10px 0;
-            background: var(--light);
-            border-radius: 8px;
-        }
-
-        .book-detail-label {
-            font-weight: 600;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .book-detail-value {
-            font-size: 16px;
-            color: var(--dark);
-        }
-
-        .book-detail-price {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--success);
-        }
-
-        .book-detail-stock-ok {
-            color: var(--success);
-            font-weight: 600;
-        }
-
-        .book-detail-stock-low {
-            color: var(--danger);
-            font-weight: 700;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header fade-in">
-            <div class="header-left">
-                <div class="logo">
-                    <i class="fas fa-book"></i>
-                </div>
-                <div>
-                    <h1>Bookstore Management</h1>
-                    <p style="color: var(--gray); font-size: 14px; margin-top: 5px;">
-                        <i class="fas fa-mobile-alt"></i> Smartphone-ready verkoopdashboard
-                    </p>
-                </div>
+<div class="container">
+    <!-- Header -->
+    <div class="header fade-in">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-book"></i>
             </div>
-            <div class="header-stats">
-                <div class="stat-badge">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="stat-orders">0 Orders</span>
-                </div>
-                <div class="stat-badge">
-                    <i class="fas fa-users"></i>
-                    <span id="stat-klanten">0 Klanten</span>
-                </div>
-                <div class="stat-badge">
-                    <i class="fas fa-book-open"></i>
-                    <span id="stat-boeken">0 Boeken</span>
-                </div>
+            <div>
+                <h1>Bookstore Management</h1>
+                <p style="color: var(--gray); font-size: 14px; margin-top: 5px;">
+                    <i class="fas fa-mobile-alt"></i> Smartphone-ready verkoopdashboard
+                </p>
             </div>
         </div>
-
-        <!-- Navigation Menu -->
-        <div class="nav-menu fade-in">
-            <a href="orders.html" class="nav-btn">
-                <i class="fas fa-clipboard-list"></i> Alle Bestellingen
-            </a>
-            <a href="books.html" class="nav-btn">
-                <i class="fas fa-book-open"></i> Boeken Catalogus
-            </a>
-            <a href="customers.html" class="nav-btn">
-                <i class="fas fa-users"></i> Klantenbeheer
-            </a>
-            <a href="admin.html" class="nav-btn" style="background: linear-gradient(135deg, var(--warning), var(--danger));">
-                <i class="fas fa-user-shield"></i> Admin Panel
-            </a>
-            <a href="cart.html" class="nav-btn cart-badge">
-                <i class="fas fa-shopping-cart"></i> Winkelmandje
-                <span class="cart-count" id="cart-count" style="display:none;">0</span>
-            </a>
-        </div>
-
-        <!-- Info Banner -->
-        <div class="info-banner fade-in">
-            <i class="fas fa-info-circle"></i>
-            <div class="info-banner-content">
-                <h3><i class="fas fa-bullseye"></i> Snel Bestellen Dashboard</h3>
-                <p>Plaats snel orders voor klanten. Gegevens worden automatisch gesynchroniseerd met RabbitMQ, Salesforce en SAP R/3.</p>
+        <div class="header-stats">
+            <div class="stat-badge">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="stat-orders">0 Orders</span>
             </div>
-        </div>
-
-        <div id="message-container"></div>
-
-        <!-- Quick Stats -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
-                <i class="fas fa-shopping-cart" style="font-size: 32px; color: var(--primary); margin-bottom: 10px;"></i>
-                <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-orders">0</div>
-                <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Orders</div>
+            <div class="stat-badge">
+                <i class="fas fa-users"></i>
+                <span id="stat-klanten">0 Klanten</span>
             </div>
-            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
-                <i class="fas fa-users" style="font-size: 32px; color: var(--success); margin-bottom: 10px;"></i>
-                <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-klanten">0</div>
-                <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Klanten</div>
+            <div class="stat-badge">
+                <i class="fas fa-book-open"></i>
+                <span id="stat-boeken">0 Boeken</span>
             </div>
-            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
-                <i class="fas fa-book-open" style="font-size: 32px; color: var(--info); margin-bottom: 10px;"></i>
-                <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-boeken">0</div>
-                <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Boeken</div>
+            <!-- Logout knop -->
+            <div class="stat-badge logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Uitloggen</span>
             </div>
-        </div>
-
-        <!-- Recente Bestellingen Sectie (Compact) -->
-        <section id="bestellingen-sectie" class="card fade-in">
-            <div class="card-header">
-                <div class="card-title">
-                    <i class="fas fa-clipboard-list"></i>
-                    Laatste 5 Bestellingen
-                </div>
-                <a href="orders.html" class="btn btn-primary">
-                    <i class="fas fa-list"></i> Alle Bestellingen
-                </a>
-            </div>
-            <div class="card-body">
-                <div id="bestellingen-loading" class="loading" style="padding: 20px;">
-                    <i class="fas fa-spinner fa-spin"></i> Laden...
-                </div>
-                <div class="table-container" id="bestellingen-container" style="display:none;">
-                    <table id="bestellingen-tabel">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-hashtag"></i> ID</th>
-                                <th><i class="fas fa-user"></i> Klant</th>
-                                <th><i class="fas fa-calendar"></i> Datum</th>
-                                <th><i class="fas fa-euro-sign"></i> Totaal</th>
-                                <th><i class="fas fa-info-circle"></i> Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bestellingen-body">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Removed Klantenbeheer section - Now on separate page (customers.html) -->
-        <!-- Removed Boeken section - Now on separate page (books.html) -->
-
-        <!-- View Mode Selector -->
-        <div style="background: white; padding: 15px 30px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 30px; display: flex; justify-content: center; gap: 15px;">
-            <button class="btn btn-success" onclick="switchToBestellenView()" id="btn-bestellen-view" style="font-size: 16px; padding: 12px 30px;">
-                <i class="fas fa-shopping-cart"></i> Bestellen
-            </button>
-            <button class="btn btn-info" onclick="switchToOverzichtView()" id="btn-overzicht-view" style="font-size: 16px; padding: 12px 30px;">
-                <i class="fas fa-list"></i> Boeken Overzicht
-            </button>
-        </div>
-
-        <!-- BESTELLEN VIEW -->
-        <div id="bestellen-view" style="display: block;">
-            <!-- Gecombineerde Bestel Sectie -->
-            <section id="bestel-sectie" class="card fade-in">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-shopping-cart"></i>
-                        Snel Bestellen
-                    </div>
-                    <a href="admin.html" class="btn btn-warning">
-                        <i class="fas fa-user-shield"></i> Admin Panel
-                    </a>
-                </div>
-                <div class="card-body">
-                    <!-- Step 1: Klant Selecteren -->
-                    <div style="background: linear-gradient(135deg, #e6f3ff, #cce7ff); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--primary);">
-                        <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 18px;">
-                            <i class="fas fa-user"></i> Stap 1: Selecteer of Maak Klant
-                        </h3>
-                        <div style="display: flex; gap: 10px; align-items: stretch;">
-                            <select id="order-klant" style="flex: 1; padding: 12px; font-size: 16px; border: 2px solid var(--primary); border-radius: 10px;">
-                                <option value="">Kies een klant om een bestelling te plaatsen</option>
-                            </select>
-                            <button class="btn btn-success" onclick="openQuickKlantModal()" title="Nieuwe klant aanmaken" style="padding: 12px 20px; white-space: nowrap;">
-                                <i class="fas fa-user-plus"></i> Nieuwe Klant
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Snel Toevoegen -->
-                    <div style="background: linear-gradient(135deg, #e6ffe6, #ccffcc); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--success);">
-                        <h3 style="color: var(--success); margin-bottom: 15px; font-size: 18px;">
-                            <i class="fas fa-bolt"></i> Stap 2: Snel Toevoegen
-                        </h3>
-                        <div id="boeken-quick-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px;">
-                            <!-- Quick add boeken cards -->
-                        </div>
-                        <div id="boeken-quick-loading" class="loading" style="padding: 20px;">
-                            <i class="fas fa-spinner fa-spin"></i> Laden...
-                        </div>
-                    </div>
-
-                    <!-- Winkelmandje Samenvatting -->
-                    <div id="winkelmandje-summary" style="background: white; padding: 20px; border-radius: 12px; border: 2px solid var(--primary); box-shadow: var(--shadow);">
-                        <h3 style="color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
-                            <span><i class="fas fa-shopping-basket"></i> Winkelmandje</span>
-                            <span id="cart-item-count" style="font-size: 16px; background: var(--danger); color: white; padding: 4px 12px; border-radius: 20px;">0 items</span>
-                        </h3>
-                        <div id="winkelmandje-quick-view" style="margin: 15px 0;">
-                            <p style="color: #999; text-align: center; padding: 20px;">
-                                <i class="fas fa-shopping-cart" style="font-size: 24px; opacity: 0.5; display: block; margin-bottom: 10px;"></i>
-                                Geen items in winkelmandje
-                            </p>
-                        </div>
-                        <a href="cart.html" class="btn btn-success" style="width: 100%; margin-top: 10px; font-size: 16px; padding: 14px; justify-content: center; text-decoration: none;">
-                            <i class="fas fa-shopping-cart"></i> Ga naar Winkelmandje & Bestel
-                        </a>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- OVERZICHT VIEW -->
-        <div id="overzicht-view" style="display: none;">
-            <!-- Boeken Overzicht Sectie -->
-            <section class="card fade-in">
-                <div class="card-header">
-                    <div class="card-title">
-                        <i class="fas fa-book"></i>
-                        Boeken Catalogus
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-info" onclick="toggleDetailView()" id="toggle-detail-btn">
-                            <i class="fas fa-th-large"></i> Details
-                        </button>
-                        <a href="admin.html" class="btn btn-warning">
-                            <i class="fas fa-cog"></i> Beheer
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <!-- Search -->
-                    <div style="margin-bottom: 20px;">
-                        <input type="text" id="search-boeken-input" placeholder="🔍 Zoek op titel of auteur..." style="width: 100%; padding: 12px; font-size: 16px; border: 2px solid var(--border); border-radius: 10px;">
-                    </div>
-
-                    <div id="boeken-overzicht-loading" class="loading" style="padding: 20px;">
-                        <i class="fas fa-spinner fa-spin"></i> Laden...
-                    </div>
-
-                    <!-- Simple List View (Default) -->
-                    <div id="boeken-simple-view">
-                        <div id="boeken-list-container" style="display: grid; gap: 15px;">
-                            <!-- Simple cards -->
-                        </div>
-                    </div>
-
-                    <!-- Detailed View -->
-                    <div id="boeken-detail-view" style="display: none;">
-                        <div id="boeken-detail-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-                            <!-- Detailed cards -->
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- Footer -->
-        <footer class="fade-in">
-            <p style="font-weight: 600; margin-bottom: 10px;">
-                <i class="fas fa-book-reader"></i> &copy; 2024 Bookstore - Alle rechten voorbehouden
-            </p>
-            <p>
-                <a href="/privacy-policy.html" target="_blank"><i class="fas fa-shield-alt"></i> Privacy Policy</a> |
-                <a href="/cookie-policy.html" target="_blank"><i class="fas fa-cookie-bite"></i> Cookie Policy</a> |
-                <a href="/terms-of-service.html" target="_blank"><i class="fas fa-file-contract"></i> Gebruiksvoorwaarden</a> |
-                <a href="/swagger" target="_blank"><i class="fas fa-code"></i> API Documentatie</a>
-            </p>
-            <p style="margin-top: 15px; font-size: 13px; color: var(--gray);">
-                <i class="fas fa-envelope"></i> Contact: <a href="mailto:support@bookstore@ehb.be">support@bookstore@ehb.be</a> |
-                <i class="fas fa-map-marker-alt"></i> Nijverheidskaai 170, 1070 Brussel
-            </p>
-            <p style="margin-top: 10px; font-size: 12px; opacity: 0.7;">
-                <i class="fas fa-cogs"></i> Powered by RabbitMQ + Salesforce + SAP R/3
-            </p>
-        </footer>
-    </div>
-
-    <!-- Modals -->
-    <div id="klant-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeKlantModal()">&times;</span>
-            <h2 id="klant-modal-title"><i class="fas fa-user-edit"></i> Klant Bewerken</h2>
-            <form id="klant-modal-form">
-                <input type="hidden" id="modal-klant-id">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Naam</label>
-                    <input type="text" id="modal-klant-naam" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="modal-klant-email" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-phone"></i> Telefoon</label>
-                    <input type="text" id="modal-klant-telefoon" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> Adres</label>
-                    <input type="text" id="modal-klant-adres" required>
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Opslaan
-                </button>
-                <button type="button" class="btn btn-clear" onclick="closeKlantModal()">
-                    <i class="fas fa-times"></i> Annuleren
-                </button>
-            </form>
         </div>
     </div>
 
-    <div id="boek-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeBoekModal()">&times;</span>
-            <h2 id="boek-modal-title"><i class="fas fa-book"></i> Boek Bewerken</h2>
-            <form id="boek-modal-form">
-                <input type="hidden" id="modal-boek-id">
-                <div class="form-group">
-                    <label><i class="fas fa-book"></i> Titel</label>
-                    <input type="text" id="modal-boek-titel" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-pen"></i> Auteur</label>
-                    <input type="text" id="modal-boek-auteur" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-euro-sign"></i> Prijs (EUR)</label>
-                    <input type="number" step="0.01" id="modal-boek-prijs" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-boxes"></i> Voorraad Aantal</label>
-                    <input type="number" id="modal-boek-voorraad" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-barcode"></i> ISBN</label>
-                    <input type="text" id="modal-boek-isbn" required>
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Opslaan
-                </button>
-                <button type="button" class="btn btn-clear" onclick="closeBoekModal()">
-                    <i class="fas fa-times"></i> Annuleren
-                </button>
-            </form>
+    <!-- Navigation Menu -->
+    <div class="nav-menu fade-in">
+        <a href="orders.html" class="nav-btn">
+            <i class="fas fa-clipboard-list"></i> Alle Bestellingen
+        </a>
+        <a href="books.html" class="nav-btn">
+            <i class="fas fa-book-open"></i> Boeken Catalogus
+        </a>
+        <a href="customers.html" class="nav-btn">
+            <i class="fas fa-users"></i> Klantenbeheer
+        </a>
+        <!-- Link naar login.html voor admin panel -->
+        <a href="login.html" class="nav-btn admin">
+            <i class="fas fa-user-shield"></i> Admin Panel
+        </a>
+        <a href="cart.html" class="nav-btn cart-badge">
+            <i class="fas fa-shopping-cart"></i> Winkelmandje
+            <span class="cart-count" id="cart-count" style="display:none;">0</span>
+        </a>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="info-banner fade-in">
+        <i class="fas fa-info-circle"></i>
+        <div class="info-banner-content">
+            <h3><i class="fas fa-bullseye"></i> Snel Bestellen Dashboard</h3>
+            <p>Plaats snel orders voor klanten. Gegevens worden automatisch gesynchroniseerd met RabbitMQ, Salesforce en SAP R/3.</p>
         </div>
     </div>
 
-    <div id="order-details-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeOrderDetailsModal()">&times;</span>
-            <h2><i class="fas fa-receipt"></i> Bestelling Details</h2>
-            <div id="order-details-content"></div>
+    <!-- Message Container -->
+    <div id="message-container"></div>
+
+    <!-- Quick Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
+            <i class="fas fa-shopping-cart" style="font-size: 32px; color: var(--primary); margin-bottom: 10px;"></i>
+            <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-orders">0</div>
+            <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Orders</div>
+        </div>
+        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
+            <i class="fas fa-users" style="font-size: 32px; color: var(--success); margin-bottom: 10px;"></i>
+            <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-klanten">0</div>
+            <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Klanten</div>
+        </div>
+        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
+            <i class="fas fa-book-open" style="font-size: 32px; color: var(--info); margin-bottom: 10px;"></i>
+            <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-boeken">0</div>
+            <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Boeken</div>
         </div>
     </div>
 
-    <script src="app.js"></script>
-    <script src="search-functions.js"></script>
-    <script>
-        // Update stats in header
-        function updateHeaderStats() {
+    <!-- Recente Bestellingen -->
+    <section id="bestellingen-sectie" class="card fade-in">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-clipboard-list"></i>
+                Laatste 5 Bestellingen
+            </div>
+            <a href="orders.html" class="btn btn-primary">
+                <i class="fas fa-list"></i> Alle Bestellingen
+            </a>
+        </div>
+        <div class="card-body">
+            <div id="bestellingen-loading" class="loading" style="padding: 20px;">
+                <i class="fas fa-spinner fa-spin"></i> Laden...
+            </div>
+            <div class="table-container" id="bestellingen-container" style="display:none;">
+                <table id="bestellingen-tabel">
+                    <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-user"></i> Klant</th>
+                        <th><i class="fas fa-calendar"></i> Datum</th>
+                        <th><i class="fas fa-euro-sign"></i> Totaal</th>
+                        <th><i class="fas fa-info-circle"></i> Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="bestellingen-body">
+                    <!-- Data wordt hier geladen -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="fade-in">
+        <p style="font-weight: 600; margin-bottom: 10px;">
+            <i class="fas fa-book-reader"></i> &copy; 2024 Bookstore - Alle rechten voorbehouden
+        </p>
+        <p>
+            <a href="/privacy-policy.html" target="_blank"><i class="fas fa-shield-alt"></i> Privacy Policy</a> |
+            <a href="/cookie-policy.html" target="_blank"><i class="fas fa-cookie-bite"></i> Cookie Policy</a> |
+            <a href="/terms-of-service.html" target="_blank"><i class="fas fa-file-contract"></i> Gebruiksvoorwaarden</a> |
+            <a href="/swagger" target="_blank"><i class="fas fa-code"></i> API Documentatie</a>
+        </p>
+        <p style="margin-top: 15px; font-size: 13px; color: var(--gray);">
+            <i class="fas fa-envelope"></i> Contact: <a href="mailto:support@bookstore@ehb.be">support@bookstore@ehb.be</a> |
+            <i class="fas fa-map-marker-alt"></i> Nijverheidskaai 170, 1070 Brussel
+        </p>
+        <p style="margin-top: 10px; font-size: 12px; opacity: 0.7;">
+            <i class="fas fa-cogs"></i> Powered by RabbitMQ + Salesforce + SAP R/3
+        </p>
+    </footer>
+</div>
+
+<script>
+    // ============================================
+    // AUTHENTICATION CHECK - EERSTE DING DAT RUNT
+    // ============================================
+    (function checkAuthentication() {
+        console.log('=== INDEX PAGE LOADED ===');
+        console.log('LocalStorage adminLoggedIn:', localStorage.getItem('adminLoggedIn'));
+        console.log('LocalStorage adminUser:', localStorage.getItem('adminUser'));
+
+        // Check of er een gebruiker is ingelogd
+        const adminLoggedIn = localStorage.getItem('adminLoggedIn');
+        const isLoggedIn = adminLoggedIn === 'true';
+
+        if (!isLoggedIn) {
+            console.log('User is not logged in - staying on index page (dashboard)');
+            // Niet redirecten, dit is de startpagina
+        } else {
+            console.log('User is logged in as:', localStorage.getItem('adminUser'));
+        }
+
+        return isLoggedIn;
+    })();
+
+    // ============================================
+    // LOGOUT FUNCTIE
+    // ============================================
+    function logout() {
+        if (confirm('Weet u zeker dat u wilt uitloggen?')) {
+            // Verwijder login data
+            localStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('adminUser');
+            localStorage.removeItem('loginTime');
+
+            // Toon bericht
+            showMessage('Succesvol uitgelogd!', 'success');
+
+            // Refresh de pagina (blijf op index)
             setTimeout(() => {
-                const orders = document.querySelectorAll('#bestellingen-body tr').length;
-                const klanten = document.querySelectorAll('#klanten-body tr').length;
-                const boeken = document.querySelectorAll('#boeken-body tr').length;
-
-                document.getElementById('stat-orders').textContent = `${orders} Orders`;
-                document.getElementById('stat-klanten').textContent = `${klanten} Klanten`;
-                document.getElementById('stat-boeken').textContent = `${boeken} Boeken`;
-            }, 500);
+                window.location.reload();
+            }, 1500);
         }
+    }
 
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+    function showMessage(text, type) {
+        const container = document.getElementById('message-container');
+        const message = document.createElement('div');
+        message.className = type;
+        message.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${text}</span>
+        `;
+        container.appendChild(message);
 
-        // Monitor data changes
-        if (typeof MutationObserver !== 'undefined') {
-            const observer = new MutationObserver(updateHeaderStats);
-            const config = { childList: true, subtree: true };
-
-            setTimeout(() => {
-                ['bestellingen-body', 'klanten-body', 'boeken-body'].forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) observer.observe(element, config);
-                });
-            }, 1000);
-        }
-
-        // ============================================
-        // AUTHENTICATION CHECK - Moet eerst ingelogd zijn
-        // ============================================
-        (function checkAuthentication() {
-            const adminLoggedIn = localStorage.getItem('adminLoggedIn');
-            const isLoggedIn = adminLoggedIn === 'true';
-
-            console.log('Index.html - Auth check:', { adminLoggedIn, isLoggedIn });
-
-            if (!isLoggedIn) {
-                console.log('Not logged in - redirecting to login.html');
-                window.location.href = 'login.html';
-                return false;
+        // Verwijder na 5 seconden
+        setTimeout(() => {
+            if (message.parentNode) {
+                message.remove();
             }
+        }, 5000);
+    }
 
-            console.log('User is logged in:', localStorage.getItem('adminUser'));
-            return true;
-        })();
+    // ============================================
+    // INITIALISATIE
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Laad sample data
+        loadSampleData();
 
-        // ============================================
-        // LOGOUT FUNCTIE
-        // ============================================
-        function logout() {
-            // Bevestig logout
-            if (confirm('Weet u zeker dat u wilt uitloggen?')) {
-                // Verwijder alle login gerelateerde items
-                localStorage.removeItem('adminLoggedIn');
-                localStorage.removeItem('adminUser');
-                localStorage.removeItem('loginTime');
+        // Toon body
+        document.body.classList.add('loaded');
+    });
 
-                console.log('User logged out, localStorage cleared');
+    function loadSampleData() {
+        // Voorbeeld bestellingen
+        const orders = [
+            { id: 'ORD-001', klant: 'Jan Janssen', datum: '15-01-2024', totaal: '€89.97', status: 'Verwerkt' },
+            { id: 'ORD-002', klant: 'Marie Peters', datum: '15-01-2024', totaal: '€24.99', status: 'Verwerkt' },
+            { id: 'ORD-003', klant: 'Thomas Verstraeten', datum: '14-01-2024', totaal: '€149.95', status: 'Verzonden' },
+            { id: 'ORD-004', klant: 'Lisa De Smet', datum: '14-01-2024', totaal: '€39.98', status: 'In behandeling' },
+            { id: 'ORD-005', klant: 'David Willems', datum: '13-01-2024', totaal: '€119.96', status: 'Verwerkt' }
+        ];
 
-                // Toon bericht
-                showMessage('Succesvol uitgelogd. U wordt doorgestuurd naar de login pagina...', 'success');
-
-                // Redirect naar login na korte delay
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1500);
-            }
-        }
-
-        // ============================================
-        // ANTI-FLICKER: Show body when ready
-        // ============================================
-        window.addEventListener('DOMContentLoaded', function() {
-            // Add loaded class to prevent flicker
-            document.body.classList.add('loaded');
+        const tbody = document.getElementById('bestellingen-body');
+        orders.forEach(order => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${order.id}</td>
+                <td>${order.klant}</td>
+                <td>${order.datum}</td>
+                <td>${order.totaal}</td>
+                <td><span style="color: ${order.status === 'Verwerkt' ? '#38a169' : order.status === 'Verzonden' ? '#4299e1' : '#ed8936'}; font-weight: bold;">${order.status}</span></td>
+            `;
+            tbody.appendChild(tr);
         });
 
-        // Fallback: Show body after max 1 second
-        setTimeout(function() {
-            document.body.classList.add('loaded');
-        }, 1000);
-    </script>
+        // Update stats
+        document.getElementById('stat-orders').textContent = '125 Orders';
+        document.getElementById('stat-klanten').textContent = '89 Klanten';
+        document.getElementById('stat-boeken').textContent = '245 Boeken';
+
+        // Verberg loading
+        document.getElementById('bestellingen-loading').style.display = 'none';
+        document.getElementById('bestellingen-container').style.display = 'block';
+    }
+
+    // Fallback voor body display
+    setTimeout(() => {
+        document.body.classList.add('loaded');
+    }, 1000);
+</script>
 </body>
 </html>

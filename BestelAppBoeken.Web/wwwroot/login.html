@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-﻿<!DOCTYPE html>
-=======
 <!DOCTYPE html>
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Admin Login - Bookstore Management System">
     <meta name="theme-color" content="#667eea">
     <title>Admin Login - Bookstore Management</title>
@@ -60,10 +56,6 @@
                 transform: translateY(30px);
                 opacity: 0;
             }
-<<<<<<< HEAD
-
-=======
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -129,21 +121,12 @@
             background: var(--light);
         }
 
-<<<<<<< HEAD
-            input:focus {
-                outline: none;
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-                background: white;
-            }
-=======
         input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             background: white;
         }
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 
         .password-input {
             position: relative;
@@ -178,32 +161,19 @@
             margin-top: 10px;
         }
 
-<<<<<<< HEAD
-            .btn:active {
-                transform: scale(0.98);
-            }
-=======
         .btn:active {
             transform: scale(0.98);
         }
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
         }
 
-<<<<<<< HEAD
-            .btn-primary:hover {
-                background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
-                box-shadow: var(--shadow);
-            }
-=======
         .btn-primary:hover {
             background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
             box-shadow: var(--shadow);
         }
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 
         .btn-back {
             background: var(--light);
@@ -211,15 +181,9 @@
             margin-top: 15px;
         }
 
-<<<<<<< HEAD
-            .btn-back:hover {
-                background: #e2e8f0;
-            }
-=======
         .btn-back:hover {
             background: #e2e8f0;
         }
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 
         .message {
             padding: 15px;
@@ -255,17 +219,10 @@
             border-left: 4px solid var(--primary);
         }
 
-<<<<<<< HEAD
-            .security-note i {
-                color: var(--primary);
-                margin-right: 5px;
-            }
-=======
         .security-note i {
             color: var(--primary);
             margin-right: 5px;
         }
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 
         /* Shake animation */
         .shake {
@@ -273,23 +230,9 @@
         }
 
         @keyframes shake {
-<<<<<<< HEAD
-            0%, 100% {
-                transform: translateX(0);
-            }
-
-            10%, 30%, 50%, 70%, 90% {
-                transform: translateX(-5px);
-            }
-
-            20%, 40%, 60%, 80% {
-                transform: translateX(5px);
-            }
-=======
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
         }
 
         @media (max-width: 768px) {
@@ -315,85 +258,9 @@
                 font-size: 24px;
             }
         }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-
-            .login-header {
-                padding: 25px 15px;
-            }
-
-            .login-body {
-                padding: 25px 15px;
-            }
-
-            input {
-                padding: 14px 16px;
-                font-size: 15px;
-            }
-
-            .btn {
-                padding: 15px;
-                font-size: 15px;
-            }
-        }
     </style>
 </head>
 <body>
-<<<<<<< HEAD
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="login-logo">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <h1>Admin Login</h1>
-                <p>Toegang tot beheerdersfuncties</p>
-            </div>
-
-            <div class="login-body">
-                <div id="error-message" class="message error">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span id="error-text">Ongeldige inloggegevens</span>
-                </div>
-
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="username">
-                            <i class="fas fa-user"></i> Gebruikersnaam
-                        </label>
-                        <input type="text" id="username" name="username" autocomplete="username" placeholder="Voer gebruikersnaam in" required value="admin">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">
-                            <i class="fas fa-lock"></i> Wachtwoord
-                        </label>
-                        <div class="password-input">
-                            <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Voer wachtwoord in" required value="admin123">
-                            <button type="button" class="toggle-password" id="toggle-password">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Inloggen
-                    </button>
-                </form>
-
-                <div class="security-note">
-                    <i class="fas fa-shield-alt"></i>
-                    Alleen geautoriseerd personeel heeft toegang tot deze pagina. Onbevoegde toegang is verboden.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-=======
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">
@@ -415,7 +282,7 @@
                     <label for="username">
                         <i class="fas fa-user"></i> Gebruikersnaam
                     </label>
-                    <input type="text" id="username" placeholder="Voer gebruikersnaam in" required value="admin">
+                    <input type="text" id="username" name="username" autocomplete="username" placeholder="Voer gebruikersnaam in" required value="admin">
                 </div>
 
                 <div class="form-group">
@@ -423,7 +290,7 @@
                         <i class="fas fa-lock"></i> Wachtwoord
                     </label>
                     <div class="password-input">
-                        <input type="password" id="password" placeholder="Voer wachtwoord in" required value="admin123">
+                        <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Voer wachtwoord in" required value="admin123">
                         <button type="button" class="toggle-password" id="toggle-password">
                             <i class="fas fa-eye"></i>
                         </button>
@@ -448,10 +315,21 @@
 </div>
 
 <script>
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
     // Debug: toon localStorage status
     console.log('Login page loaded');
     console.log('Current localStorage adminLoggedIn:', localStorage.getItem('adminLoggedIn'));
+    console.log('Current localStorage adminUser:', localStorage.getItem('adminUser'));
+
+    // Check of er al ingelogd is
+    (function checkIfAlreadyLoggedIn() {
+        const adminLoggedIn = localStorage.getItem('adminLoggedIn');
+        const isLoggedIn = adminLoggedIn === 'true';
+
+        if (isLoggedIn) {
+            console.log('User is already logged in, redirecting to admin.html');
+            window.location.href = 'admin.html';
+        }
+    })();
 
     // Toggle password visibility
     const togglePassword = document.getElementById('toggle-password');
@@ -472,28 +350,25 @@
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
 
-        // Eenvoudige validatie - in productie gebruik je een backend
+        // Eenvoudige validatie
         const validCredentials = {
-            // Standaard admin credentials
-<<<<<<< HEAD
-            'admin': 'admin123'
-=======
             'admin': 'admin123',
             'beheerder': 'boekhandel2024',
             'supervisor': 'EHB123!',
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
+            'test': 'test123'
         };
 
         if (validCredentials[username] && validCredentials[username] === password) {
             // SUCCESVOL INGELOGD
             console.log('Login successful for user:', username);
 
-            // Zet localStorage items - BELANGRIJK: als string 'true'
-            localStorage.setItem('adminLoggedIn', 'true');  // Als STRING
+            // Zet localStorage items
+            localStorage.setItem('adminLoggedIn', 'true');
             localStorage.setItem('adminUser', username);
             localStorage.setItem('loginTime', new Date().getTime());
 
-            errorMessage.style.display = 'none';
+            // Toon succesbericht
+            errorMessage.style.display = 'flex';
             errorMessage.className = 'message success';
             errorText.textContent = 'Inloggen succesvol! Doorsturen...';
 
@@ -503,11 +378,11 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inloggen...';
             submitBtn.disabled = true;
 
-            // Debug: toon wat we hebben opgeslagen
+            // Debug
             console.log('Set localStorage adminLoggedIn to:', localStorage.getItem('adminLoggedIn'));
-            console.log('Type:', typeof localStorage.getItem('adminLoggedIn'));
+            console.log('Set localStorage adminUser to:', localStorage.getItem('adminUser'));
 
-            // Simuleer een korte vertraging voor UX, dan redirect
+            // Redirect naar admin.html na 1.5 seconden
             setTimeout(() => {
                 console.log('Redirecting to admin.html...');
                 window.location.href = 'admin.html';
@@ -529,12 +404,14 @@
         }
     });
 
-    // Auto-focus op wachtwoord veld als gebruikersnaam al ingevuld is
-    if (document.getElementById('username').value) {
-        document.getElementById('password').focus();
-    } else {
-        document.getElementById('username').focus();
-    }
+    // Auto-focus op wachtwoord veld
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('username').value) {
+            document.getElementById('password').focus();
+        } else {
+            document.getElementById('username').focus();
+        }
+    });
 
     // Enter key navigatie
     document.addEventListener('keydown', function(e) {
@@ -547,19 +424,6 @@
             }
         }
     });
-
-    // Test login via URL parameter (voor debug)
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('debug') && urlParams.get('debug') === 'login') {
-        console.log('Debug mode: auto-filling form');
-        document.getElementById('username').value = 'admin';
-        document.getElementById('password').value = 'admin123';
-    }
-
-<<<<<<< HEAD
-    </script>
-=======
 </script>
->>>>>>> 6dd51d45223bbe71a57d2306a20f888bd69d6c8e
 </body>
 </html>
