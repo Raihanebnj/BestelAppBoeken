@@ -1,0 +1,38 @@
+name: 🚀 Demo Pipeline
+
+on:
+  push:
+    branches: 
+      - main
+      - kimberley
+      - Front-end-Backend-Saleforce
+  workflow_dispatch:
+
+jobs:
+  demo-ci:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v4
+      
+    - name: ⚙️ Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: "10.0.x"
+        
+    - name: 📦 Restore Dependencies
+      run: |
+        echo "Restoring dependencies..."
+        dotnet restore
+        
+    - name: 🏗️ Build Web App
+      run: |
+        echo "🔨 Building Web app..."
+        dotnet build --no-restore --verbosity minimal
+        
+    - name: 🎯 Demo Success
+      run: |
+        echo "========================================"
+        echo "✅ CI/CD PIPELINE SUCCESS!"
+        echo "========================================"

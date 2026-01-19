@@ -123,58 +123,285 @@ namespace BestelAppBoeken.Receiver.Services
                 await AuthenticateAsync();
             }
 
-            // Map Order to Salesforce 'Task' Object as requested
-            // Using standard Task fields
-            var salesforceTask = new
+            try 
             {
-                Subject = $"New Web Order from {order.CustomerEmail}",
-                Description = $"Order Details:\n" +
-                              $"Customer: {order.CustomerEmail}\n" +
-                              $"Total Amount: {order.TotalAmount:C}\n" +
-                              $"Book ID: {order.Items?.FirstOrDefault()?.BookId ?? 0}\n" +
-                              $"Quantity: {order.Items?.FirstOrDefault()?.Quantity ?? 0}",
-                Status = "Not Started",
-                Priority = "Normal",
-                ActivityDate = DateTime.Now.ToString("yyyy-MM-dd") // Due Date today
+                // 1. Find or Create Account
+                var accountId = await GetAccountIdAsync(order.CustomerEmail);
+                if (string.IsNullOrEmpty(accountId))
+                {
+                    _logger.LogInformation($"Account not found for {order.CustomerEmail}. Creating new account...");
+                    accountId = await CreateAccountAsync(order.CustomerEmail, order.CustomerEmail);
+                }
+
+                // 2. Get Standard Pricebook ID
+                var pricebookId = await GetStandardPricebookIdAsync();
+                
+                // 3. Get or Create Contract (Required for Activation)
+                var contractId = await EnsureContractAsync(accountId);
+
+                // 4. Create Order Object
+                var salesforceOrder = new
+                {
+                    AccountId = accountId,
+                    ContractId = contractId,
+                    EffectiveDate = order.OrderDate.ToString("yyyy-MM-dd"), // Use actual order date
+                    Status = "Draft",
+                    Pricebook2Id = pricebookId, // Required for adding Line Items
+                    Description = $"Web Order #{order.Id} from {order.CustomerEmail}"
+                };
+
+                var orderId = await CreateObjectAsync("Order", salesforceOrder);
+                
+                if (string.IsNullOrEmpty(orderId))
+                {
+                     throw new Exception("Failed to create Order Header (returned null ID)");
+                }
+
+                _logger.LogInformation($"Created Order Header {orderId}. Syncing {order.Items.Count} items...");
+
+                // 4. Sync Items (Products & OrderItems)
+                foreach(var item in order.Items)
+                {
+                    await SyncOrderItemAsync(orderId, pricebookId, item);
+                }
+
+                _logger.LogInformation($"Successfully fully synced Order {orderId} for {order.CustomerEmail}. Ready for manual activation.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error syncing order to Salesforce");
+                throw;
+            }
+        }
+
+        private async Task SyncOrderItemAsync(string orderId, string pricebookId, OrderItem item)
+        {
+             // A. Ensure Product Exists
+             var productId = await EnsureProductAsync(item.BookTitle, $"BOOK-{item.BookId}");
+
+             // B. Ensure Pricebook Entry Exists
+             var pbeId = await EnsurePricebookEntryAsync(productId, pricebookId, item.UnitPrice);
+
+             // C. Create OrderItem
+             var orderItem = new
+             {
+                 OrderId = orderId,
+                 PricebookEntryId = pbeId,
+                 Quantity = item.Quantity,
+                 UnitPrice = item.UnitPrice
+             };
+
+             await CreateObjectAsync("OrderItem", orderItem);
+        }
+
+        private async Task<string> EnsureProductAsync(string name, string code)
+        {
+            // Check if exists by ProductCode
+            var query = $"SELECT Id FROM Product2 WHERE ProductCode = '{code}' LIMIT 1";
+            var result = await QueryAsync(query);
+            
+            if (result?.records != null && result.records.Count > 0)
+            {
+                return result.records[0].Id;
+            }
+
+            // Create
+            var product = new
+            {
+                Name = name,
+                ProductCode = code,
+                IsActive = true,
+                Description = "Synced from BestelApp"
             };
 
-            var jsonOrder = JsonConvert.SerializeObject(salesforceTask);
-            var content = new StringContent(jsonOrder, Encoding.UTF8, "application/json");
+            var id = await CreateObjectAsync("Product2", product);
+            return id;
+        }
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+        private async Task<string> EnsurePricebookEntryAsync(string productId, string pricebookId, decimal price)
+        {
+            // Check if exists
+            var query = $"SELECT Id FROM PricebookEntry WHERE Product2Id = '{productId}' AND Pricebook2Id = '{pricebookId}' LIMIT 1";
+            var result = await QueryAsync(query);
 
-            // Use Standard Task Object Endpoint
-            var requestUrl = $"{_instanceUrl}/services/data/v58.0/sobjects/Task/"; 
+            if (result?.records != null && result.records.Count > 0)
+            {
+                return result.records[0].Id;
+            }
 
-            var response = await _httpClient.PostAsync(requestUrl, content);
+            // Create
+            var pbe = new
+            {
+                Pricebook2Id = pricebookId,
+                Product2Id = productId,
+                UnitPrice = price,
+                IsActive = true,
+                UseStandardPrice = false
+            };
+
+            var id = await CreateObjectAsync("PricebookEntry", pbe);
+            return id;
+        }
+
+        private async Task<string> GetStandardPricebookIdAsync()
+        {
+            // Standard Pricebook is usually harddat to query reliably without `isStandard` which varies by API version, 
+            // but getting by ID if known is best. 
+            // Fallback strategy: Query for standard pricebook
+            var query = "SELECT Id FROM Pricebook2 WHERE IsStandard = true LIMIT 1";
+            var result = await QueryAsync(query);
+             if (result?.records != null && result.records.Count > 0)
+            {
+                return result.records[0].Id;
+            }
+            throw new Exception("Could not find Standard Pricebook!");
+        }
+
+        // Helper for queries to reduce boilerplate
+        private async Task<dynamic?> QueryAsync(string soql)
+        {
+             return await ExecuteWithRetryAsync(async () => 
+             {
+                 var requestUrl = $"{_instanceUrl}/services/data/v58.0/query/?q={Uri.EscapeDataString(soql)}";
+                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+                 return await _httpClient.GetAsync(requestUrl);
+             });
+        }
+
+        // Helper for creation
+        private async Task<string> CreateObjectAsync(string objectType, object data)
+        {
+             var result = await ExecuteWithRetryAsync(async () => 
+             {
+                 var json = JsonConvert.SerializeObject(data);
+                 var content = new StringContent(json, Encoding.UTF8, "application/json");
+                 var requestUrl = $"{_instanceUrl}/services/data/v58.0/sobjects/{objectType}/";
+                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+                 return await _httpClient.PostAsync(requestUrl, content);
+             });
+             
+            return result?.id;
+        }
+
+        private async Task<dynamic?> ExecuteWithRetryAsync(Func<Task<HttpResponseMessage>> action)
+        {
+            var response = await action();
+
+            // Retry on 401 Unauthorized
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                _logger.LogWarning("Salesforce Token Expired (401). refreshing...");
+                await AuthenticateAsync();
+                response = await action();
+            }
+
+            if (!response.IsSuccessStatusCode) 
+            {
+                 var error = await response.Content.ReadAsStringAsync();
+                 _logger.LogError($"Salesforce Request Failed: {response.StatusCode} - {error} - URL: {response.RequestMessage?.RequestUri}");
+                 // For QueryAsync which expects null on fail:
+                 return null;
+            }
             
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                
-                // If 401, token might be expired. Retry once.
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    _logger.LogWarning("Token expired, refreshing...");
-                    _accessToken = null;
-                    await AuthenticateAsync();
-                    if (_accessToken != null)
-                    {
-                         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
-                         response = await _httpClient.PostAsync(requestUrl, content);
-                    }
-                }
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<dynamic>(json);
+        }
 
-                if (!response.IsSuccessStatusCode)
+        private async Task<string?> GetAccountIdAsync(string email)
+        {
+            var query = $"SELECT Id FROM Account WHERE Name = '{email}' LIMIT 1";
+            var result = await QueryAsync(query);
+            if (result?.records != null && result.records.Count > 0) return result.records[0].Id;
+            return null;
+        }
+
+        private async Task<string> CreateAccountAsync(string name, string email)
+        {
+            var account = new
+            {
+                Name = name,
+                Type = "Customer - Direct",
+                Phone = "1234567890" 
+            };
+            return await CreateObjectAsync("Account", account);
+        }
+
+        private async Task<string> EnsureContractAsync(string accountId)
+        {
+            // 1. Try to find an ALREADY ACTIVATED contract
+            var query = $"SELECT Id FROM Contract WHERE AccountId = '{accountId}' AND Status = 'Activated' LIMIT 1";
+            var result = await QueryAsync(query);
+            
+            if (result?.records != null && result.records.Count > 0)
+            {
+                return result.records[0].Id;
+            }
+
+            // 2. If no active contract, Create a NEW one (Draft -> Activate)
+            // We avoid reusing old Drafts to prevent "missing field" issues
+            var contract = new
+            {
+                AccountId = accountId,
+                Status = "Draft",
+                StartDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                ContractTerm = 12,
+                Description = "Auto-created by BestelApp"
+            };
+
+            var contractId = await CreateObjectAsync("Contract", contract);
+
+            // 3. Activate it immediately
+             await UpdateContractStatusAsync(contractId, "Activated");
+             
+             return contractId;
+        }
+
+        private async Task UpdateContractStatusAsync(string contractId, string status)
+        {
+            var update = new { Status = status };
+             await ExecuteWithRetryAsync(async () => 
+             {
+                 var json = JsonConvert.SerializeObject(update);
+                 var content = new StringContent(json, Encoding.UTF8, "application/json");
+                 var requestUrl = $"{_instanceUrl}/services/data/v58.0/sobjects/Contract/{contractId}";
+                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+                 return await _httpClient.PatchAsync(requestUrl, content);
+             });
+        }
+        public async Task<List<dynamic>> GetModifiedOrdersAsync(DateTime since)
+        {
+            if (string.IsNullOrEmpty(_accessToken)) await AuthenticateAsync();
+
+            var dateStr = since.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            // Query for orders modified after the date
+            // We select Description to parse out the original email if needed, or we just trust matching by Reference/Name if we had that.
+            // Returning Description to help validat in Consumer.
+            var query = $"SELECT Id, Status, Description, OrderNumber FROM Order WHERE LastModifiedDate > {dateStr} ORDER BY LastModifiedDate DESC";
+            
+            var result = await QueryAsync(query);
+            var list = new List<dynamic>();
+
+            if (result?.records != null)
+            {
+                foreach (var record in result.records)
                 {
-                     _logger.LogError($"Failed to push order to Salesforce: {response.StatusCode} - {error}");
-                     // Don't throw if you want to keep processing, but usually we want to retry/DLQ.
+                    list.Add(record);
                 }
             }
-            else 
-            {
-                _logger.LogInformation($"Order pushed to Salesforce successfully: {order.CustomerEmail}");
-            }
+            return list;
+        }
+        private async Task UpdateStatusAsync(string orderId, string status)
+        {
+            var update = new { Status = status };
+             await ExecuteWithRetryAsync(async () => 
+             {
+                 var json = JsonConvert.SerializeObject(update);
+                 var content = new StringContent(json, Encoding.UTF8, "application/json");
+                 // Use PATCH for updates
+                 var requestUrl = $"{_instanceUrl}/services/data/v58.0/sobjects/Order/{orderId}";
+                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+                 return await _httpClient.PatchAsync(requestUrl, content);
+             });
         }
     }
 }
