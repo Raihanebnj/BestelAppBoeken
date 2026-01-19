@@ -228,17 +228,17 @@ async function plaatsOrder() {
     console.log('✅ [CART] Klant gevonden!');
     console.log('📋 Klant details:', JSON.stringify(klant, null, 2));
 
+    // ✅ FIX: Gebruik correcte API request format (CreateOrderRequest)
+    // Backend verwacht: { KlantId: int, Items: [ { BoekId: int, Aantal: int } ] }
     const orderData = {
-        customerName: klant.naam,
-        customerEmail: klant.email,
-        books: winkelmandje.map(item => ({
-            bookId: item.id,
-            title: item.titel,
-            quantity: item.aantal,
-            price: item.prijs
-        })),
-        totalAmount: winkelmandje.reduce((sum, item) => sum + (item.prijs * item.aantal), 0)
+        KlantId: parseInt(klant.id, 10),  // ✅ Correct! Parse naar INT
+        Items: winkelmandje.map(item => ({
+            BoekId: parseInt(item.boekId, 10),  // ✅ Correct! Parse naar INT
+            Aantal: parseInt(item.aantal, 10)   // ✅ Correct! Parse naar INT
+        }))
     };
+    
+    console.log('📦 Order Data (naar API):', JSON.stringify(orderData, null, 2));
 
     try {
         const response = await fetch(`${API_BASE}/orders`, {
