@@ -12,8 +12,24 @@ using System.Xml.Linq;
 namespace BestelAppBoeken.Infrastructure.Services
 {
     /// <summary>
-    /// SAP iDoc ORDERS05 Service - Tweezijdige communicatie (Request-Response)
-    /// Transformeert orders naar SAP iDoc XML en verwerkt statusresponsen
+    /// 🎭 SAP iDoc Service - SIMPLIFIED MOCK VERSION
+    /// 
+    /// ✅ Features:
+    /// - Simuleert SAP R/3 integratie (geen echte connectie nodig)
+    /// - Genereert realistische IDoc nummers
+    /// - Uitgebreide logging voor debugging
+    /// - Minimale XML generatie (klaar voor echte SAP)
+    /// - Configurable: switch tussen mock en live mode
+    /// 
+    /// ⚙️ Configuration:
+    /// {
+    ///   "SAP": {
+    ///     "UseMockMode": true,           // true = simulatie, false = echte SAP
+    ///     "Endpoint": "http://sap:8000", // SAP server (alleen bij live mode)
+    ///     "Client": "800",               // SAP client nummer
+    ///     "System": "DEV"                // SAP systeem (DEV/QA/PRD)
+    ///   }
+    /// }
     /// </summary>
     public class SapService : ISapService
     {
@@ -21,11 +37,11 @@ namespace BestelAppBoeken.Infrastructure.Services
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
         
-        // SAP iDoc configuratie
+        // Configuration
+        private readonly bool _useMockMode;
         private readonly string _sapEndpoint;
         private readonly string _sapClient;
         private readonly string _sapSystem;
-        private readonly int _idocTimeout;
 
         public SapService(
             ILogger<SapService> logger, 
@@ -36,257 +52,301 @@ namespace BestelAppBoeken.Infrastructure.Services
             _configuration = configuration;
             _httpClient = httpClient;
             
-            // SAP configuratie laden
-            _sapEndpoint = configuration["SAP:Endpoint"] ?? "http://sap-server:8000/sap/bc/idoc";
+            // Load configuration
+            _useMockMode = configuration.GetValue<bool>("SAP:UseMockMode", true);
+            _sapEndpoint = configuration["SAP:Endpoint"] ?? "http://sap-mock:8000/idoc";
             _sapClient = configuration["SAP:Client"] ?? "800";
-            _sapSystem = configuration["SAP:System"] ?? "PRD";
-            _idocTimeout = int.TryParse(configuration["SAP:TimeoutSeconds"], out int timeout) ? timeout : 30;
+            _sapSystem = configuration["SAP:System"] ?? "DEV";
             
-            _httpClient.Timeout = TimeSpan.FromSeconds(_idocTimeout);
+            // Log startup mode
+            if (_useMockMode)
+            {
+                _logger.LogInformation("🎭 [SAP MOCK] Service started - All orders will be SIMULATED");
+            }
+            else
+            {
+                _logger.LogInformation("🔌 [SAP LIVE] Service started - Endpoint: {Endpoint}, Client: {Client}", 
+                    _sapEndpoint, _sapClient);
+            }
         }
 
         #region Legacy Methods (backwards compatibility)
+        
+        /// <summary>
+        /// Check inventory (always returns true in mock mode)
+        /// </summary>
         public Task<bool> CheckInventoryAsync(int bookId, int quantity)
         {
-            // Placeholder: Assume inventory is always available
+            if (_useMockMode)
+            {
+                _logger.LogDebug("📦 [SAP Mock] Inventory check - Book: {BookId}, Qty: {Quantity} → ✅ AVAILABLE", 
+                    bookId, quantity);
+            }
             return Task.FromResult(true);
         }
 
+        /// <summary>
+        /// Post invoice to SAP
+        /// </summary>
         public async Task PostInvoiceAsync(Order order)
         {
-            // Gebruik nieuwe iDoc methode
+            _logger.LogInformation("📄 [SAP] Posting invoice for Order {OrderId}", order.Id);
             var response = await SendOrderIDocAsync(order);
-            if (!response.Success)
+            
+            if (response.Success)
             {
-                _logger.LogWarning($"SAP invoice posting failed for Order {order.Id}: {response.StatusDescription}");
+                _logger.LogInformation("✅ [SAP] Invoice posted successfully - IDoc: {IDocNumber}", 
+                    response.IDocNumber);
+            }
+            else
+            {
+                _logger.LogWarning("⚠️ [SAP] Invoice posting issue - {Status}", 
+                    response.StatusDescription);
             }
         }
+        
         #endregion
 
+        #region Main IDoc Methods
+
         /// <summary>
-        /// STAP 3b: Verzend Order als SAP iDoc ORDERS05
-        /// Tweezijdige communicatie: Request → SAP → Response
+        /// 🚀 Send Order to SAP as IDoc
+        /// 
+        /// MOCK MODE: Simulates SAP response (for development/testing)
+        /// LIVE MODE: Sends actual HTTP request to SAP endpoint
         /// </summary>
         public async Task<SapIDocResponse> SendOrderIDocAsync(Order order)
         {
+            var idocNumber = GenerateIDocNumber();
+            
             try
             {
-                _logger.LogInformation($"[SAP iDoc] START - Verzenden Order {order.Id} naar SAP R/3");
-
-                // Stap 1: Genereer iDoc XML (ORDERS05 formaat)
-                var idocXml = await GenerateOrdersIdocXmlAsync(order);
+                _logger.LogInformation("📤 [SAP] START - Order {OrderId} → IDoc {IDocNumber}", 
+                    order.Id, idocNumber);
                 
-                // Stap 2: Genereer uniek iDoc nummer
-                var idocNumber = GenerateIDocNumber();
+                // MOCK MODE: Simulate response
+                if (_useMockMode)
+                {
+                    return SimulateSapResponse(order, idocNumber);
+                }
                 
-                _logger.LogInformation($"[SAP iDoc] Generated IDoc: {idocNumber}");
-
-                // Stap 3: Verzend naar SAP via HTTP POST
-                var content = new StringContent(idocXml, Encoding.UTF8, "application/xml");
-                content.Headers.Add("X-IDoc-Number", idocNumber);
-                content.Headers.Add("X-SAP-Client", _sapClient);
-                content.Headers.Add("X-SAP-System", _sapSystem);
-
-                var response = await _httpClient.PostAsync(_sapEndpoint, content);
-
-                // Stap 4: Verwerk SAP Response
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    var sapStatus = ParseSapResponse(responseContent);
-                    
-                    _logger.LogInformation($"[SAP iDoc] SUCCESS - IDoc {idocNumber} Status: {sapStatus}");
-
-                    return new SapIDocResponse
-                    {
-                        IDocNumber = idocNumber,
-                        Status = sapStatus,
-                        StatusDescription = GetStatusDescription(sapStatus),
-                        Timestamp = DateTime.UtcNow
-                    };
-                }
-                else
-                {
-                    _logger.LogError($"[SAP iDoc] ERROR - HTTP {response.StatusCode} voor IDoc {idocNumber}");
-                    
-                    return new SapIDocResponse
-                    {
-                        IDocNumber = idocNumber,
-                        Status = SapIDocStatus.Error,
-                        StatusDescription = $"HTTP Error: {response.StatusCode}",
-                        Timestamp = DateTime.UtcNow
-                    };
-                }
+                // LIVE MODE: Send to real SAP
+                return await SendToRealSapAsync(order, idocNumber);
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex, "[SAP iDoc] HTTP Connectie fout");
+                _logger.LogError(ex, "❌ [SAP] ERROR - Order {OrderId} / IDoc {IDocNumber}", 
+                    order.Id, idocNumber);
                 
-                // Fallback: Return simulated success (voor development)
                 return new SapIDocResponse
                 {
-                    IDocNumber = GenerateIDocNumber(),
-                    Status = SapIDocStatus.Success,
-                    StatusDescription = "Simulated: SAP niet bereikbaar - order lokaal opgeslagen",
+                    IDocNumber = idocNumber,
+                    Status = SapIDocStatus.Error,
+                    StatusDescription = $"Error: {ex.Message}",
                     Timestamp = DateTime.UtcNow
                 };
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"[SAP iDoc] Onverwachte fout bij verzenden Order {order.Id}");
-                throw;
-            }
         }
 
         /// <summary>
-        /// Genereer SAP iDoc XML in ORDERS05 formaat
-        /// Gebruikt E1EDK01 segment met BELNR (ordernummer)
+        /// Generate SAP iDoc XML (backwards compatibility)
+        /// Returns minimal XML structure
         /// </summary>
         public Task<string> GenerateOrdersIdocXmlAsync(Order order)
         {
-            try
-            {
-                var idocNumber = GenerateIDocNumber();
-                var orderNumber = $"ORD-{order.Id:D6}"; // Format: ORD-000001
-
-                // SAP iDoc ORDERS05 XML structuur - ZONDER namespace op root (veroorzaakt conflict)
-                var idocXml = new XElement("ORDERS05",
-                    
-                    // Control Record (verplicht)
-                    new XElement("IDOC",
-                        new XAttribute("BEGIN", "1"),
-                        
-                        // EDI_DC40: Control Record
-                        new XElement("EDI_DC40",
-                            new XAttribute("SEGMENT", "1"),
-                            new XElement("TABNAM", "EDI_DC40"),
-                            new XElement("MANDT", _sapClient),
-                            new XElement("DOCNUM", idocNumber),
-                            new XElement("DOCREL", "740"),
-                            new XElement("STATUS", "64"), // 64 = Klaar voor verwerking
-                            new XElement("DIRECT", "2"),  // 2 = Inbound
-                            new XElement("IDOCTYP", "ORDERS05"),
-                            new XElement("MESTYP", "ORDERS"),
-                            new XElement("SNDPOR", "BOOKSTORE"),
-                            new XElement("SNDPRT", "LS"),
-                            new XElement("SNDPRN", "BOOKSTORE_WEB"),
-                            new XElement("RCVPOR", "SAPECC"),
-                            new XElement("RCVPRT", "LS"),
-                            new XElement("RCVPRN", "ECCCLNT800"),
-                            new XElement("CREDAT", DateTime.Now.ToString("yyyyMMdd")),
-                            new XElement("CRETIM", DateTime.Now.ToString("HHmmss"))
-                        ),
-                        
-                        // E1EDK01: Document Header (BELANGRIJK - bevat ordernummer)
-                        new XElement("E1EDK01",
-                            new XAttribute("SEGMENT", "1"),
-                            new XElement("BELNR", orderNumber),  // ← Ordernummer (SAP vereist)
-                            new XElement("CURCY", "EUR"),
-                            new XElement("WKURS", "1.00"),
-                            new XElement("HWAER", "EUR"),
-                            new XElement("AUGRU", "001"), // Order reason
-                            new XElement("BSART", "OR"),  // Document type: Order
-                            new XElement("NTGEW", "0"), // Net weight
-                            new XElement("BRGEW", "0"), // Gross weight
-                            new XElement("GEWEI", "KG"), // Weight unit
-                            
-                            // E1EDKA1: Partner/Customer data
-                            new XElement("E1EDKA1",
-                                new XAttribute("SEGMENT", "1"),
-                                new XElement("PARVW", "AG"), // Partner function: Sold-to party
-                                new XElement("PARTN", order.Id.ToString("D10")), // Use Order ID as partner
-                                new XElement("NAME1", order.CustomerName ?? order.CustomerEmail ?? "Unknown Customer")
-                            ),
-                            
-                            // E1EDP01: Line items (per boek)
-                            order.Items?.Select((item, index) => 
-                                new XElement("E1EDP01",
-                                    new XAttribute("SEGMENT", "1"),
-                                    new XElement("POSEX", (index + 1).ToString("D6")), // Position number
-                                    new XElement("MENGE", item.Quantity.ToString()), // Quantity
-                                    new XElement("MENEE", "ST"), // Unit: Stuks
-                                    new XElement("WERKS", "1000"), // Plant
-                                    new XElement("LPRIO", "02"), // Delivery priority
-                                    
-                                    // E1EDP19: Item object identification (Book ID as material)
-                                    new XElement("E1EDP19",
-                                        new XAttribute("SEGMENT", "1"),
-                                        new XElement("QUALF", "001"), // Qualifier: Material number
-                                        new XElement("IDTNR", item.BookId.ToString("D10")),
-                                        new XElement("KTEXT", item.BookTitle ?? "Unknown Book")
-                                    ),
-                                    
-                                    // E1EDP26: Item price
-                                    new XElement("E1EDP26",
-                                        new XAttribute("SEGMENT", "1"),
-                                        new XElement("QUALF", "003"), // Qualifier: Net price
-                                        new XElement("BETRG", item.UnitPrice.ToString("F2")),
-                                        new XElement("KRATE", item.Quantity.ToString()),
-                                        new XElement("WAERS", "EUR")
-                                    )
-                                )
-                            ).ToArray() ?? Array.Empty<XElement>()
-                        ),
-                        
-                        // E1EDS01: Summary data
-                        new XElement("E1EDS01",
-                            new XAttribute("SEGMENT", "1"),
-                            new XElement("SUMID", "001"),
-                            new XElement("SUMME", order.TotalAmount.ToString("F2")),
-                            new XElement("SUNIT", "EUR")
-                        )
-                    )
-                );
-
-                var xmlString = $"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n{idocXml}";
-                
-                _logger.LogDebug($"[SAP iDoc] Generated XML:\n{xmlString}");
-                
-                return Task.FromResult(xmlString);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"[SAP iDoc] Fout bij genereren XML voor Order {order.Id}");
-                throw new InvalidOperationException("SAP iDoc XML generatie gefaald", ex);
-            }
+            var idocNumber = GenerateIDocNumber();
+            var xml = GenerateMinimalIdocXml(order, idocNumber);
+            return Task.FromResult(xml);
         }
 
         /// <summary>
-        /// Check SAP iDoc status (64 → 53/51)
+        /// Check IDoc status in SAP
         /// </summary>
         public async Task<SapIDocStatus> CheckIDocStatusAsync(string idocNumber)
         {
+            if (_useMockMode)
+            {
+                _logger.LogDebug("🔍 [SAP Mock] Status check - IDoc: {IDocNumber} → ✅ SUCCESS", idocNumber);
+                return SapIDocStatus.Success;
+            }
+            
             try
             {
-                _logger.LogInformation($"[SAP iDoc] Checking status voor IDoc: {idocNumber}");
-
-                // In productie: API call naar SAP
-                // Voor nu: Simuleer status check
                 var statusEndpoint = $"{_sapEndpoint}/status/{idocNumber}";
                 var response = await _httpClient.GetAsync(statusEndpoint);
-
+                
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    return ParseSapResponse(content);
+                    return ParseSapStatus(content);
                 }
                 
-                // Fallback: Simuleer succes
-                _logger.LogWarning($"[SAP iDoc] Status check gefaald, assume success voor {idocNumber}");
+                _logger.LogWarning("⚠️ [SAP] Status check failed for {IDocNumber}, assuming success", idocNumber);
                 return SapIDocStatus.Success;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"[SAP iDoc] Status check fout voor {idocNumber}");
+                _logger.LogError(ex, "❌ [SAP] Status check error for {IDocNumber}", idocNumber);
                 return SapIDocStatus.Error;
             }
         }
 
-        #region Helper Methods
+        #endregion
+
+        #region Private Helper Methods
 
         /// <summary>
-        /// Genereer uniek SAP iDoc nummer (16 digits)
-        /// Formaat: YYYYMMDDHHMMSSXX
+        /// 🎭 MOCK: Simulate SAP response
+        /// </summary>
+        private SapIDocResponse SimulateSapResponse(Order order, string idocNumber)
+        {
+            // Log order details (as if sending to SAP)
+            _logger.LogInformation("📋 [SAP Mock] Order Details:");
+            _logger.LogInformation("   Order ID: {OrderId}", order.Id);
+            _logger.LogInformation("   Customer: {Customer}", order.CustomerName ?? order.CustomerEmail);
+            _logger.LogInformation("   Items: {Count} items", order.Items?.Count ?? 0);
+            _logger.LogInformation("   Total: €{Amount:F2}", order.TotalAmount);
+            _logger.LogInformation("   IDoc: {IDocNumber}", idocNumber);
+            
+            // Simulate processing delay
+            System.Threading.Thread.Sleep(50);
+            
+            // Return success
+            _logger.LogInformation("✅ [SAP Mock] IDoc {IDocNumber} - Status: SUCCESS (simulated)", idocNumber);
+            
+            return new SapIDocResponse
+            {
+                IDocNumber = idocNumber,
+                Status = SapIDocStatus.Success,
+                StatusDescription = "Mock: Order successfully processed (simulated)",
+                Timestamp = DateTime.UtcNow
+            };
+        }
+
+        /// <summary>
+        /// 🔌 LIVE: Send to real SAP endpoint
+        /// </summary>
+        private async Task<SapIDocResponse> SendToRealSapAsync(Order order, string idocNumber)
+        {
+            try
+            {
+                _logger.LogInformation("🔌 [SAP Live] Sending to endpoint: {Endpoint}", _sapEndpoint);
+                
+                // Generate minimal XML
+                var xml = GenerateMinimalIdocXml(order, idocNumber);
+                
+                // POST to SAP
+                var content = new StringContent(xml, Encoding.UTF8, "application/xml");
+                content.Headers.Add("X-IDoc-Number", idocNumber);
+                content.Headers.Add("X-SAP-Client", _sapClient);
+                content.Headers.Add("X-SAP-System", _sapSystem);
+                
+                var response = await _httpClient.PostAsync(_sapEndpoint, content);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var status = ParseSapStatus(responseContent);
+                    
+                    _logger.LogInformation("✅ [SAP Live] IDoc {IDocNumber} - Status: {Status}", 
+                        idocNumber, status);
+                    
+                    return new SapIDocResponse
+                    {
+                        IDocNumber = idocNumber,
+                        Status = status,
+                        StatusDescription = GetStatusDescription(status),
+                        Timestamp = DateTime.UtcNow
+                    };
+                }
+                
+                _logger.LogError("❌ [SAP Live] HTTP Error: {StatusCode}", response.StatusCode);
+                
+                return new SapIDocResponse
+                {
+                    IDocNumber = idocNumber,
+                    Status = SapIDocStatus.Error,
+                    StatusDescription = $"HTTP Error: {response.StatusCode}",
+                    Timestamp = DateTime.UtcNow
+                };
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "❌ [SAP Live] Connection failed - falling back to mock");
+                
+                // Fallback to mock
+                return SimulateSapResponse(order, idocNumber);
+            }
+        }
+
+        /// <summary>
+        /// Generate minimal SAP iDoc XML
+        /// Contains only essential fields for SAP processing
+        /// </summary>
+        private string GenerateMinimalIdocXml(Order order, string idocNumber)
+        {
+            var orderNumber = $"ORD-{order.Id:D6}";
+            
+            var xml = new XElement("ORDERS05",
+                new XElement("IDOC",
+                    // Control Record
+                    new XElement("EDI_DC40",
+                        new XElement("DOCNUM", idocNumber),
+                        new XElement("IDOCTYP", "ORDERS05"),
+                        new XElement("MESTYP", "ORDERS"),
+                        new XElement("MANDT", _sapClient),
+                        new XElement("CREDAT", DateTime.Now.ToString("yyyyMMdd")),
+                        new XElement("CRETIM", DateTime.Now.ToString("HHmmss"))
+                    ),
+                    // Document Header
+                    new XElement("E1EDK01",
+                        new XElement("BELNR", orderNumber),
+                        new XElement("CURCY", "EUR"),
+                        
+                        // Customer
+                        new XElement("E1EDKA1",
+                            new XElement("PARVW", "AG"),
+                            new XElement("PARTN", order.Id.ToString("D10")),
+                            new XElement("NAME1", order.CustomerName ?? order.CustomerEmail ?? "Unknown")
+                        ),
+                        
+                        // Line Items
+                        order.Items?.Select((item, index) =>
+                            new XElement("E1EDP01",
+                                new XElement("POSEX", (index + 1).ToString("D6")),
+                                new XElement("MENGE", item.Quantity),
+                                new XElement("MENEE", "ST"),
+                                
+                                // Material
+                                new XElement("E1EDP19",
+                                    new XElement("QUALF", "001"),
+                                    new XElement("IDTNR", item.BookId.ToString("D10")),
+                                    new XElement("KTEXT", item.BookTitle ?? "Unknown")
+                                ),
+                                
+                                // Price
+                                new XElement("E1EDP26",
+                                    new XElement("QUALF", "003"),
+                                    new XElement("BETRG", item.UnitPrice.ToString("F2")),
+                                    new XElement("WAERS", "EUR")
+                                )
+                            )
+                        ).ToArray() ?? Array.Empty<XElement>()
+                    ),
+                    // Summary
+                    new XElement("E1EDS01",
+                        new XElement("SUMME", order.TotalAmount.ToString("F2")),
+                        new XElement("SUNIT", "EUR")
+                    )
+                )
+            );
+            
+            return $"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n{xml}";
+        }
+
+        /// <summary>
+        /// Generate unique SAP IDoc number (16 digits)
+        /// Format: YYYYMMDDHHMMSSRR
         /// </summary>
         private string GenerateIDocNumber()
         {
@@ -296,13 +356,12 @@ namespace BestelAppBoeken.Infrastructure.Services
         }
 
         /// <summary>
-        /// Parse SAP response XML en extract status
+        /// Parse SAP response and extract status
         /// </summary>
-        private SapIDocStatus ParseSapResponse(string responseXml)
+        private SapIDocStatus ParseSapStatus(string responseXml)
         {
             try
             {
-                // Parse SAP response XML
                 var doc = XDocument.Parse(responseXml);
                 var statusElement = doc.Descendants("STATUS").FirstOrDefault();
                 
@@ -316,29 +375,27 @@ namespace BestelAppBoeken.Infrastructure.Services
                         _ => SapIDocStatus.Pending
                     };
                 }
-
-                // Default: assume success als geen status gevonden
+                
                 return SapIDocStatus.Success;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogWarning(ex, "[SAP iDoc] Response parsing gefaald, assume pending");
                 return SapIDocStatus.Pending;
             }
         }
 
         /// <summary>
-        /// Menselijk leesbare status beschrijving
+        /// Get human-readable status description
         /// </summary>
         private string GetStatusDescription(SapIDocStatus status)
         {
             return status switch
             {
-                SapIDocStatus.Created => "64 - IDoc klaar voor verwerking",
-                SapIDocStatus.Success => "53 - IDoc succesvol verwerkt, document aangemaakt",
-                SapIDocStatus.Error => "51 - IDoc verwerking gefaald",
-                SapIDocStatus.Pending => "00 - IDoc in wachtrij",
-                _ => "Onbekende status"
+                SapIDocStatus.Created => "64 - IDoc ready for processing",
+                SapIDocStatus.Success => "53 - IDoc successfully processed",
+                SapIDocStatus.Error => "51 - IDoc processing failed",
+                SapIDocStatus.Pending => "00 - IDoc in queue",
+                _ => "Unknown status"
             };
         }
 

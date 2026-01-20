@@ -54,13 +54,18 @@ function checkForNewOrder() {
 async function loadOrders() {
     try {
         console.log('?? Loading orders from API...');
-        const response = await fetch(`${API_BASE}/orders`);
+        const response = await fetch(`${API_BASE}/orders`, {
+            headers: {
+                'X-Api-Key': 'BOOKSTORE-API-2026-SECRET-KEY-XYZ789'  // ? API KEY TOEGEVOEGD!
+            }
+        });
         if (!response.ok) throw new Error('Kon bestellingen niet laden');
         
         orders = await response.json();
         console.log(`? Loaded ${orders.length} orders`);
         
         displayOrders();
+        updateStatistics();
         
         document.getElementById('orders-loading').style.display = 'none';
         document.getElementById('orders-table-container').style.display = 'block';
@@ -128,6 +133,12 @@ function displayOrders() {
             </tr>
         `;
     }).join('');
+}
+
+// Update statistics (DISABLED - statistics removed from UI)
+function updateStatistics() {
+    // Statistics UI elements removed - function kept to prevent errors
+    console.log('?? Statistics update skipped (UI removed)');
 }
 
 // View order details

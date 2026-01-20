@@ -1064,69 +1064,45 @@
         showMessage(message, 'error');
     }
 
+    // Show message functie - MODERNE TOAST NOTIFICATIONS
     function showMessage(text, type) {
-        const container = document.getElementById('message-container');
-        const message = document.createElement('div');
-        message.className = type;
-        message.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-            <span>${text}</span>
-        `;
-        container.appendChild(message);
+        const messageContainer = document.getElementById('message-container');
+        if (!messageContainer) {
+            console.log('Message:', text);
+            return;
+        }
 
-        // Verwijder na 5 seconden
+        // Creëer toast element
+        const toast = document.createElement('div');
+        toast.className = `toast-${type}`;
+        
+        // Icon bepalen
+        const icon = type === 'success' 
+            ? 'fa-check-circle' 
+            : type === 'error' 
+            ? 'fa-exclamation-circle'
+            : 'fa-info-circle';
+        
+        toast.innerHTML = `
+            <i class="fas ${icon}"></i>
+            <span>${text}</span>
+            <button class="toast-close" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="toast-progress"></div>
+        `;
+
+        messageContainer.appendChild(toast);
+
+        // Auto verwijderen na 5 seconden
         setTimeout(() => {
-            if (message.parentNode) {
-                message.remove();
+            if (toast.parentNode) {
+                toast.classList.add('toast-fadeout');
+                setTimeout(() => toast.remove(), 300);
             }
         }, 5000);
-    }
-
-    // ============================================
-    // INITIALISATIE
-    // ============================================
-    document.addEventListener('DOMContentLoaded', function() {
-        // Laad sample data
-        loadSampleData();
-
-        // Toon body
-        document.body.classList.add('loaded');
-    });
-
-    function loadSampleData() {
-        // Voorbeeld bestellingen
-        const orders = [
-            { id: 'ORD-001', klant: 'Jan Janssen', datum: '15-01-2024', totaal: '€89.97', status: 'Verwerkt' },
-            { id: 'ORD-002', klant: 'Marie Peters', datum: '15-01-2024', totaal: '€24.99', status: 'Verwerkt' },
-            { id: 'ORD-003', klant: 'Thomas Verstraeten', datum: '14-01-2024', totaal: '€149.95', status: 'Verzonden' },
-            { id: 'ORD-004', klant: 'Lisa De Smet', datum: '14-01-2024', totaal: '€39.98', status: 'In behandeling' },
-            { id: 'ORD-005', klant: 'David Willems', datum: '13-01-2024', totaal: '€119.96', status: 'Verwerkt' }
-        ];
-
-        const tbody = document.getElementById('bestellingen-body');
-        orders.forEach(order => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${order.id}</td>
-                <td>${order.klant}</td>
-                <td>${order.datum}</td>
-                <td>${order.totaal}</td>
-                <td><span style="color: ${order.status === 'Verwerkt' ? '#38a169' : order.status === 'Verzonden' ? '#4299e1' : '#ed8936'}; font-weight: bold;">${order.status}</span></td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-        // Update stats
-        document.getElementById('stat-orders').textContent = '125 Orders';
-        document.getElementById('stat-klanten').textContent = '89 Klanten';
-        document.getElementById('stat-boeken').textContent = '245 Boeken';
-
-        // Verberg loading
-        document.getElementById('bestellingen-loading').style.display = 'none';
-        document.getElementById('bestellingen-container').style.display = 'block';
-
-        // Laad boeken
-        loadBoeken();
+        
+        console.log(`Toast shown: ${type} - ${text}`);
     }
 
     // ============================================
@@ -1143,12 +1119,14 @@
             const response = await fetch('/api/books');
             if (response.ok) {
                 const books = await response.json();
+                console.log('✅ Books loaded from API:', books.length);
                 renderBoeken(books);
+                return;
             } else {
-                throw new Error('API failed');
+                throw new Error('API returned: ' + response.status);
             }
         } catch (error) {
-            console.log('API failed, using sample data');
+            console.log('⚠️ API failed, using sample data:', error.message);
             // Fallback: sample data met Open Library book covers
             const sampleBooks = [
                 { id: 1, isbn: '9789023456789', title: 'De Nachtwachter', author: 'Sarah Blake', price: 22.99, stock: 15 },
@@ -1166,17 +1144,23 @@
     const bookQuantities = {};
 
     function renderBoeken(books) {
-        console.log('Rendering', books.length, 'books');
+        console.log('📚 Rendering', books.length, 'books');
 
-        // Render Grid View
-        const gridContainer = document.querySelector('#boeken-grid > div');
-        gridContainer.innerHTML = '';
-        
-        // Get current cart to show existing quantities
-        const cart = JSON.parse(localStorage.getItem('winkelmandje') || '[]');
+        try {
+            // Render Grid View
+            const gridContainer = document.querySelector('#boeken-grid > div');
+            if (!gridContainer) {
+                console.error('❌ Grid container not found!');
+                return;
+            }
+            gridContainer.innerHTML = '';
+            
+            // Get current cart to show existing quantities
+            const cart = JSON.parse(localStorage.getItem('winkelmandje') || '[]');
 
-        books.forEach(book => {
-            const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
+            books.forEach((book, index) => {
+                try {
+                    const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
             
             // Check if book is already in cart
             const cartItem = cart.find(item => item.boekId === book.id);
@@ -1246,17 +1230,25 @@
                         ` : ''}
                     </div>
                 </div>
-            `;
-            gridContainer.appendChild(card);
-        });
+                `;
+                    gridContainer.appendChild(card);
+                } catch (bookError) {
+                    console.error(`❌ Error rendering book ${index}:`, book, bookError);
+                }
+            });
 
 
-        // Render List View
-        const listBody = document.getElementById('boeken-list-body');
-        listBody.innerHTML = '';
+            // Render List View
+            const listBody = document.getElementById('boeken-list-body');
+            if (!listBody) {
+                console.error('❌ List body not found!');
+                return;
+            }
+            listBody.innerHTML = '';
 
-        books.forEach(book => {
-            const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
+            books.forEach((book, index) => {
+                try {
+                    const priceFormatted = typeof book.price === 'number' ? `€${book.price.toFixed(2)}` : book.price;
             
             // Check cart quantity
             const cartItem = cart.find(item => item.boekId === book.id);
@@ -1295,13 +1287,31 @@
                         ${isOutOfStock ? '<span style="color: var(--danger); font-size: 12px; margin-left: 8px;"><i class="fas fa-exclamation-triangle"></i> Uitverkocht</span>' : availableStock <= 5 && availableStock > 0 ? `<span style="color: var(--warning); font-size: 12px; margin-left: 8px;"><i class="fas fa-exclamation-circle"></i> ${availableStock} rest</span>` : ''}
                     </div>
                 </td>
-            `;
-            listBody.appendChild(row);
-        });
+                `;
+                    listBody.appendChild(row);
+                } catch (bookError) {
+                    console.error(`❌ Error rendering list row ${index}:`, book, bookError);
+                }
+            });
 
-        // Verberg loading, toon default view (grid)
-        document.getElementById('boeken-loading').style.display = 'none';
-        switchBoekenView('grid');
+            // Verberg loading, toon default view (grid)
+            document.getElementById('boeken-loading').style.display = 'none';
+            switchBoekenView('grid');
+            
+            console.log('✅ Books rendered successfully!');
+        } catch (error) {
+            console.error('❌ FATAL ERROR rendering books:', error);
+            document.getElementById('boeken-loading').innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--danger);">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                    <h3>Fout bij laden van boeken</h3>
+                    <p style="margin: 15px 0;">JavaScript fout: ${error.message}</p>
+                    <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 15px;">
+                        <i class="fas fa-redo"></i> Probeer opnieuw
+                    </button>
+                </div>
+            `;
+        }
     }
 
     // Switch tussen grid en list view
@@ -1705,101 +1715,73 @@
         console.log('✅ Centered modal shown - auto close in 5 seconds');
     }
 
-    // Show message functie - MODERNE TOAST NOTIFICATIONS
-    function showMessage(text, type) {
-        const messageContainer = document.getElementById('message-container');
-        if (!messageContainer) {
-            console.log('Message:', text);
-            return;
-        }
-
-        // Creëer toast element
-        const toast = document.createElement('div');
-        toast.className = `toast-${type}`;
-        
-        // Icon bepalen
-        const icon = type === 'success' 
-            ? 'fa-check-circle' 
-            : type === 'error' 
-            ? 'fa-exclamation-circle'
-            : 'fa-info-circle';
-        
-        toast.innerHTML = `
-            <i class="fas ${icon}"></i>
-            <span>${text}</span>
-            <button class="toast-close" onclick="this.parentElement.remove()">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="toast-progress"></div>
-        `;
-
-        messageContainer.appendChild(toast);
-
-        // Auto verwijderen na 5 seconden
-        setTimeout(() => {
-            if (toast.parentNode) {
-                toast.classList.add('toast-fadeout');
-                setTimeout(() => toast.remove(), 300);
-            }
-        }, 5000);
-        
-        console.log(`Toast shown: ${type} - ${text}`);
-    }
-
     // ============================================
-    // INITIAL LOAD
+    // INITIAL LOAD - MAIN ENTRY POINT
     // ============================================
     document.addEventListener('DOMContentLoaded', function() {
-        // Laad sample data
-        loadSampleData();
-
-        // Update cart counter
-        updateCartCounter();
-
-        // Toon body
-        document.body.classList.add('loaded');
+        console.log('🚀 DOM Content Loaded - Initializing...');
+        
+        try {
+            // Laad sample bestellingen
+            loadSampleOrders();
+            
+            // Laad boeken (API of fallback)
+            loadBoeken();
+            
+            // Update cart counter
+            updateCartCounter();
+            
+            // Toon body
+            document.body.classList.add('loaded');
+            
+            console.log('✅ Initialization complete!');
+        } catch (error) {
+            console.error('❌ Initialization failed:', error);
+            document.body.classList.add('loaded'); // Show body anyway
+            showError('Fout bij laden van pagina. Ververs de pagina.');
+        }
     });
 
-    function loadSampleData() {
-        // Voorbeeld bestellingen
-        const orders = [
-            { id: 'ORD-001', klant: 'Jan Janssen', datum: '15-01-2024', totaal: '€89.97', status: 'Verwerkt' },
-            { id: 'ORD-002', klant: 'Marie Peters', datum: '15-01-2024', totaal: '€24.99', status: 'Verwerkt' },
-            { id: 'ORD-003', klant: 'Thomas Verstraeten', datum: '14-01-2024', totaal: '€149.95', status: 'Verzonden' },
-            { id: 'ORD-004', klant: 'Lisa De Smet', datum: '14-01-2024', totaal: '€39.98', status: 'In behandeling' },
-            { id: 'ORD-005', klant: 'David Willems', datum: '13-01-2024', totaal: '€119.96', status: 'Verwerkt' }
-        ];
+    function loadSampleOrders() {
+        console.log('📋 Loading sample orders...');
+        
+        try {
+            // Voorbeeld bestellingen
+            const orders = [
+                { id: 'ORD-001', klant: 'Jan Janssen', datum: '15-01-2024', totaal: '€89.97', status: 'Verwerkt' },
+                { id: 'ORD-002', klant: 'Marie Peters', datum: '15-01-2024', totaal: '€24.99', status: 'Verwerkt' },
+                { id: 'ORD-003', klant: 'Thomas Verstraeten', datum: '14-01-2024', totaal: '€149.95', status: 'Verzonden' },
+                { id: 'ORD-004', klant: 'Lisa De Smet', datum: '14-01-2024', totaal: '€39.98', status: 'In behandeling' },
+                { id: 'ORD-005', klant: 'David Willems', datum: '13-01-2024', totaal: '€119.96', status: 'Verwerkt' }
+            ];
 
-        const tbody = document.getElementById('bestellingen-body');
-        orders.forEach(order => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${order.id}</td>
-                <td>${order.klant}</td>
-                <td>${order.datum}</td>
-                <td>${order.totaal}</td>
-                <td><span style="color: ${order.status === 'Verwerkt' ? '#38a169' : order.status === 'Verzonden' ? '#4299e1' : '#ed8936'}; font-weight: bold;">${order.status}</span></td>
-            `;
-            tbody.appendChild(tr);
-        });
+            const tbody = document.getElementById('bestellingen-body');
+            if (!tbody) {
+                console.error('❌ Orders table body not found!');
+                return;
+            }
+            
+            orders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.klant}</td>
+                    <td>${order.datum}</td>
+                    <td>${order.totaal}</td>
+                    <td><span style="color: ${order.status === 'Verwerkt' ? '#38a169' : order.status === 'Verzonden' ? '#4299e1' : '#ed8936'}; font-weight: bold;">${order.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
 
-        // Update stats
-        document.getElementById('stat-orders').textContent = '125 Orders';
-        document.getElementById('stat-klanten').textContent = '89 Klanten';
-        document.getElementById('stat-boeken').textContent = '245 Boeken';
-
-        // Verberg loading
-        document.getElementById('bestellingen-loading').style.display = 'none';
-        document.getElementById('bestellingen-container').style.display = 'block';
-
-        // Laad boeken
-        loadBoeken();
+            // Verberg loading
+            document.getElementById('bestellingen-loading').style.display = 'none';
+            document.getElementById('bestellingen-container').style.display = 'block';
+            
+            console.log('✅ Sample orders loaded!');
+        } catch (error) {
+            console.error('❌ Error loading sample orders:', error);
+        }
     }
-
-    // Fallback voor body display
-    setTimeout(() => {
-        document.body.classList.add('loaded');
-    }, 1000);
     
     // ============================================
     // 🚨 EMERGENCY FALLBACK - FORCE SHOW CONTENT

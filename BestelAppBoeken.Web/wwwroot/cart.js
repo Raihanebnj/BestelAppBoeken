@@ -37,7 +37,11 @@ async function loadKlanten() {
     try {
         console.log('🔄 Loading klanten from API...');
         
-        const response = await fetch(`${API_BASE}/klanten`);
+        const response = await fetch(`${API_BASE}/klanten`, {
+            headers: {
+                'X-Api-Key': 'BOOKSTORE-API-2026-SECRET-KEY-XYZ789'  // ✅ API KEY TOEGEVOEGD!
+            }
+        });
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -298,6 +302,7 @@ async function plaatsOrder() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-Api-Key': 'BOOKSTORE-API-2026-SECRET-KEY-XYZ789'  // ✅ API KEY TOEGEVOEGD!
             },
             body: JSON.stringify(orderData)
         });
