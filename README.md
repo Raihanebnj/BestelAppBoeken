@@ -128,3 +128,6 @@ Beveiliging: API keys, rate limiting, encryptie in transit
 Accountability: Audit logging van alle verwerkingen
 
 Recht op inzage: Gestructureerde logs voor DPO
+
+### Screenshots
+
