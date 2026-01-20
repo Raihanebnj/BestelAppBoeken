@@ -53,10 +53,16 @@ namespace BestelAppBoeken.Infrastructure.Services
             _httpClient = httpClient;
             
             // Load configuration
-            _useMockMode = configuration.GetValue<bool>("SAP:UseMockMode", true);
+            bool.TryParse(configuration["SAP:UseMockMode"], out _useMockMode);
+            if (string.IsNullOrEmpty(configuration["SAP:UseMockMode"]))
+            {
+                _useMockMode = true; // Default to mock mode
+            }
+            
             _sapEndpoint = configuration["SAP:Endpoint"] ?? "http://sap-mock:8000/idoc";
             _sapClient = configuration["SAP:Client"] ?? "800";
             _sapSystem = configuration["SAP:System"] ?? "DEV";
+            
             
             // Log startup mode
             if (_useMockMode)
