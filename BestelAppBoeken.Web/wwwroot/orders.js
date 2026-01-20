@@ -61,7 +61,6 @@ async function loadOrders() {
         console.log(`? Loaded ${orders.length} orders`);
         
         displayOrders();
-        updateStatistics();
         
         document.getElementById('orders-loading').style.display = 'none';
         document.getElementById('orders-table-container').style.display = 'block';
@@ -129,19 +128,6 @@ function displayOrders() {
             </tr>
         `;
     }).join('');
-}
-
-// Update statistics
-function updateStatistics() {
-    const totalOrders = orders.length;
-    const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-    const pendingOrders = orders.filter(o => o.status === 'Pending').length;
-    const completedOrders = orders.filter(o => o.status === 'Verwerkt').length;
-    
-    document.getElementById('total-orders').textContent = totalOrders;
-    document.getElementById('total-revenue').textContent = `€${totalRevenue.toFixed(2)}`;
-    document.getElementById('pending-orders').textContent = pendingOrders;
-    document.getElementById('completed-orders').textContent = completedOrders;
 }
 
 // View order details

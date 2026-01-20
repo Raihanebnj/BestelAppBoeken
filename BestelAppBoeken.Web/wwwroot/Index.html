@@ -860,18 +860,6 @@
             </div>
         </div>
         <div class="header-stats">
-            <div class="stat-badge">
-                <i class="fas fa-shopping-cart"></i>
-                <span id="stat-orders">0 Orders</span>
-            </div>
-            <div class="stat-badge">
-                <i class="fas fa-users"></i>
-                <span id="stat-klanten">0 Klanten</span>
-            </div>
-            <div class="stat-badge">
-                <i class="fas fa-book-open"></i>
-                <span id="stat-boeken">0 Boeken</span>
-            </div>
             <!-- Logout knop -->
             <div class="stat-badge logout" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i>
@@ -913,25 +901,6 @@
     <!-- Message Container -->
     <div id="message-container"></div>
 
-    <!-- Quick Stats -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
-            <i class="fas fa-shopping-cart" style="font-size: 32px; color: var(--primary); margin-bottom: 10px;"></i>
-            <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-orders">0</div>
-            <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Orders</div>
-        </div>
-        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
-            <i class="fas fa-users" style="font-size: 32px; color: var(--success); margin-bottom: 10px;"></i>
-            <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-klanten">0</div>
-            <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Klanten</div>
-        </div>
-        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: var(--shadow); text-align: center;">
-            <i class="fas fa-book-open" style="font-size: 32px; color: var(--info); margin-bottom: 10px;"></i>
-            <div style="font-size: 28px; font-weight: 700; color: var(--dark);" id="stat-boeken">0</div>
-            <div style="font-size: 13px; color: var(--gray); text-transform: uppercase; font-weight: 600;">Boeken</div>
-        </div>
-    </div>
-
     <!-- Recente Bestellingen -->
     <section id="bestellingen-sectie" class="card fade-in">
         <div class="card-header">
@@ -939,9 +908,6 @@
                 <i class="fas fa-clipboard-list"></i>
                 Laatste 5 Bestellingen
             </div>
-            <a href="orders.html" class="btn btn-primary">
-                <i class="fas fa-list"></i> Alle Bestellingen
-            </a>
         </div>
         <div class="card-body">
             <div id="bestellingen-loading" class="loading" style="padding: 20px;">
@@ -980,9 +946,6 @@
                 <button class="btn btn-primary" onclick="switchBoekenView('list')" id="btn-list-view">
                     <i class="fas fa-list"></i> Lijst
                 </button>
-                <a href="books.html" class="btn btn-primary">
-                    <i class="fas fa-book-open"></i> Alle Boeken
-                </a>
             </div>
         </div>
         <div class="card-body">
