@@ -1,5 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<!-- BestelAppBoeken.Infrastructure.csproj -->
+<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\BestelAppBoeken.Core\BestelAppBoeken.Core.csproj" />
   </ItemGroup>
@@ -11,6 +11,10 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
     <PackageReference Include="QuestPDF" Version="2024.12.3" />
     <PackageReference Include="RabbitMQ.Client" Version="7.2.0" />
+
+    <!-- NIEUW: Voor Salesforce errors -->
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -18,5 +22,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
 </Project>

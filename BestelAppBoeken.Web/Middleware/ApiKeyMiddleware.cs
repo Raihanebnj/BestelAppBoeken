@@ -44,12 +44,12 @@ namespace BestelAppBoeken.Web.Middleware
                     return;
                 }
 
-                // Uitzonderingen: Publieke GET endpoints (geen API-key nodig, ook in production)
+                // Uitzonderingen: Publieke GET endpoints
                 var publicEndpoints = new[]
                 {
-                    "/api/books",     // Boeken catalogus (publiek)
-                    "/api/klanten",   // Klanten lijst voor dropdown (publiek)
-                    "/api/orders"     // Orders lijst (publiek voor nu)
+                    "/api/books",     // Boeken catalogus -
+                    "/api/klanten",   // Klanten lijst voor dropdown
+                    "/api/orders"     // Orders lijst
                 };
 
                 bool isPublicGetRequest = context.Request.Method == "GET" && 
@@ -62,7 +62,7 @@ namespace BestelAppBoeken.Web.Middleware
                     return;
                 }
 
-                // Check of X-API-Key header aanwezig is
+                // Check of API-Key header aanwezig is
                 if (!context.Request.Headers.TryGetValue(API_KEY_HEADER, out var extractedApiKey))
                 {
                     _logger.LogWarning("❌ [API Auth] Missing API-key for {Path}", path);
@@ -110,7 +110,7 @@ namespace BestelAppBoeken.Web.Middleware
                     return;
                 }
 
-                // ✅ API-key is geldig
+                // API-key is geldig
                 _logger.LogInformation("✅ [API Auth] Geldige API-key voor {Path}", path);
             }
 

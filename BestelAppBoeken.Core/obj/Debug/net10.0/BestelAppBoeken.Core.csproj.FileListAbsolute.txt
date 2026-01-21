@@ -10,3 +10,15 @@ C:\Users\admin\source\repos\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10
 C:\Users\admin\source\repos\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\refint\BestelAppBoeken.Core.dll
 C:\Users\admin\source\repos\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.pdb
 C:\Users\admin\source\repos\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\ref\BestelAppBoeken.Core.dll
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\bin\Debug\net10.0\BestelAppBoeken.Core.deps.json
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\bin\Debug\net10.0\BestelAppBoeken.Core.dll
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\bin\Debug\net10.0\BestelAppBoeken.Core.pdb
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.AssemblyInfoInputs.cache
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.AssemblyInfo.cs
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.csproj.CoreCompileInputs.cache
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.sourcelink.json
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.dll
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\refint\BestelAppBoeken.Core.dll
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\BestelAppBoeken.Core.pdb
+C:\Users\Benha\OneDrive\Desktop\BestelAppBoeken\BestelAppBoeken.Core\obj\Debug\net10.0\ref\BestelAppBoeken.Core.dll
