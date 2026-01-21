@@ -302,26 +302,6 @@
                 </button>
             </form>
 
-            <!-- Test credentials area for quick autofill during testing -->
-            <div class="form-group" id="test-credentials" style="margin-top:18px;">
-                <label for="test-creds">
-                    <i class="fas fa-vial"></i> Test Credentials (één per regel: <code>username:password</code>)
-                </label>
-                <textarea id="test-creds" rows="4" style="width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; background:var(--light);">admin:admin123
-beheerder:boekhandel2024
-supervisor:EHB123!
-test:test123</textarea>
-
-                <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
-                    <button type="button" class="btn btn-primary" onclick="autofillFromTextarea()" style="padding:10px 14px;">Autofill vanaf textarea</button>
-                    <button type="button" class="btn btn-back" onclick="autofillQuick('admin','admin123')" style="padding:10px 14px;">Autofill Admin</button>
-                    <button type="button" class="btn btn-back" onclick="autofillQuick('beheerder','boekhandel2024')" style="padding:10px 14px;">Autofill Beheerder</button>
-                    <button type="button" class="btn btn-back" onclick="autofillQuick('test','test123')" style="padding:10px 14px;">Autofill Test</button>
-                </div>
-
-                <!-- Dynamic parsed credentials list removed to avoid showing passwords -->
-            </div>
-
             <a href="index.html" class="btn btn-back">
                 <i class="fas fa-arrow-left"></i> Terug naar Dashboard
             </a>
@@ -444,50 +424,6 @@ test:test123</textarea>
             }
         }
     });
-
-    // Autofill helpers for testing
-    function autofillQuick(user, pass) {
-        document.getElementById('username').value = user;
-        document.getElementById('password').value = pass;
-        document.getElementById('password').focus();
-        console.log('Autofill quick for', user);
-    }
-
-    function autofillFromTextarea() {
-        const txt = document.getElementById('test-creds').value.trim();
-        if (!txt) return alert('Geen testgegevens gevonden in textarea');
-
-        // Parse first non-empty line as username:password
-        const lines = txt.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        if (lines.length === 0) return alert('Geen geldige regels gevonden');
-
-        // If first line contains a :, use that. Otherwise fallback to first token pair
-        let chosen = lines[0];
-        // If multiple lines, show a small chooser (simple prompt)
-        if (lines.length > 1) {
-            const choice = prompt('Kies regel nummer om te gebruiken (1..' + lines.length + '):', '1');
-            const idx = Math.max(1, Math.min(lines.length, parseInt(choice || '1')));
-            chosen = lines[idx - 1];
-        }
-
-        let user = '';
-        let pass = '';
-        if (chosen.includes(':')) {
-            [user, pass] = chosen.split(':');
-        } else if (chosen.includes(' ')) {
-            [user, pass] = chosen.split(/\s+/);
-        } else {
-            user = chosen;
-            pass = '';
-        }
-
-        document.getElementById('username').value = user || '';
-        document.getElementById('password').value = pass || '';
-        document.getElementById('password').focus();
-        console.log('Autofill from textarea:', user);
-    }
-
-    // Note: Dynamic parsed-credentials buttons removed to avoid displaying passwords
 </script>
 </body>
 </html>
