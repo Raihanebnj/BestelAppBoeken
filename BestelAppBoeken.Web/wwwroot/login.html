@@ -319,8 +319,7 @@ test:test123</textarea>
                     <button type="button" class="btn btn-back" onclick="autofillQuick('test','test123')" style="padding:10px 14px;">Autofill Test</button>
                 </div>
 
-                <!-- Dynamic list of parsed credentials -->
-                <div id="test-creds-list" style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;"></div>
+                <!-- Dynamic parsed credentials list removed to avoid showing passwords -->
             </div>
 
             <a href="index.html" class="btn btn-back">
@@ -488,39 +487,7 @@ test:test123</textarea>
         console.log('Autofill from textarea:', user);
     }
 
-    // Render parsed credentials as buttons below textarea
-    function renderTestCredsList() {
-        const container = document.getElementById('test-creds-list');
-        const txt = document.getElementById('test-creds').value.trim();
-        container.innerHTML = '';
-        if (!txt) return;
-
-        const lines = txt.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        lines.forEach((line, idx) => {
-            let user = line;
-            let pass = '';
-            if (line.includes(':')) {
-                [user, pass] = line.split(':');
-            } else if (line.includes(' ')) {
-                [user, pass] = line.split(/\s+/);
-            }
-
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'btn btn-back';
-            btn.style.padding = '8px 12px';
-            btn.style.fontSize = '13px';
-            btn.textContent = user + (pass ? ` (${pass})` : '');
-            btn.addEventListener('click', () => autofillQuick(user, pass));
-            container.appendChild(btn);
-        });
-    }
-
-    // Update list on textarea change and initial render
-    document.addEventListener('DOMContentLoaded', function() {
-        renderTestCredsList();
-        document.getElementById('test-creds').addEventListener('input', renderTestCredsList);
-    });
+    // Note: Dynamic parsed-credentials buttons removed to avoid displaying passwords
 </script>
 </body>
 </html>
