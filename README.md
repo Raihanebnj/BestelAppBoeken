@@ -30,7 +30,7 @@ Core Features
 
 ✅ Asynchrone berichtverwerking met RabbitMQ
 
-✅ Foutafhandeling en retry mechanismen
+
 
 ## Technische Stack
 
