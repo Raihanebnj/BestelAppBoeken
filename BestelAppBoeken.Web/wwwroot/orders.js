@@ -21,35 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('orders-loading').style.display = 'none';
             document.getElementById('orders-table-container').style.display = 'block';
         }
-
-// Download invoice for a specific order (from orders page)
-function downloadInvoiceFromOrders(orderId) {
-    if (!orderId) return;
-    const id = orderId;
-    // Show a quick message
-    if (typeof showInfo === 'function') showInfo('Factuur wordt gegenereerd...');
-
-    fetch(`/api/backup/export/order/${id}/invoice`, { headers: { 'X-Api-Key': 'BOOKSTORE-API-2026-SECRET-KEY-XYZ789' } })
-        .then(resp => {
-            if (!resp.ok) throw new Error('Kon factuur niet genereren');
-            return resp.blob();
-        })
-        .then(blob => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `factuur_${id}_${Date.now()}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
-            if (typeof showSuccess === 'function') showSuccess('Factuur gedownload');
-        })
-        .catch(err => {
-            console.error('Error downloading invoice:', err);
-            if (typeof showError === 'function') showError('Kon factuur niet genereren');
-        });
-}
     } catch (e) {
         console.warn('No cached orders available or parse error', e);
     }
@@ -316,6 +287,38 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Download invoice for a specific order (from orders page)
+async function downloadInvoiceFromOrders(orderId) {
+    if (!orderId) return;
+    const id = orderId;
+    if (typeof showInfo === 'function') showInfo('Factuur wordt gegenereerd...');
+
+    try {
+        const resp = await fetch(`${API_BASE}/backup/export/order/${id}/invoice`, {
+            headers: { 'X-Api-Key': 'BOOKSTORE-API-2026-SECRET-KEY-XYZ789' }
+        });
+
+        if (!resp.ok) {
+            const text = await resp.text().catch(() => null);
+            throw new Error(text || 'Kon factuur niet genereren');
+        }
+
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `factuur_${id}_${Date.now()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        if (typeof showSuccess === 'function') showSuccess('Factuur gedownload');
+    } catch (err) {
+        console.error('Error downloading invoice:', err);
+        if (typeof showError === 'function') showError('Kon factuur niet genereren');
+    }
 }
 
 // Close modal when clicking outside
