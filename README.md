@@ -34,8 +34,8 @@ Core Features
 
 ## Technische Stack
 
-Frontend: React/Vue.js (AI-generated)
-Backend: Node.js/Python (AI-generated)
+Frontend: C# (AI-generated)
+Backend: C# (AI-generated)
 Message Broker: RabbitMQ
 CRM: Salesforce REST API
 CI/CD: GitHub Actions (voor testing)
@@ -43,7 +43,7 @@ Version Control: Git
 
 ##🚀 Installatie & Configuratie
 ### Vereisten
-Node.js/C# 
+C# 
 RabbitMQ server
 Salesforce Developer Account
 
@@ -85,8 +85,8 @@ npm start
 
 ## 📁 Projectstructuur
 text
-├── frontend/          # React/Vue.js applicatie
-├── backend/           # Node.js/Python backend
+├── frontend/          # C# applicatie
+├── backend/           # C" backend
 ├── rabbitmq/          # RabbitMQ configuratie
 ├── salesforce/        # Salesforce integratielogica
 ├── tests/             # Integratie- en unittesten
