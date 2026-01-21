@@ -1,0 +1,19 @@
+<changelist name="Uncommitted_changes_before_Update_at_21_01_2026_11_49_[Changes]1" date="1768992570642" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_21_01_2026_11_49_[Changes]1/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 21/01/2026 11:49 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.assets.cache" />
+    <option name="AFTER_PATH" value="BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.assets.cache" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_21_01_2026_11_49_[Changes]1/BestelAppBoeken.Core.assets.cache" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="BestelAppBoeken.Web/bookstore.db" />
+    <option name="AFTER_PATH" value="BestelAppBoeken.Web/bookstore.db" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_21_01_2026_11_49_[Changes]1/bookstore.db" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.assets.cache" />
+    <option name="AFTER_PATH" value="BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.assets.cache" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_21_01_2026_11_49_[Changes]1/BestelAppBoeken.Infrastructure.assets.cache" />
+  </binary>
+</changelist>
