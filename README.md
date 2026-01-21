@@ -7,7 +7,12 @@ Dit project implementeert een end-to-end integratieoplossing waarbij een mobiele
 
 ## 👥 Team 
 
-In samenwerking met Kimberley Thill, Raïhane Benjilali, Ludger De Sousa Lima Cardoso, Lina Benhaj en Kiran Chaud-ry.
+In samenwerking met : 
+- Kimberley Thill
+-  Raïhane Benjilali
+-  Ludger De Sousa Lima Cardoso
+-  Lina Benhaj
+- Kiran Chaud-ry.
 
 ## 🏗️ Architectuur
 
