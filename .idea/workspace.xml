@@ -4,31 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9678de99-3c75-4d15-888d-09a918f6f1ae" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/bin/Debug/net10.0/BestelAppBoeken.Core.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/bin/Debug/net10.0/BestelAppBoeken.Core.deps.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/BestelAppBoeken.Core.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/BestelAppBoeken.Core.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/BestelAppBoeken.Core.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/BestelAppBoeken.Core.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.GlobalUsings.g.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.GlobalUsings.g.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/Debug/net10.0/BestelAppBoeken.Core.csproj.FileListAbsolute.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Core/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/bin/Debug/net10.0/BestelAppBoeken.Infrastructure.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/bin/Debug/net10.0/BestelAppBoeken.Infrastructure.deps.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/BestelAppBoeken.Infrastructure.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/BestelAppBoeken.Infrastructure.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/BestelAppBoeken.Infrastructure.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/BestelAppBoeken.Infrastructure.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/BestelAppBoeken.Infrastructure.csproj.nuget.g.targets" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/BestelAppBoeken.Infrastructure.csproj.nuget.g.targets" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.GlobalUsings.g.cs" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.GlobalUsings.g.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/Debug/net10.0/BestelAppBoeken.Infrastructure.csproj.FileListAbsolute.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Infrastructure/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Web/bookstore.db" beforeDir="false" afterPath="$PROJECT_DIR$/BestelAppBoeken.Web/bookstore.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Web/bookstore.db-shm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/BestelAppBoeken.Web/bookstore.db-wal" beforeDir="false" />
+    <list default="true" id="9678de99-3c75-4d15-888d-09a918f6f1ae" name="Changes" comment="gitignore">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,26 +42,29 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="38X0ueNYbm2Eqh0xUbrFnFo0k0y" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Front-end-Backend-Saleforce&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "#2 on Front-end-Backend-Saleforce",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -107,6 +87,11 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Encryptie op database aangemaakt. Testing via terminal." />
+    <MESSAGE value="gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="gitignore" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
