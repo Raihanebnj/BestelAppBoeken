@@ -66,6 +66,24 @@ async function loadOrders() {
         
         displayOrders();
         updateStatistics();
+
+        // Notify other pages (admin) that orders were updated
+        try {
+            if ('BroadcastChannel' in window) {
+                const bc = new BroadcastChannel('orders_channel');
+                bc.postMessage({ type: 'orders-updated', timestamp: Date.now(), count: orders.length });
+                bc.close();
+            }
+        } catch (e) {
+            console.warn('BroadcastChannel not available:', e);
+        }
+
+        // Fallback via localStorage to trigger storage event in other tabs
+        try {
+            localStorage.setItem('orders-updated', Date.now().toString());
+        } catch (e) {
+            console.warn('localStorage orders-updated failed:', e);
+        }
         
         document.getElementById('orders-loading').style.display = 'none';
         document.getElementById('orders-table-container').style.display = 'block';

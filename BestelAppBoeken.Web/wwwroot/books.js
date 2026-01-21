@@ -81,16 +81,71 @@ function displayBooks() {
                 </td>
                 <td><small>${escapeHtml(boek.isbn)}</small></td>
                 <td>
-                    <button class="btn btn-icon btn-warning" onclick="editBook(${boek.id})" title="Bewerken">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-icon btn-danger" onclick="deleteBook(${boek.id})" title="Verwijderen">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button class="btn btn-icon" style="background:#ffe9e6; color:#c53030;" onclick="adjustStock(${boek.id}, -1)" title="-">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button class="btn btn-icon" style="background:#e6ffef; color:#047857;" onclick="adjustStock(${boek.id}, 1)" title="+">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="btn btn-icon btn-warning" onclick="editBook(${boek.id})" title="Bewerken">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-icon btn-danger" onclick="deleteBook(${boek.id})" title="Verwijderen">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
     }).join('');
+}
+
+// Adjust stock quickly (+/-) and persist via API
+async function adjustStock(id, delta) {
+    try {
+        const boekIndex = allBoeken.findIndex(b => b.id === id);
+        if (boekIndex === -1) return showError('Boek niet gevonden');
+
+        const boek = { ...allBoeken[boekIndex] };
+        const newStock = Math.max(0, (boek.voorraadAantal || 0) + delta);
+
+        // Optimistic UI update
+        allBoeken[boekIndex].voorraadAantal = newStock;
+        boeken = boeken.map(b => b.id === id ? { ...b, voorraadAantal: newStock } : b);
+        displayBooks();
+
+        // Prepare payload matching API Book model
+        const payload = {
+            id: boek.id,
+            title: boek.titel,
+            author: boek.auteur,
+            price: parseFloat(boek.prijs),
+            voorraadAantal: newStock,
+            isbn: boek.isbn
+        };
+
+        const resp = await fetch(`${API_BASE}/books/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+            // Revert optimistic update
+            const error = await resp.json().catch(() => ({ error: 'Kon voorraad niet bijwerken' }));
+            // revert
+            allBoeken[boekIndex].voorraadAantal = boek.voorraadAantal;
+            boeken = boeken.map(b => b.id === id ? { ...b, voorraadAantal: boek.voorraadAantal } : b);
+            displayBooks();
+            throw new Error(error.error || 'Kon voorraad niet bijwerken');
+        }
+
+        showSuccess('Voorraad succesvol bijgewerkt');
+    } catch (err) {
+        console.error('Error updating stock:', err);
+        showError(err.message || 'Fout bij voorraad update');
+    }
 }
 
 // Search books

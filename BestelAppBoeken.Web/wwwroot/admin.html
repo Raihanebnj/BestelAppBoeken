@@ -551,6 +551,12 @@
                     <button class="btn btn-success" onclick="exportDatabase()">
                         <i class="fas fa-download"></i> Database Downloaden
                     </button>
+                <button class="btn btn-info" onclick="exportInventoryPdf()">
+                    <i class="fas fa-file-pdf"></i> Voorraad (PDF)
+                </button>
+                <button class="btn btn-info" onclick="exportOrdersPdf()">
+                    <i class="fas fa-file-pdf"></i> Bestellingen (PDF)
+                </button>
                 </div>
             </div>
         </div>
@@ -594,56 +600,7 @@
         </div>
     </div>
 
-    <!-- Voorraad Beheer -->
-    <div class="card">
-        <div class="card-header">
-            <div class="card-icon" style="background: linear-gradient(135deg, #0f9d58, #0b8043);">
-                <i class="fas fa-industry"></i>
-            </div>
-            <div class="card-title">Voorraad Beheer</div>
-        </div>
-
-        <!-- SAP Connection Status -->
-        <div class="sap-status">
-            <div class="sap-connection">
-                <span class="connection-status connected" id="sapStatus"></span>
-                <span id="sapStatusText">SAP R/3 Verbonden - iDoc actief</span>
-            </div>
-            <div style="color: #666; font-size: 14px;">
-                <i class="fas fa-info-circle"></i> Voorraadwijzigingen worden automatisch gesynchroniseerd
-            </div>
-        </div>
-
-        <!-- Inventory Table -->
-        <div class="table-wrapper" style="margin-top: 20px;">
-            <div class="table-header">
-                <h2 style="margin: 0;"><i class="fas fa-boxes"></i> Voorraad Overzicht</h2>
-                <button class="btn btn-primary" onclick="refreshInventory()">
-                    <i class="fas fa-sync"></i> Vernieuw
-                </button>
-            </div>
-
-            <table id="inventoryTable">
-                <thead>
-                <tr>
-                    <th>ISBN</th>
-                    <th>Titel</th>
-                    <th>Auteur</th>
-                    <th>Prijs</th>
-                    <th>Huidige Voorraad</th>
-                    <th>Minimum</th>
-                    <th>Acties</th>
-                </tr>
-                </thead>
-                <tbody id="inventoryBody">
-                <!-- Data wordt hier ingeladen -->
-                </tbody>
-            </table>
-            <div class="loading" id="inventoryLoading">
-                <i class="fas fa-spinner fa-spin"></i> Voorraad laden...
-            </div>
-        </div>
-    </div>
+    <!-- Voorraadbeheer is verplaatst naar Boekenlijst (books.html) -->
 
     <!-- Recente Bestellingen -->
     <div class="card">
@@ -671,6 +628,7 @@
                     <th>Datum</th>
                     <th>Bedrag</th>
                     <th>Status</th>
+                    <th>Acties</th>
                 </tr>
                 </thead>
                 <tbody id="ordersBody">
@@ -748,6 +706,32 @@
             addMessage('Welkom in het Admin Panel!', 'success');
         }
     });
+
+    // Listen for order updates from orders.html or other tabs
+    (function setupOrdersSyncListener() {
+        try {
+            if ('BroadcastChannel' in window) {
+                const bc = new BroadcastChannel('orders_channel');
+                bc.addEventListener('message', (ev) => {
+                    if (ev.data && ev.data.type === 'orders-updated') {
+                        addMessage('Nieuwe bestellingen gedetecteerd - ververs lijst', 'info');
+                        // Refresh orders only
+                        loadOrders();
+                    }
+                });
+            }
+        } catch (e) {
+            console.warn('BroadcastChannel not available for admin sync:', e);
+        }
+
+        // localStorage fallback
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'orders-updated') {
+                addMessage('Nieuwe bestellingen (storage) - ververs lijst', 'info');
+                loadOrders();
+            }
+        });
+    })();
 
     // Load all data
     function loadAllData() {
@@ -917,6 +901,11 @@
                     <td>${order.date}</td>
                     <td>${order.amount}</td>
                     <td ${statusClass}>${order.status}</td>
+                    <td>
+                        <button class="btn btn-info" style="padding:6px 10px; font-size:12px;" onclick="downloadInvoice('${order.id}')">
+                            <i class="fas fa-file-invoice"></i> Factuur
+                        </button>
+                    </td>
                 `;
                 ordersBody.appendChild(row);
             });
@@ -975,6 +964,85 @@
     function refreshOrders() {
         addMessage('Bestellingen worden vernieuwd...', 'info');
         loadOrders();
+    }
+
+    // Export inventory PDF
+    function exportInventoryPdf() {
+        addMessage('Voorraad PDF wordt gegenereerd...', 'info');
+        fetch('/api/backup/export/inventory/pdf')
+            .then(resp => {
+                if (!resp.ok) throw new Error('PDF export mislukt');
+                return resp.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `voorraad_${Date.now()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                addMessage('Voorraad PDF gedownload', 'success');
+            })
+            .catch(err => {
+                console.error(err);
+                addMessage('Fout bij genereren voorraad PDF', 'error');
+            });
+    }
+
+    // Export orders PDF
+    function exportOrdersPdf() {
+        addMessage('Bestellingen PDF wordt gegenereerd...', 'info');
+        fetch('/api/backup/export/orders/pdf')
+            .then(resp => {
+                if (!resp.ok) throw new Error('PDF export mislukt');
+                return resp.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `bestellingen_${Date.now()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                addMessage('Bestellingen PDF gedownload', 'success');
+            })
+            .catch(err => {
+                console.error(err);
+                addMessage('Fout bij genereren bestellingen PDF', 'error');
+            });
+    }
+
+    // Download invoice for a single order
+    function downloadInvoice(orderId) {
+        addMessage('Factuur wordt gegenereerd...', 'info');
+        // If order id is prefixed (like ORD-2024-001), try to extract numeric id if possible
+        const numericIdMatch = orderId.match(/(\d+)/);
+        const idForApi = numericIdMatch ? numericIdMatch[0] : orderId;
+
+        fetch(`/api/backup/export/order/${idForApi}/invoice`)
+            .then(resp => {
+                if (!resp.ok) throw new Error('Factuur generatie mislukt');
+                return resp.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `factuur_${orderId}_${Date.now()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                addMessage('Factuur gedownload', 'success');
+            })
+            .catch(err => {
+                console.error(err);
+                addMessage('Fout bij genereren factuur', 'error');
+            });
     }
 
     // ============================================
