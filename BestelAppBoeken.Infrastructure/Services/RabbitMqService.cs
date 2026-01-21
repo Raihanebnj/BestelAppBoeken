@@ -1,3 +1,4 @@
+// BestelAppBoeken.Infrastructure/Services/RabbitMqService.cs
 using BestelAppBoeken.Core.Interfaces;
 using BestelAppBoeken.Core.Models;
 using RabbitMQ.Client;
@@ -18,19 +19,27 @@ namespace BestelAppBoeken.Infrastructure.Services
         {
             _configuration = configuration;
             _logger = logger;
+            
+            // Lees RabbitMQ config
             var rabbitMqSection = _configuration.GetSection("RabbitMq");
+
+            // Encrypt/decrypt test
+            var encryptedPassword = SimpleCrypto.Encrypt("Groep3");
+            var decryptedPassword = SimpleCrypto.Decrypt(encryptedPassword);
 
             _factory = new ConnectionFactory
             {
-                HostName = "10.2.160.223",
-                UserName = "bestelapp",
-                Password = "Groep3"
+                HostName = rabbitMqSection["HostName"] ?? "10.2.160.223",
+                UserName = rabbitMqSection["UserName"] ?? "bestelapp",
+                Password = decryptedPassword // Gebruik gedecrypt wachtwoord
             };
+
+            _logger.LogInformation("RabbitMQ service met encryptie geïnitialiseerd");
         }
 
         public async Task PublishOrderAsync(Order order)
         {
-            try 
+            try
             {
                 using var connection = await _factory.CreateConnectionAsync();
                 using var channel = await connection.CreateChannelAsync();
@@ -52,12 +61,12 @@ namespace BestelAppBoeken.Infrastructure.Services
                                      basicProperties: new BasicProperties(),
                                      body: body);
 
-                _logger.LogInformation($"Successfully published order to queue '{queueName}': {order.CustomerEmail}");
+                // FIX: Gebruik een property die WEL bestaat in Order
+                _logger.LogInformation($"Successfully published order to queue '{queueName}': Order ID {order.Id}");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to publish order to RabbitMQ.");
-                // Retrying logic or fallback could go here
             }
         }
     }
