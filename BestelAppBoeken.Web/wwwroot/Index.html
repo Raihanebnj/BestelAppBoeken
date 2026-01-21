@@ -318,6 +318,37 @@
             border: 2px solid var(--border);
         }
 
+        /* On wide/desktop screens hide the native horizontal scrollbar visually
+           but keep content layout without forcing scrollbars. On smaller
+           screens keep the horizontal scroll/swipe indicator so users know
+           they can swipe to see more columns. */
+        @media (min-width: 1200px) {
+            .table-container {
+                overflow-x: hidden !important;
+                /* Hide scrollbars in various browsers */
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
+            }
+            .table-container::-webkit-scrollbar {
+                display: none; /* Chrome, Safari */
+            }
+        }
+
+        /* Ensure on smaller screens the horizontal scrollbar / swipe track is visible
+           and styled for better affordance */
+        @media (max-width: 1199px) {
+            .table-container {
+                overflow-x: auto !important;
+            }
+            .table-container::-webkit-scrollbar {
+                height: 8px;
+            }
+            .table-container::-webkit-scrollbar-thumb {
+                background: rgba(0,0,0,0.18);
+                border-radius: 10px;
+            }
+        }
+
         table {
             width: 100%;
             min-width: 700px;

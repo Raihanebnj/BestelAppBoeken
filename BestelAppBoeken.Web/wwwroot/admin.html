@@ -184,6 +184,32 @@
             margin-bottom: 30px;
         }
 
+        /* Hide horizontal scrollbar visually on wide screens but keep scrolling
+           possible via layout/JS. Show and style scrollbar on smaller screens. */
+        @media (min-width: 1200px) {
+            .table-wrapper {
+                overflow-x: hidden;
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
+            }
+            .table-wrapper::-webkit-scrollbar {
+                display: none; /* Chrome, Safari */
+            }
+        }
+
+        @media (max-width: 1199px) {
+            .table-wrapper {
+                overflow-x: auto;
+            }
+            .table-wrapper::-webkit-scrollbar {
+                height: 8px;
+            }
+            .table-wrapper::-webkit-scrollbar-thumb {
+                background: rgba(0,0,0,0.18);
+                border-radius: 10px;
+            }
+        }
+
         .table-header {
             padding: 20px;
             background: linear-gradient(135deg, #667eea, #764ba2);
