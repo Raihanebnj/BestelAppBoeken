@@ -6,9 +6,74 @@ let allBoeken = [];
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    loadBooks();
+    checkAdminAndInit();
     setupForm();
 });
+
+// Check admin login and initialize UI accordingly
+function checkAdminAndInit() {
+    const isAdmin = localStorage.getItem('adminLoggedIn') === 'true';
+
+    // Add admin link or login link next to header
+    const adminContainer = document.getElementById('admin-link-container');
+    if (adminContainer) {
+        if (isAdmin) {
+            adminContainer.innerHTML = `
+                <a href="admin.html" class="btn btn-info" style="text-decoration:none;"><i class="fas fa-user-shield"></i> Admin Paneel</a>
+                <button class="btn btn-danger" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Uitloggen</button>
+            `;
+        } else {
+            // Add returnUrl to login link
+            const returnUrl = encodeURIComponent(window.location.pathname.replace(/^\//, ''));
+            adminContainer.innerHTML = `
+                <a href="login.html?returnUrl=${returnUrl}" class="btn btn-primary" style="text-decoration:none;"><i class="fas fa-sign-in-alt"></i> Inloggen als Admin</a>
+            `;
+        }
+    }
+
+    // If not admin, hide management controls and show message
+    if (!isAdmin) {
+        // Hide add-new button
+        const newBtn = document.querySelector('.card-header .btn-success');
+        if (newBtn) newBtn.style.display = 'none';
+
+        // Hide actions column content via CSS or remove buttons after load
+        const actionsStyle = document.createElement('style');
+        actionsStyle.id = 'hide-actions-style';
+        actionsStyle.innerHTML = `
+            /* Hide action buttons for non-admins */
+            .card .btn-icon, .card .btn-warning, .card .btn-danger { display: none !important; }
+        `;
+        document.head.appendChild(actionsStyle);
+
+        // Show prominent message that admin rights are required
+        const msgContainer = document.getElementById('message-container');
+        if (msgContainer) {
+            msgContainer.innerHTML = `
+                <div class="admin-warning">
+                    <strong>Je moet ingelogd zijn als admin om de boekencatalogus te beheren.</strong><br>
+                    Log in als admin om volledige toegang te krijgen.
+                </div>
+            `;
+        }
+
+        // Still load the list (read-only) so visitors can browse
+        loadBooks();
+        return;
+    }
+
+    // If admin, load books with full controls
+    loadBooks();
+}
+
+// Logout admin helper
+function logoutAdmin() {
+    localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminUser');
+    localStorage.removeItem('loginTime');
+    // Refresh page to update UI
+    window.location.reload();
+}
 
 // Setup form
 function setupForm() {
