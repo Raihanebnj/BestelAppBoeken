@@ -381,6 +381,79 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 return StatusCode(500, new { success = false, error = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Exporteer huidige voorraad naar PDF
+        /// </summary>
+        [HttpGet("export/inventory/pdf")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult ExportInventoryPdf()
+        {
+            try
+            {
+                // Voor demo: haal boeken via IBookService indien beschikbaar
+                var bookService = HttpContext.RequestServices.GetService(typeof(BestelAppBoeken.Core.Interfaces.IBookService)) as BestelAppBoeken.Core.Interfaces.IBookService;
+                var books = new List<BestelAppBoeken.Core.Models.Book>();
+
+                if (bookService != null)
+                {
+                    books = bookService.GetAllBooks().ToList();
+                }
+                else
+                {
+                    // fallback: lege lijst
+                    books = new List<BestelAppBoeken.Core.Models.Book>();
+                }
+
+                var pdf = _pdfExportService.GenerateInventoryPdf(books);
+                var fileName = $"voorraad_overzicht_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+
+                _logger.LogInformation($"?? Voorraad geëxporteerd naar PDF: {fileName}");
+
+                return File(pdf, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Fout bij exporteren voorraad naar PDF");
+                return StatusCode(500, new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Genereer factuur PDF voor één bestelling
+        /// </summary>
+        [HttpGet("export/order/{id}/invoice")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ExportOrderInvoice(int id)
+        {
+            try
+            {
+                var order = await _orderService.GetOrderByIdAsync(id);
+                if (order == null)
+                {
+                    return NotFound(new { success = false, error = "Bestelling niet gevonden" });
+                }
+
+                var klanten = _klantService.GetAllKlanten().ToList();
+                var klant = klanten.FirstOrDefault(k => k.Email == order.CustomerEmail);
+                if (klant != null && string.IsNullOrEmpty(order.CustomerName)) order.CustomerName = klant.Naam;
+
+                var pdf = _pdfExportService.GenerateInvoicePdf(order);
+                var fileName = $"factuur_{order.Id}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+
+                _logger.LogInformation($"?? Factuur gegenereerd voor bestelling {order.Id}: {fileName}");
+
+                return File(pdf, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Fout bij genereren factuur PDF");
+                return StatusCode(500, new { success = false, error = ex.Message });
+            }
+        }
     }
 
     // Response models

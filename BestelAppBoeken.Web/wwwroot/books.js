@@ -6,9 +6,74 @@ let allBoeken = [];
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    loadBooks();
+    checkAdminAndInit();
     setupForm();
 });
+
+// Check admin login and initialize UI accordingly
+function checkAdminAndInit() {
+    const isAdmin = localStorage.getItem('adminLoggedIn') === 'true';
+
+    // Add admin link or login link next to header
+    const adminContainer = document.getElementById('admin-link-container');
+    if (adminContainer) {
+        if (isAdmin) {
+            adminContainer.innerHTML = `
+                <a href="admin.html" class="btn btn-info" style="text-decoration:none;"><i class="fas fa-user-shield"></i> Admin Paneel</a>
+                <button class="btn btn-danger" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Uitloggen</button>
+            `;
+        } else {
+            // Add returnUrl to login link
+            const returnUrl = encodeURIComponent(window.location.pathname.replace(/^\//, ''));
+            adminContainer.innerHTML = `
+                <a href="login.html?returnUrl=${returnUrl}" class="btn btn-primary" style="text-decoration:none;"><i class="fas fa-sign-in-alt"></i> Inloggen als Admin</a>
+            `;
+        }
+    }
+
+    // If not admin, hide management controls and show message
+    if (!isAdmin) {
+        // Hide add-new button
+        const newBtn = document.querySelector('.card-header .btn-success');
+        if (newBtn) newBtn.style.display = 'none';
+
+        // Hide actions column content via CSS or remove buttons after load
+        const actionsStyle = document.createElement('style');
+        actionsStyle.id = 'hide-actions-style';
+        actionsStyle.innerHTML = `
+            /* Hide action buttons for non-admins */
+            .card .btn-icon, .card .btn-warning, .card .btn-danger { display: none !important; }
+        `;
+        document.head.appendChild(actionsStyle);
+
+        // Show prominent message that admin rights are required
+        const msgContainer = document.getElementById('message-container');
+        if (msgContainer) {
+            msgContainer.innerHTML = `
+                <div class="admin-warning">
+                    <strong>Je moet ingelogd zijn als admin om de boekencatalogus te beheren.</strong><br>
+                    Log in als admin om volledige toegang te krijgen.
+                </div>
+            `;
+        }
+
+        // Still load the list (read-only) so visitors can browse
+        loadBooks();
+        return;
+    }
+
+    // If admin, load books with full controls
+    loadBooks();
+}
+
+// Logout admin helper
+function logoutAdmin() {
+    localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminUser');
+    localStorage.removeItem('loginTime');
+    // Refresh page to update UI
+    window.location.reload();
+}
 
 // Setup form
 function setupForm() {
@@ -81,16 +146,71 @@ function displayBooks() {
                 </td>
                 <td><small>${escapeHtml(boek.isbn)}</small></td>
                 <td>
-                    <button class="btn btn-icon btn-warning" onclick="editBook(${boek.id})" title="Bewerken">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-icon btn-danger" onclick="deleteBook(${boek.id})" title="Verwijderen">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button class="btn btn-icon" style="background:#ffe9e6; color:#c53030;" onclick="adjustStock(${boek.id}, -1)" title="-">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button class="btn btn-icon" style="background:#e6ffef; color:#047857;" onclick="adjustStock(${boek.id}, 1)" title="+">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="btn btn-icon btn-warning" onclick="editBook(${boek.id})" title="Bewerken">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-icon btn-danger" onclick="deleteBook(${boek.id})" title="Verwijderen">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
     }).join('');
+}
+
+// Adjust stock quickly (+/-) and persist via API
+async function adjustStock(id, delta) {
+    try {
+        const boekIndex = allBoeken.findIndex(b => b.id === id);
+        if (boekIndex === -1) return showError('Boek niet gevonden');
+
+        const boek = { ...allBoeken[boekIndex] };
+        const newStock = Math.max(0, (boek.voorraadAantal || 0) + delta);
+
+        // Optimistic UI update
+        allBoeken[boekIndex].voorraadAantal = newStock;
+        boeken = boeken.map(b => b.id === id ? { ...b, voorraadAantal: newStock } : b);
+        displayBooks();
+
+        // Prepare payload matching API Book model
+        const payload = {
+            id: boek.id,
+            title: boek.titel,
+            author: boek.auteur,
+            price: parseFloat(boek.prijs),
+            voorraadAantal: newStock,
+            isbn: boek.isbn
+        };
+
+        const resp = await fetch(`${API_BASE}/books/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+            // Revert optimistic update
+            const error = await resp.json().catch(() => ({ error: 'Kon voorraad niet bijwerken' }));
+            // revert
+            allBoeken[boekIndex].voorraadAantal = boek.voorraadAantal;
+            boeken = boeken.map(b => b.id === id ? { ...b, voorraadAantal: boek.voorraadAantal } : b);
+            displayBooks();
+            throw new Error(error.error || 'Kon voorraad niet bijwerken');
+        }
+
+        showSuccess('Voorraad succesvol bijgewerkt');
+    } catch (err) {
+        console.error('Error updating stock:', err);
+        showError(err.message || 'Fout bij voorraad update');
+    }
 }
 
 // Search books

@@ -199,6 +199,32 @@
             border: 2px solid var(--border);
         }
 
+        /* Hide horizontal scrollbar visually on wide screens but keep scrolling
+           possible via layout/JS. Show and style scrollbar on smaller screens. */
+        @media (min-width: 1200px) {
+            .table-container {
+                overflow-x: hidden;
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
+            }
+            .table-container::-webkit-scrollbar {
+                display: none; /* Chrome, Safari */
+            }
+        }
+
+        @media (max-width: 1199px) {
+            .table-container {
+                overflow-x: auto;
+            }
+            .table-container::-webkit-scrollbar {
+                height: 8px;
+            }
+            .table-container::-webkit-scrollbar-thumb {
+                background: rgba(0,0,0,0.18);
+                border-radius: 10px;
+            }
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -336,6 +362,19 @@
             font-size: 16px;
         }
 
+        /* Admin Warning (same highlight as books.html) */
+        .admin-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            text-align: center;
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -403,21 +442,29 @@
                     </p>
                 </div>
             </div>
-            <a href="Index.html" class="btn btn-primary">
-                <i class="fas fa-arrow-left"></i> Terug naar Dashboard
-            </a>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <div id="admin-link-container">
+                    <!-- Fallback login link (zichtbaar als JS niet geladen) -->
+                    <a href="login.html?returnUrl=customers.html" class="btn btn-primary" style="text-decoration:none;">
+                        <i class="fas fa-sign-in-alt"></i> Inloggen als Admin
+                    </a>
+                </div>
+                <a href="Index.html" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Terug naar Dashboard
+                </a>
+            </div>
         </div>
 
         <div id="message-container"></div>
 
         <!-- Customers List -->
-        <div class="card">
+        <div class="card" id="customers-card" style="display:none;">
             <div class="card-header">
                 <div class="card-title">
                     <i class="fas fa-list"></i>
                     Klantenlijst
                 </div>
-                <button class="btn btn-success" onclick="openNewCustomerModal()">
+                <button id="new-customer-btn" class="btn btn-success" onclick="openNewCustomerModal()">
                     <i class="fas fa-plus"></i> Nieuwe Klant
                 </button>
             </div>

@@ -6,9 +6,106 @@ let allKlanten = [];
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    loadCustomers();
+    checkAdminAndInit();
     setupForm();
 });
+
+// Check admin login and initialize UI accordingly
+function checkAdminAndInit() {
+    const isAdmin = localStorage.getItem('adminLoggedIn') === 'true';
+    console.log('checkAdminAndInit(): adminLoggedIn=', localStorage.getItem('adminLoggedIn'));
+
+    // Add admin link or login link next to header
+    const adminContainer = document.getElementById('admin-link-container');
+    if (adminContainer) {
+        if (isAdmin) {
+            adminContainer.innerHTML = `
+                <a href="admin.html" class="btn btn-info" style="text-decoration:none;"><i class="fas fa-user-shield"></i> Admin Paneel</a>
+                <button class="btn btn-danger" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Uitloggen</button>
+            `;
+            // If previously a style was added to hide action buttons, remove it for admins
+            const prevStyle = document.getElementById('hide-actions-style');
+            if (prevStyle) prevStyle.remove();
+            // Ensure the new button is visible for admins
+            const newBtn = document.querySelector('.card-header .btn-success');
+            if (newBtn) newBtn.style.display = '';
+            // Ensure the customers card is visible for admins
+            const card = document.getElementById('customers-card');
+            if (card) card.style.display = '';
+        } else {
+            const returnUrl = encodeURIComponent(window.location.pathname.replace(/^\//, ''));
+            adminContainer.innerHTML = `
+                <a href="login.html?returnUrl=${returnUrl}" class="btn btn-primary" style="text-decoration:none;"><i class="fas fa-sign-in-alt"></i> Inloggen als Admin</a>
+            `;
+        }
+    }
+
+    // If not admin, hide management controls and show message
+    if (!isAdmin) {
+        // Hide add-new button
+        const newBtn = document.querySelector('.card-header .btn-success');
+        if (newBtn) newBtn.style.display = 'none';
+
+        // Hide actions column content via CSS
+        const actionsStyle = document.createElement('style');
+        actionsStyle.id = 'hide-actions-style';
+        actionsStyle.innerHTML = `
+            .card .btn-icon, .card .btn-warning, .card .btn-danger { display: none !important; }
+        `;
+        document.head.appendChild(actionsStyle);
+
+        // Show prominent message that admin rights are required
+        const msgContainer = document.getElementById('message-container');
+        if (msgContainer) {
+            msgContainer.style.display = 'block';
+            const returnUrl = encodeURIComponent(window.location.pathname.replace(/^\//, ''));
+            msgContainer.innerHTML = `
+                <div class="admin-warning">
+                    <strong>Je moet ingelogd zijn als admin om de klantencatalogus te beheren.</strong><br>
+                    <a href="login.html?returnUrl=${returnUrl}" style="color: #856404; font-weight:700; text-decoration:underline;">Log in als admin</a> om volledige toegang te krijgen.
+                </div>
+            `;
+            console.log('Displayed admin warning in customers page');
+        } else {
+            console.warn('message-container not found on customers page');
+        }
+
+        // Still load the list (read-only) so visitors can browse
+        loadCustomers();
+        return;
+    }
+
+    // If admin, load customers with full controls
+    loadCustomers();
+}
+
+function logoutAdmin() {
+    localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminUser');
+    localStorage.removeItem('loginTime');
+    window.location.reload();
+}
+
+// Helper: Kontrolleer of gebruiker admin is, zo niet toon waarschuwing en stop actie
+function ensureAdminOrShowWarning() {
+    const isAdmin = localStorage.getItem('adminLoggedIn') === 'true';
+    if (isAdmin) return true;
+
+    const msgContainer = document.getElementById('message-container');
+    if (msgContainer) {
+        const returnUrl = encodeURIComponent(window.location.pathname.replace(/^\//, ''));
+        msgContainer.innerHTML = `\
+            <div class="admin-warning">\
+                <strong>Je moet ingelogd zijn als admin om deze actie uit te voeren.</strong><br/>\
+                <a href="login.html?returnUrl=${returnUrl}" style="color: #856404; font-weight:700; text-decoration:underline;">Log in als admin</a> om door te gaan.\
+            </div>`;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        alert('Je moet ingelogd zijn als admin om deze actie uit te voeren.');
+    }
+
+    return false;
+}
 
 // Setup form
 function setupForm() {
@@ -40,7 +137,18 @@ async function loadCustomers() {
 // Display customers in table
 function displayCustomers() {
     const tbody = document.getElementById('customers-body');
-    
+    const isAdmin = localStorage.getItem('adminLoggedIn') === 'true';
+
+    // Ensure header and new-button visibility reflect admin state
+    try {
+        const actionsHeader = document.querySelector('.card thead th:last-child');
+        if (actionsHeader) actionsHeader.style.display = isAdmin ? '' : 'none';
+        const newBtn = document.getElementById('new-customer-btn');
+        if (newBtn) newBtn.style.display = isAdmin ? '' : 'none';
+    } catch (e) {
+        console.warn('Error toggling header/new button visibility', e);
+    }
+
     if (klanten.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -54,24 +162,27 @@ function displayCustomers() {
         `;
         return;
     }
-    
-    tbody.innerHTML = klanten.map(klant => `
+    tbody.innerHTML = klanten.map(klant => {
+        const actionsHtml = isAdmin ? `
+            <button class="btn btn-icon btn-warning" onclick="editCustomer(${klant.id})" title="Bewerken">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-icon btn-danger" onclick="deleteCustomer(${klant.id})" title="Verwijderen">
+                <i class="fas fa-trash"></i>
+            </button>
+        ` : '';
+
+        return `
         <tr>
             <td>${klant.id}</td>
             <td><strong>${escapeHtml(klant.naam)}</strong></td>
             <td>${escapeHtml(klant.email)}</td>
             <td>${escapeHtml(klant.telefoon)}</td>
             <td>${escapeHtml(klant.adres || '-')}</td>
-            <td>
-                <button class="btn btn-icon btn-warning" onclick="editCustomer(${klant.id})" title="Bewerken">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-icon btn-danger" onclick="deleteCustomer(${klant.id})" title="Verwijderen">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
+            <td>${actionsHtml}</td>
         </tr>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Search customers
@@ -107,6 +218,8 @@ function clearSearch() {
 
 // Open modal for new customer
 function openNewCustomerModal() {
+    if (!ensureAdminOrShowWarning()) return;
+
     document.getElementById('modal-title').innerHTML = '<i class="fas fa-user-plus"></i> Nieuwe Klant';
     document.getElementById('customer-form').reset();
     document.getElementById('customer-id').value = '';
@@ -115,9 +228,11 @@ function openNewCustomerModal() {
 
 // Edit customer
 function editCustomer(id) {
+    if (!ensureAdminOrShowWarning()) return;
+
     const klant = allKlanten.find(k => k.id === id);
     if (!klant) return;
-    
+
     document.getElementById('modal-title').innerHTML = '<i class="fas fa-user-edit"></i> Klant Bewerken';
     document.getElementById('customer-id').value = klant.id;
     document.getElementById('customer-name').value = klant.naam;
@@ -129,6 +244,8 @@ function editCustomer(id) {
 
 // Delete customer
 async function deleteCustomer(id) {
+    if (!ensureAdminOrShowWarning()) return;
+
     if (!confirm('Weet u zeker dat u deze klant wilt verwijderen?')) {
         return;
     }
@@ -154,6 +271,7 @@ async function deleteCustomer(id) {
 // Handle form submit
 async function handleFormSubmit(e) {
     e.preventDefault();
+    if (!ensureAdminOrShowWarning()) return;
     
     const id = document.getElementById('customer-id').value;
     const customerData = {

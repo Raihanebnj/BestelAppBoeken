@@ -324,10 +324,15 @@
     (function checkIfAlreadyLoggedIn() {
         const adminLoggedIn = localStorage.getItem('adminLoggedIn');
         const isLoggedIn = adminLoggedIn === 'true';
+        const params = new URLSearchParams(window.location.search);
+        const returnUrl = params.get('returnUrl');
 
         if (isLoggedIn) {
-            console.log('User is already logged in, redirecting to admin.html');
-            window.location.href = 'admin.html';
+            if (returnUrl) {
+                window.location.href = returnUrl;
+            } else {
+                window.location.href = 'admin.html';
+            }
         }
     })();
 
@@ -349,6 +354,8 @@
 
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
+        const params = new URLSearchParams(window.location.search);
+        const returnUrl = params.get('returnUrl');
 
         // Eenvoudige validatie
         const validCredentials = {
@@ -382,12 +389,14 @@
             console.log('Set localStorage adminLoggedIn to:', localStorage.getItem('adminLoggedIn'));
             console.log('Set localStorage adminUser to:', localStorage.getItem('adminUser'));
 
-            // Redirect naar admin.html na 1.5 seconden
+            // Redirect naar returnUrl of admin.html na 1.5 seconden
             setTimeout(() => {
-                console.log('Redirecting to admin.html...');
-                window.location.href = 'admin.html';
+                if (returnUrl) {
+                    window.location.href = returnUrl;
+                } else {
+                    window.location.href = 'admin.html';
+                }
             }, 1500);
-
             return true;
         } else {
             // FOUT - Toon foutmelding
@@ -399,7 +408,6 @@
             // Voeg shake animatie toe
             this.classList.add('shake');
             setTimeout(() => this.classList.remove('shake'), 500);
-
             return false;
         }
     });

@@ -38,6 +38,13 @@ namespace BestelAppBoeken.Infrastructure.Services
                 .FirstOrDefault(o => o.Id == id);
         }
 
+        public async Task<Order?> GetOrderByIdAsync(int id)
+        {
+            return await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
         public Order CreateOrder(Order order)
         {
             _context.Orders.Add(order);

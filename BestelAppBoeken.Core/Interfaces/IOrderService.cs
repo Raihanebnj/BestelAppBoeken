@@ -10,6 +10,7 @@ namespace BestelAppBoeken.Core.Interfaces
         IEnumerable<Order> GetAllOrders();
         Task<IEnumerable<Order>> GetAllOrdersAsync(); // ? Voor export functionaliteit
         Order? GetOrderById(int id);
+        Task<Order?> GetOrderByIdAsync(int id);
         Order CreateOrder(Order order);
         IEnumerable<Order> GetOrdersByCustomerEmail(string email);
     }

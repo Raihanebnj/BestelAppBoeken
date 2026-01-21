@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: BestelAppBoeken.Web/Dockerfile
+    container_name: bestelapp-web
+    ports:
+      - "7000:443"   # HTTPS
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DOTNET_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      # Certificate met LEEG wachtwoord
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      # RabbitMQ
+      - RabbitMQ__HostName=10.2.160.223
+      - RabbitMQ__UserName=bestelapp
+      - RabbitMQ__Password=Groep3
+      - RabbitMQ__QueueName=orders
+      # Database
+      - ConnectionStrings__DefaultConnection=Data Source=/app/bookstore.db
+      - ApiKey__ValidKey=BOOKSTORE-API-2026-SECRET-KEY-XYZ789
+    volumes:
+      - ./BestelAppBoeken.Web/bookstore.db:/app/bookstore.db
+      - ./BestelAppBoeken.Web/wwwroot:/app/wwwroot
+      # Mount certificate als volume ook (backup)
+      - ./aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    depends_on:
+      - receiver
+
+  receiver:
+    # ... bestaande config ...
+    restart: always
+    build:
+      context: .
+      dockerfile: BestelAppBoeken.Receiver/Dockerfile
+    container_name: bestelapp-receiver
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      # RabbitMQ
+      - RabbitMQ__HostName=10.2.160.223
+      - RabbitMQ__UserName=bestelapp
+      - RabbitMQ__Password=Groep3
+      - RabbitMQ__QueueName=orders

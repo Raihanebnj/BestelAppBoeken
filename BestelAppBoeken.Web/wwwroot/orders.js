@@ -10,7 +10,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check if we came from a successful order placement
     const hasNewOrder = checkForNewOrder();
     
-    // Always load orders (even if no new order)
+    // First try to show cached orders quickly to reduce perceived load time
+    try {
+        const cached = localStorage.getItem('cached_orders');
+        if (cached) {
+            orders = JSON.parse(cached);
+            console.log('?? Loaded orders from cache:', orders.length);
+            displayOrders();
+            updateSummary();
+            document.getElementById('orders-loading').style.display = 'none';
+            document.getElementById('orders-table-container').style.display = 'block';
+        }
+
+// Download invoice for a specific order (from orders page)
+function downloadInvoiceFromOrders(orderId) {
+    if (!orderId) return;
+    const id = orderId;
+    // Show a quick message
+    if (typeof showInfo === 'function') showInfo('Factuur wordt gegenereerd...');
+
+    fetch(`/api/backup/export/order/${id}/invoice`, { headers: { 'X-Api-Key': 'BOOKSTORE-API-2026-SECRET-KEY-XYZ789' } })
+        .then(resp => {
+            if (!resp.ok) throw new Error('Kon factuur niet genereren');
+            return resp.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `factuur_${id}_${Date.now()}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            if (typeof showSuccess === 'function') showSuccess('Factuur gedownload');
+        })
+        .catch(err => {
+            console.error('Error downloading invoice:', err);
+            if (typeof showError === 'function') showError('Kon factuur niet genereren');
+        });
+}
+    } catch (e) {
+        console.warn('No cached orders available or parse error', e);
+    }
+
+    // Always load fresh orders in background
     loadOrders();
     
     // If new order was detected, schedule a refresh after load
@@ -66,6 +110,24 @@ async function loadOrders() {
         
         displayOrders();
         updateStatistics();
+
+        // Notify other pages (admin) that orders were updated
+        try {
+            if ('BroadcastChannel' in window) {
+                const bc = new BroadcastChannel('orders_channel');
+                bc.postMessage({ type: 'orders-updated', timestamp: Date.now(), count: orders.length });
+                bc.close();
+            }
+        } catch (e) {
+            console.warn('BroadcastChannel not available:', e);
+        }
+
+        // Fallback via localStorage to trigger storage event in other tabs
+        try {
+            localStorage.setItem('orders-updated', Date.now().toString());
+        } catch (e) {
+            console.warn('localStorage orders-updated failed:', e);
+        }
         
         document.getElementById('orders-loading').style.display = 'none';
         document.getElementById('orders-table-container').style.display = 'block';
@@ -125,20 +187,36 @@ function displayOrders() {
                 <td>${itemCount} item(s)</td>
                 <td><strong>EUR ${order.totalAmount.toFixed(2)}</strong></td>
                 <td><span class="status-badge ${statusClass}">${order.status}</span></td>
-                <td>
-                    <button class="btn btn-info" onclick="viewOrderDetails(${order.id})" style="padding: 8px 16px;">
-                        <i class="fas fa-eye"></i> Details
+                <td style="display:flex; gap:8px;">
+                    <button class="btn btn-info" onclick="viewOrderDetails(${order.id})" style="padding: 8px 12px;">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-info" onclick="downloadInvoiceFromOrders(${order.id})" style="padding: 8px 12px;">
+                        <i class="fas fa-file-invoice"></i>
                     </button>
                 </td>
             </tr>
         `;
     }).join('');
+
+    // Update summary (totals)
+    updateSummary();
 }
 
 // Update statistics (DISABLED - statistics removed from UI)
 function updateStatistics() {
     // Statistics UI elements removed - function kept to prevent errors
     console.log('?? Statistics update skipped (UI removed)');
+}
+
+function updateSummary() {
+    const summary = document.getElementById('orders-summary');
+    if (!summary) return;
+
+    const totalOrders = orders.length;
+    const totalAmount = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+
+    summary.innerHTML = `Totaal bestellingen: <strong>${totalOrders}</strong> — Totaal omzet: <strong>EUR ${totalAmount.toFixed(2)}</strong>`;
 }
 
 // View order details

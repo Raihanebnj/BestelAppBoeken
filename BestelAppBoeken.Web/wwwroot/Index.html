@@ -318,6 +318,37 @@
             border: 2px solid var(--border);
         }
 
+        /* On wide/desktop screens hide the native horizontal scrollbar visually
+           but keep content layout without forcing scrollbars. On smaller
+           screens keep the horizontal scroll/swipe indicator so users know
+           they can swipe to see more columns. */
+        @media (min-width: 1200px) {
+            .table-container {
+                overflow-x: hidden !important;
+                /* Hide scrollbars in various browsers */
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
+            }
+            .table-container::-webkit-scrollbar {
+                display: none; /* Chrome, Safari */
+            }
+        }
+
+        /* Ensure on smaller screens the horizontal scrollbar / swipe track is visible
+           and styled for better affordance */
+        @media (max-width: 1199px) {
+            .table-container {
+                overflow-x: auto !important;
+            }
+            .table-container::-webkit-scrollbar {
+                height: 8px;
+            }
+            .table-container::-webkit-scrollbar-thumb {
+                background: rgba(0,0,0,0.18);
+                border-radius: 10px;
+            }
+        }
+
         table {
             width: 100%;
             min-width: 700px;
@@ -900,37 +931,6 @@
 
     <!-- Message Container -->
     <div id="message-container"></div>
-
-    <!-- Recente Bestellingen -->
-    <section id="bestellingen-sectie" class="card fade-in">
-        <div class="card-header">
-            <div class="card-title">
-                <i class="fas fa-clipboard-list"></i>
-                Laatste 5 Bestellingen
-            </div>
-        </div>
-        <div class="card-body">
-            <div id="bestellingen-loading" class="loading" style="padding: 20px;">
-                <i class="fas fa-spinner fa-spin"></i> Laden...
-            </div>
-            <div class="table-container" id="bestellingen-container" style="display:none;">
-                <table id="bestellingen-tabel">
-                    <thead>
-                    <tr>
-                        <th><i class="fas fa-hashtag"></i> ID</th>
-                        <th><i class="fas fa-user"></i> Klant</th>
-                        <th><i class="fas fa-calendar"></i> Datum</th>
-                        <th><i class="fas fa-euro-sign"></i> Totaal</th>
-                        <th><i class="fas fa-info-circle"></i> Status</th>
-                    </tr>
-                    </thead>
-                    <tbody id="bestellingen-body">
-                    <!-- Data wordt hier geladen -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
 
     <!-- Boeken Menu met Grid/List Toggle -->
     <section id="boeken-sectie" class="card fade-in" style="margin-top: 30px;">
