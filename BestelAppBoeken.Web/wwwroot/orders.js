@@ -144,8 +144,18 @@ function displayOrders() {
         return;
     }
     
+    // Helper to map order.status values to CSS classes
+    function getStatusClass(status) {
+        if (!status) return 'status-pending';
+        const s = String(status).toLowerCase();
+        if (s === 'verwerkt' || s === 'processed') return 'status-verwerkt';
+        if (s === 'activated' || s === 'active' || s === 'geactiveerd') return 'status-activated';
+        if (s === 'draft' || s === 'concept' || s === 'klad') return 'status-draft';
+        return 'status-pending';
+    }
+
     tbody.innerHTML = orders.map(order => {
-        const statusClass = order.status === 'Verwerkt' ? 'status-verwerkt' : 'status-pending';
+        const statusClass = getStatusClass(order.status);
         const klantNaam = order.klant ? escapeHtml(order.klant.naam) : 'Onbekend';
         const itemCount = order.items ? order.items.reduce((sum, item) => sum + item.aantal, 0) : 0;
         
