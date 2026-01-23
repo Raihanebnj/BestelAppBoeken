@@ -60,6 +60,26 @@ builder.Services.AddDbContext<BookstoreDbContext>(options =>
 
 // Register Custom Services
 builder.Services.AddSingleton<IMessageQueueService, RabbitMqService>();
+
+// Register named HttpClient for Salesforce (used by SalesforceService via IHttpClientFactory)
+builder.Services.AddHttpClient("salesforce", client =>
+{
+    var salesforceEndpoint = builder.Configuration["Salesforce:Endpoint"];
+    if (!string.IsNullOrWhiteSpace(salesforceEndpoint))
+    {
+        try
+        {
+            client.BaseAddress = new Uri(salesforceEndpoint);
+        }
+        catch { /* ignore invalid URI; service will use full URL directly */ }
+    }
+
+    var timeoutSec = 10;
+    if (int.TryParse(builder.Configuration["Salesforce:TimeoutSeconds"], out var t)) timeoutSec = t;
+    client.Timeout = TimeSpan.FromSeconds(timeoutSec);
+});
+
+// Register SalesforceService implementation (will receive IHttpClientFactory)
 builder.Services.AddScoped<ISalesforceService, SalesforceService>();
 
 // ✅ SAP iDoc Service (ACTIEF - Tweezijdige communicatie met SAP R/3)
@@ -212,6 +232,9 @@ app.UseDefaultFiles(); // Dit zorgt ervoor dat index.html automatisch wordt gela
 app.UseStaticFiles();  // Serve static files uit wwwroot
 
 app.UseRouting();
+
+// Global API exception middleware for consistent error responses
+app.UseMiddleware<BestelAppBoeken.Web.Middleware.ApiExceptionMiddleware>();
 
 app.UseAuthorization();
 

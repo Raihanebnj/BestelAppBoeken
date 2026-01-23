@@ -226,14 +226,47 @@
             font-weight: 600;
         }
 
+        /* Status kleuren - per status eigen kleur */
         .status-pending {
-            background: linear-gradient(135deg, #bee3f8, #90cdf4);
-            color: #2c5282;
+            background: linear-gradient(135deg, #f0f7ff, #dbeafe);
+            color: #1e40af; /* blauw */
         }
 
-        .status-verwerkt {
+        .status-verwerkt, .status-processed {
+            background: linear-gradient(135deg, #e6fffa, #c6f6d5);
+            color: #22543d; /* groen */
+        }
+
+        .status-processing {
+            background: linear-gradient(135deg, #fff7ed, #fee2b3);
+            color: #92400e; /* oranje */
+        }
+
+        .status-shipped, .status-verzonden {
+            background: linear-gradient(135deg, #e6f7ff, #c7f0ff);
+            color: #0b5563; /* cyan/teal */
+        }
+
+        .status-cancelled, .status-geannuleerd {
+            background: linear-gradient(135deg, #ffeaea, #ffd6d6);
+            color: #7f1d1d; /* rood */
+        }
+
+        .status-error, .status-failed {
+            background: linear-gradient(135deg, #fdecea, #f8d7da);
+            color: #601010; /* donker rood */
+        }
+
+        .status-default {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            color: var(--gray);
+        }
+        
+        /* Activated status (green highlight) */
+        .status-activated {
             background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
             color: #22543d;
+            box-shadow: 0 6px 18px rgba(34,84,61,0.08);
         }
 
         .loading {
@@ -383,6 +416,9 @@
                         <tbody id="orders-body">
                         </tbody>
                     </table>
+                </div>
+                <div id="load-more-container" style="text-align:center; margin-top:12px; display:none;">
+                    <button id="load-more-btn" class="btn btn-info" onclick="loadMoreOrders()">Laad meer</button>
                 </div>
             </div>
         </div>

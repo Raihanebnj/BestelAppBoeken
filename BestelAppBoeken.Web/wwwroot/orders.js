@@ -3,13 +3,46 @@
 const API_BASE = '/api';
 let orders = [];
 
+// Helper: map status text to CSS class
+function getStatusClass(status) {
+    if (!status) return 'status-default';
+    const s = String(status).toLowerCase().trim();
+
+    // Dutch + English mappings
+    switch (s) {
+        case 'verwerkt':
+        case 'processed':
+            return 'status-verwerkt';
+        case 'pending':
+        case 'in afwachting':
+            return 'status-pending';
+        case 'processing':
+        case 'in verwerking':
+            return 'status-processing';
+        case 'activated':
+        case 'actived':
+            return 'status-activated';
+        case 'shipped':
+        case 'verzonden':
+            return 'status-shipped';
+        case 'cancelled':
+        case 'geannuleerd':
+            return 'status-cancelled';
+        case 'error':
+        case 'failed':
+            return 'status-error';
+        default:
+            return 'status-default';
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     console.log('?? Orders.html page loaded');
     
     // Check if we came from a successful order placement
     const hasNewOrder = checkForNewOrder();
-    
+
     // First try to show cached orders quickly to reduce perceived load time
     try {
         const cached = localStorage.getItem('cached_orders');
@@ -65,20 +98,40 @@ function checkForNewOrder() {
     return false;
 }
 
-// Load all orders
+// Pagination state
+let ordersPage = 1;
+let ordersPageSize = 25;
+let ordersHasMore = true;
+
+// Load first page of orders
 async function loadOrders() {
+    ordersPage = 1;
+    ordersHasMore = true;
+    document.getElementById('load-more-container').style.display = 'none';
+    await loadOrdersPage(ordersPage);
+}
+
+// Load a single page
+async function loadOrdersPage(page) {
     try {
         console.log('?? Loading orders from API...');
-        const response = await fetch(`${API_BASE}/orders`, {
+        const response = await fetch(`${API_BASE}/orders?page=${page}&pageSize=${ordersPageSize}`, {
             headers: {
-                'X-Api-Key': 'BOOKSTORE-API-2026-SECRET-KEY-XYZ789'  // ? API KEY TOEGEVOEGD!
+                'X-Api-Key': 'BOOKSTORE-API-2026-SECRET-KEY-XYZ789'
             }
         });
         if (!response.ok) throw new Error('Kon bestellingen niet laden');
-        
-        orders = await response.json();
-        console.log(`? Loaded ${orders.length} orders`);
-        
+        const result = await response.json();
+        console.log(`? Loaded page ${page} with ${result.items.length} orders`);
+
+        if (page === 1) {
+            orders = result.items;
+        } else {
+            orders = orders.concat(result.items);
+        }
+
+        ordersHasMore = result.hasMore;
+
         displayOrders();
         updateStatistics();
 
@@ -94,14 +147,14 @@ async function loadOrders() {
         }
 
         // Fallback via localStorage to trigger storage event in other tabs
-        try {
-            localStorage.setItem('orders-updated', Date.now().toString());
-        } catch (e) {
-            console.warn('localStorage orders-updated failed:', e);
-        }
+        try { localStorage.setItem('orders-updated', Date.now().toString()); } catch (e) { console.warn('localStorage orders-updated failed:', e); }
         
         document.getElementById('orders-loading').style.display = 'none';
         document.getElementById('orders-table-container').style.display = 'block';
+
+        // hide load more container (not used in legacy mode)
+        const loadMoreEl = document.getElementById('load-more-container');
+        if (loadMoreEl) loadMoreEl.style.display = 'none';
     } catch (error) {
         console.error('? Error loading orders:', error);
         document.getElementById('orders-loading').innerHTML = 
@@ -111,6 +164,11 @@ async function loadOrders() {
             showError('Kon bestellingen niet laden: ' + error.message);
         }
     }
+}
+
+// Load more not available in legacy mode
+async function loadMoreOrders() {
+    // no-op in this mode
 }
 
 // ? Refresh orders (can be called from UI button)
@@ -145,7 +203,7 @@ function displayOrders() {
     }
     
     tbody.innerHTML = orders.map(order => {
-        const statusClass = order.status === 'Verwerkt' ? 'status-verwerkt' : 'status-pending';
+        const statusClass = getStatusClass(order.status);
         const klantNaam = order.klant ? escapeHtml(order.klant.naam) : 'Onbekend';
         const itemCount = order.items ? order.items.reduce((sum, item) => sum + item.aantal, 0) : 0;
         
@@ -187,7 +245,7 @@ function updateSummary() {
     const totalOrders = orders.length;
     const totalAmount = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
 
-    summary.innerHTML = `Totaal bestellingen: <strong>${totalOrders}</strong> — Totaal omzet: <strong>EUR ${totalAmount.toFixed(2)}</strong>`;
+    summary.innerHTML = `Totaal bestellingen: <strong>${totalOrders}</strong> ? Totaal omzet: <strong>EUR ${totalAmount.toFixed(2)}</strong>`;
 }
 
 // View order details
@@ -196,7 +254,7 @@ function viewOrderDetails(orderId) {
     if (!order) return;
     
     const klantNaam = order.klant ? escapeHtml(order.klant.naam) : 'Onbekend';
-    const statusClass = order.status === 'Verwerkt' ? 'status-verwerkt' : 'status-pending';
+    const statusClass = getStatusClass(order.status);
     
     let itemsHtml = '';
     if (order.items && order.items.length > 0) {
@@ -205,7 +263,7 @@ function viewOrderDetails(orderId) {
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <strong>${escapeHtml(item.titel)}</strong><br>
-                        <small style="color: var(--gray);">Aantal: ${item.aantal} × EUR ${item.prijs.toFixed(2)}</small>
+                        <small style="color: var(--gray);">Aantal: ${item.aantal} ? EUR ${item.prijs.toFixed(2)}</small>
                     </div>
                     <div style="font-weight: 700; color: var(--success);">
                         EUR ${(item.prijs * item.aantal).toFixed(2)}

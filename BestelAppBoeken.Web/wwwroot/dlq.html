@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DLQ Beheer - Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #667eea;
+      --success: #48bb78;
+      --danger: #f56565;
+      --gray: #718096;
+      --border: #e2e8f0;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding:24px;}
+    .container{max-width:1200px;margin:0 auto}
+    .header{background:white;padding:18px;border-radius:12px;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    h1{margin:0;font-size:18px;color:#222}
+    .controls{display:flex;gap:10px;align-items:center}
+    .input{padding:8px 10px;border-radius:8px;border:1px solid var(--border);min-width:200px}
+    .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+    .btn-primary{background:linear-gradient(135deg,var(--primary),#5568d3);color:white}
+    .btn-success{background:linear-gradient(135deg,var(--success),#38a169);color:white}
+    .btn-danger{background:linear-gradient(135deg,var(--danger),#e53e3e);color:white}
+    .card{background:white;padding:18px;border-radius:12px;box-shadow:var(--shadow)}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:12px;border-bottom:1px solid var(--border);text-align:left}
+    pre.msg{background:#0b1220;color:#e6eef8;padding:12px;border-radius:8px;max-height:240px;overflow:auto}
+    .small{font-size:13px;color:var(--gray)}
+    .actions{display:flex;gap:8px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Dead Letter Queue Beheer</h1>
+        <div class="small">Bekijk en beheer berichten die in de DLQ zijn beland</div>
+      </div>
+      <div class="controls">
+        <input id="queueName" class="input" value="orders" />
+        <button id="apiKeyBtn" class="btn" style="background:transparent;color:white;border:1px solid rgba(255,255,255,0.12);padding:6px 10px;border-radius:8px;margin-right:6px;" onclick="promptApiKey()">API-key</button>
+        <button class="btn btn-primary" onclick="loadDlq()"><i class="fas fa-sync-alt"></i> Laad DLQ</button>
+        <button class="btn btn-success" onclick="requeueAll()"><i class="fas fa-arrow-up"></i> Requeue Alles</button>
+        <button class="btn btn-danger" onclick="purgeDlq()"><i class="fas fa-trash"></i> Purge DLQ</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>Berichten in DLQ</strong>
+        <div class="small">Aantal: <span id="dlqCount">0</span></div>
+      </div>
+
+      <table id="dlqTable">
+        <thead>
+          <tr><th>#</th><th>Timestamp</th><th>Properties</th><th>Bericht</th></tr>
+        </thead>
+        <tbody id="dlqBody">
+          <tr><td colspan="4" class="small">Klik op "Laad DLQ" om berichten te bekijken</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function escapeHtml(t){ if(!t) return ''; return t.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+    async function loadDlq(){
+      const q = document.getElementById('queueName').value || 'orders';
+      const tbody = document.getElementById('dlqBody');
+      tbody.innerHTML = '<tr><td colspan="4" class="small">Loading...</td></tr>';
+
+      try{
+        const resp = await fetch(`/api/dlq/list?queue=${encodeURIComponent(q)}&count=100`, { headers: { 'X-Api-Key': localStorage.getItem('adminApiKey') || '' } });
+        if(!resp.ok){ const txt = await resp.text(); throw new Error(txt || 'Fout bij laden'); }
+        const data = await resp.json();
+
+        const messages = data.messages || [];
+        document.getElementById('dlqCount').textContent = messages.length;
+
+        if(messages.length === 0){ tbody.innerHTML = '<tr><td colspan="4" class="small">Geen berichten in DLQ</td></tr>'; return; }
+
+        tbody.innerHTML = '';
+        messages.forEach((m, idx) =>{
+          const props = JSON.stringify(m.Properties || {}, null, 2);
+          const ts = m.Timestamp || '-';
+          const body = escapeHtml(String(m.Body || ''));
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td style="vertical-align:top">${idx+1}</td>
+            <td style="vertical-align:top">${ts}</td>
+            <td style="vertical-align:top"><pre class="small">${escapeHtml(props)}</pre></td>
+            <td><pre class="msg">${body}</pre></td>
+          `;
+          tbody.appendChild(row);
+        });
+
+      }catch(err){
+        tbody.innerHTML = `<tr><td colspan="4" class="small">Fout: ${escapeHtml(err.message || String(err))}</td></tr>`;
+        console.error('DLQ load error', err);
+      }
+    }
+
+    async function requeueAll(){
+      if(!confirm('Weet je zeker dat je alle berichten uit de DLQ naar de hoofdqueue wilt verplaatsen?')) return;
+      const q = document.getElementById('queueName').value || 'orders';
+      try{
+        const resp = await fetch(`/api/dlq/requeue-all?queue=${encodeURIComponent(q)}`, { method: 'POST', headers: { 'X-Api-Key': localStorage.getItem('adminApiKey') || '' } });
+        const data = await resp.json();
+        alert('Requeued: ' + (data.requeued || 0));
+        loadDlq();
+      }catch(err){ alert('Fout: ' + (err.message || err)); }
+    }
+
+    async function purgeDlq(){
+      if(!confirm('Weet je zeker dat je de DLQ wilt legen? Dit kan niet ongedaan gemaakt worden.')) return;
+      const q = document.getElementById('queueName').value || 'orders';
+      try{
+        const resp = await fetch(`/api/dlq/purge?queue=${encodeURIComponent(q)}`, { method: 'POST', headers: { 'X-Api-Key': localStorage.getItem('adminApiKey') || '' } });
+        const data = await resp.json();
+        alert('Purge success: ' + (data.success ? 'ja' : 'nee'));
+        loadDlq();
+      }catch(err){ alert('Fout: ' + (err.message || err)); }
+    }
+
+    // Requeue single message by index
+    async function requeueOne(idx){
+      const q = document.getElementById('queueName').value || 'orders';
+      try{
+        const resp = await fetch(`/api/dlq/requeue?queue=${encodeURIComponent(q)}&index=${idx}`, { method: 'POST', headers: { 'X-Api-Key': localStorage.getItem('adminApiKey') || '' } });
+        const data = await resp.json();
+        alert('Requeued: ' + (data.requeued || 0));
+        loadDlq();
+      }catch(err){ alert('Fout: ' + (err.message || err)); }
+    }
+
+    // Delete single message by index
+    async function deleteOne(idx){
+      if(!confirm('Verwijder dit bericht definitief?')) return;
+      const q = document.getElementById('queueName').value || 'orders';
+      try{
+        const resp = await fetch(`/api/dlq/delete?queue=${encodeURIComponent(q)}&index=${idx}`, { method: 'POST', headers: { 'X-Api-Key': localStorage.getItem('adminApiKey') || '' } });
+        const data = await resp.json();
+        alert('Deleted: ' + (data.deleted || 0));
+        loadDlq();
+      }catch(err){ alert('Fout: ' + (err.message || err)); }
+    }
+
+    // Prompt / store admin API key
+    function promptApiKey(){
+      const current = localStorage.getItem('adminApiKey') || '';
+      const entered = prompt('Voer X-Api-Key in voor DLQ acties (zichtbaar wordt niet opgeslagen in server):', current);
+      if(entered !== null){
+        if(entered === ''){ localStorage.removeItem('adminApiKey'); }
+        else { localStorage.setItem('adminApiKey', entered); }
+        updateApiKeyButton();
+      }
+    }
+
+    function updateApiKeyButton(){
+      const btn = document.getElementById('apiKeyBtn');
+      const key = localStorage.getItem('adminApiKey');
+      if(!btn) return;
+      if(key){
+        btn.innerText = 'API-key (set)';
+        btn.style.background = 'rgba(255,255,255,0.06)';
+      } else {
+        btn.innerText = 'API-key';
+        btn.style.background = 'transparent';
+      }
+    }
+
+    // Auto-load on open
+    document.addEventListener('DOMContentLoaded', () => {
+      updateApiKeyButton();
+      loadDlq();
+    });
+  </script>
+</body>
+</html>

@@ -115,6 +115,28 @@ function setupForm() {
     }
 }
 
+// Listen for global order updates so admin/customer pages auto-refresh
+(function setupGlobalUpdateListenerForPages() {
+    try {
+        if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel('orders_channel');
+            bc.addEventListener('message', (ev) => {
+                if (ev.data && (ev.data.type === 'orders-updated' || ev.data.type === 'orders-synced')) {
+                    console.log('Global orders update received, reloading customers list');
+                    loadCustomers();
+                }
+            });
+        }
+    } catch (e) { console.warn('BroadcastChannel not available in customers page:', e); }
+
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'orders-updated' || e.key === 'orders-last-sync') {
+            console.log('Storage event for orders update received in customers page');
+            loadCustomers();
+        }
+    });
+})();
+
 // Load all customers
 async function loadCustomers() {
     try {

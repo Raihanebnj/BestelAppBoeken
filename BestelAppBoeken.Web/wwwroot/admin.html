@@ -497,6 +497,23 @@
             transform-origin: center;
         }
 
+        /* Status badges (reuse styles from orders page) */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending { background: linear-gradient(135deg, #f0f7ff, #dbeafe); color: #1e40af; }
+        .status-verwerkt, .status-processed { background: linear-gradient(135deg, #e6fffa, #c6f6d5); color: #22543d; }
+        .status-processing { background: linear-gradient(135deg, #fff7ed, #fee2b3); color: #92400e; }
+        .status-shipped, .status-verzonden { background: linear-gradient(135deg, #e6f7ff, #c7f0ff); color: #0b5563; }
+        .status-cancelled, .status-geannuleerd { background: linear-gradient(135deg, #ffeaea, #ffd6d6); color: #7f1d1d; }
+        .status-error, .status-failed { background: linear-gradient(135deg, #fdecea, #f8d7da); color: #601010; }
+        .status-default { background: linear-gradient(135deg, #f7fafc, #edf2f7); color: var(--gray); }
+
         @keyframes ordersPulse {
             0% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-2px) scale(1.02); }
@@ -526,6 +543,9 @@
             </div>
             <a href="Index.html" class="btn btn-primary" style="text-decoration: none;">
                 <i class="fas fa-home"></i> Terug naar Dashboard
+            </a>
+            <a href="dlq.html" class="btn btn-warning" style="text-decoration: none;">
+                <i class="fas fa-exclamation-triangle"></i> DLQ Beheer
             </a>
             <button class="btn btn-primary" onclick="refreshAllData()">
                 <i class="fas fa-sync-alt"></i> Vernieuw Alles
@@ -977,6 +997,8 @@
                 } catch (e) { }
 
                 try { localStorage.setItem('orders-last-sync', Date.now().toString()); } catch (e) {}
+                // Also set an orders-updated flag so other pages refresh automatically
+                try { localStorage.setItem('orders-updated', Date.now().toString()); } catch (e) {}
             })
             .catch(err => {
                 console.error('Fout bij ophalen orders API:', err);

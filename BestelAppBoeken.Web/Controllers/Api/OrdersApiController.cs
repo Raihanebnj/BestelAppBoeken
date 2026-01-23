@@ -1,5 +1,6 @@
 ﻿using BestelAppBoeken.Core.Interfaces;
 using BestelAppBoeken.Core.Models;
+using BestelAppBoeken.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BestelAppBoeken.Web.Controllers.Api
@@ -45,19 +46,19 @@ namespace BestelAppBoeken.Web.Controllers.Api
         /// <response code="200">Bestellingen succesvol opgehaald</response>
         /// <response code="500">Server error</response>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<OrderResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<IEnumerable<OrderResponse>> GetAllOrders()
+        public ActionResult GetAllOrders([FromQuery] int? page, [FromQuery] int? pageSize)
         {
             try
             {
-                var orders = _orderService.GetAllOrders();
+                var allOrders = _orderService.GetAllOrders().ToList();
                 var allKlanten = _klantService.GetAllKlanten().ToList();
 
-                var response = orders.Select(o =>
+                // Map to response objects
+                var mapped = allOrders.Select(o =>
                 {
                     var klant = allKlanten.FirstOrDefault(k => k.Email == o.CustomerEmail);
-
                     return new OrderResponse
                     {
                         Id = o.Id,
@@ -81,7 +82,27 @@ namespace BestelAppBoeken.Web.Controllers.Api
                     };
                 }).ToList();
 
-                return Ok(response);
+                // If pagination requested
+                if (page.HasValue && pageSize.HasValue && page.Value > 0 && pageSize.Value > 0)
+                {
+                    var p = page.Value;
+                    var ps = pageSize.Value;
+                    var total = mapped.Count;
+                    var items = mapped.Skip((p - 1) * ps).Take(ps).ToList();
+                    var hasMore = (p * ps) < total;
+
+                    return Ok(new
+                    {
+                        items,
+                        totalCount = total,
+                        page = p,
+                        pageSize = ps,
+                        hasMore
+                    });
+                }
+
+                // Fallback: return all (legacy)
+                return Ok(new { items = mapped, totalCount = mapped.Count, page = 1, pageSize = mapped.Count, hasMore = false });
             }
             catch (Exception ex)
             {
@@ -361,64 +382,5 @@ namespace BestelAppBoeken.Web.Controllers.Api
         }
     }
 
-    // Request/Response models
-    public class CreateOrderRequest
-    {
-        public int KlantId { get; set; }
-        public List<OrderItemRequest> Items { get; set; } = new();
-    }
-
-    public class OrderItemRequest
-    {
-        public int BoekId { get; set; }
-        public int Aantal { get; set; }
-    }
-
-    public class OrderResponse
-    {
-        public int Id { get; set; }
-        public DateTime OrderDate { get; set; }
-        public string CustomerEmail { get; set; } = string.Empty;
-        public decimal TotalAmount { get; set; }
-        public string Status { get; set; } = string.Empty;
-        public KlantInfo? Klant { get; set; }
-        public List<OrderItemInfo> Items { get; set; } = new();
-        
-        // ✅ STAP 6: Integratie status (Salesforce + SAP)
-        public IntegrationStatusInfo? IntegrationStatus { get; set; }
-    }
-
-    /// <summary>
-    /// Gecombineerde integratie status voor Salesforce + SAP
-    /// </summary>
-    public class IntegrationStatusInfo
-    {
-        // Salesforce integratie
-        public string? SalesforceId { get; set; }
-        public bool SalesforceSuccess { get; set; }
-        
-        // SAP iDoc integratie
-        public string? SapIDocNumber { get; set; }
-        public int? SapStatus { get; set; }
-        public string? SapStatusDescription { get; set; }
-        public bool SapSuccess { get; set; }
-        
-        // Timestamp
-        public DateTime Timestamp { get; set; }
-    }
-
-    public class KlantInfo
-    {
-        public int Id { get; set; }
-        public string Naam { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-    }
-
-    public class OrderItemInfo
-    {
-        public int BoekId { get; set; }
-        public string Titel { get; set; } = string.Empty;
-        public int Aantal { get; set; }
-        public decimal Prijs { get; set; }
-    }
+    // Request DTOs moved to BestelAppBoeken.Web.Models.OrderDtos
 }

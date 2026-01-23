@@ -40,23 +40,41 @@ namespace BestelAppBoeken.Web.Services
                 Password = _configuration["RabbitMq:Password"]
             };
 
-            try
-            {
-                _connection = await factory.CreateConnectionAsync();
-                _channel = await _connection.CreateChannelAsync();
+            // Try to establish connection with simple retry/backoff
+            int attempt = 0;
+            const int maxAttempts = 5;
 
-                await _channel.QueueDeclareAsync(queue: "order-updates",
-                                     durable: false,
-                                     exclusive: false,
-                                     autoDelete: false,
-                                     arguments: null);
-
-                Console.WriteLine("OrderUpdateConsumer listening on 'order-updates'...");
-                _logger.LogInformation("OrderUpdateConsumer listening on 'order-updates'...");
-            }
-            catch (Exception ex)
+            while (attempt < maxAttempts && !cancellationToken.IsCancellationRequested)
             {
-                _logger.LogError(ex, "Failed to connect to RabbitMQ in Web App");
+                attempt++;
+                try
+                {
+                    _connection = await factory.CreateConnectionAsync();
+                    _channel = await _connection.CreateChannelAsync();
+
+                    await _channel.QueueDeclareAsync(queue: "order-updates",
+                                         durable: false,
+                                         exclusive: false,
+                                         autoDelete: false,
+                                         arguments: null);
+
+                    Console.WriteLine("OrderUpdateConsumer listening on 'order-updates'...");
+                    _logger.LogInformation("OrderUpdateConsumer listening on 'order-updates'...");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Attempt {Attempt} failed to connect to RabbitMQ", attempt);
+                    if (attempt >= maxAttempts)
+                    {
+                        _logger.LogError(ex, "Failed to connect to RabbitMQ after {Attempts} attempts", attempt);
+                        break;
+                    }
+
+                    // exponential backoff
+                    var delayMs = 500 * (int)Math.Pow(2, attempt - 1);
+                    await Task.Delay(delayMs, cancellationToken);
+                }
             }
 
             await base.StartAsync(cancellationToken);

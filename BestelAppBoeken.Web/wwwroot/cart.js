@@ -314,6 +314,18 @@ async function plaatsOrder() {
         setTimeout(() => {
             showOrderPlacedModal(orderId, totalAmount, itemCount);
         }, 300);
+        // Notify other pages/tabs that orders have been updated
+        try {
+            if ('BroadcastChannel' in window) {
+                const bc = new BroadcastChannel('orders_channel');
+                bc.postMessage({ type: 'orders-updated', timestamp: Date.now(), orderId });
+                bc.close();
+            }
+        } catch (e) { console.warn('BroadcastChannel not available:', e); }
+
+        try { localStorage.setItem('orders-updated', Date.now().toString()); } catch (e) { }
+        try { localStorage.setItem('orders-last-sync', Date.now().toString()); } catch (e) { }
+
 
         console.log('═══════════════════════════════════════');
 
