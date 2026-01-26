@@ -4,6 +4,8 @@ using BestelAppBoeken.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace BestelAppBoeken.Infrastructure.Services
 {
@@ -28,9 +30,23 @@ namespace BestelAppBoeken.Infrastructure.Services
 
         public Klant CreateKlant(Klant klant)
         {
-            _context.Klanten.Add(klant);
-            _context.SaveChanges();
-            return klant;
+            // Business rule: email must be unique
+            if (_context.Klanten.Any(k => k.Email == klant.Email))
+            {
+                throw new ValidationException("Een klant met dit e-mailadres bestaat al.");
+            }
+
+            try
+            {
+                _context.Klanten.Add(klant);
+                _context.SaveChanges();
+                return klant;
+            }
+            catch (DbUpdateException ex)
+            {
+                // Rethrow as validation for controller to map to 409/500
+                throw new Exception("Fout bij opslaan van klant in database", ex);
+            }
         }
 
         public Klant? UpdateKlant(int id, Klant klant)

@@ -115,6 +115,74 @@ function setupForm() {
     }
 }
 
+// Validate customer form fields on client-side
+function validateCustomerForm() {
+    clearFieldErrors();
+    const name = document.getElementById('customer-name').value.trim();
+    const email = document.getElementById('customer-email').value.trim();
+    const phone = document.getElementById('customer-phone').value.trim();
+    const address = document.getElementById('customer-address').value.trim();
+
+    const errors = [];
+
+    if (!name) {
+        errors.push('Naam is verplicht');
+        showFieldError('customer-name', 'Naam is verplicht');
+    } else if (name.length > 100) {
+        errors.push('Naam is te lang (max 100 tekens)');
+        showFieldError('customer-name', 'Te lang (max 100)');
+    }
+
+    if (!email) {
+        errors.push('E-mail is verplicht');
+        showFieldError('customer-email', 'E-mail is verplicht');
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+        errors.push('Ongeldig e-mail formaat');
+        showFieldError('customer-email', 'Ongeldig e-mail');
+    }
+
+    if (phone && phone.length > 20) {
+        errors.push('Telefoonnummer is te lang');
+        showFieldError('customer-phone', 'Te lang');
+    }
+
+    if (address && address.length > 300) {
+        errors.push('Adres is te lang');
+        showFieldError('customer-address', 'Te lang');
+    }
+
+    return { valid: errors.length === 0, errors };
+}
+
+function showFieldError(fieldId, message) {
+    try {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        field.classList.add('input-error');
+        let hint = field.parentElement.querySelector('.field-error');
+        if (!hint) {
+            hint = document.createElement('div');
+            hint.className = 'field-error';
+            hint.style.color = '#b02a37';
+            hint.style.fontSize = '12px';
+            hint.style.marginTop = '6px';
+            field.parentElement.appendChild(hint);
+        }
+        hint.textContent = message;
+    } catch (e) {
+        console.warn('showFieldError failed', e);
+    }
+}
+
+function clearFieldErrors() {
+    try {
+        document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+        document.querySelectorAll('.field-error').forEach(el => el.remove());
+    } catch (e) {
+        // ignore
+    }
+}
+
 // Load all customers
 async function loadCustomers() {
     try {
@@ -274,6 +342,14 @@ async function handleFormSubmit(e) {
     if (!ensureAdminOrShowWarning()) return;
     
     const id = document.getElementById('customer-id').value;
+
+    // Client-side validation
+    const validation = validateCustomerForm();
+    if (!validation.valid) {
+        showError(validation.errors.join(' • '));
+        return;
+    }
+
     const customerData = {
         naam: document.getElementById('customer-name').value.trim(),
         email: document.getElementById('customer-email').value.trim(),
@@ -300,8 +376,18 @@ async function handleFormSubmit(e) {
         }
         
         if (!response.ok) {
-            const error = await response.json().catch(() => ({ error: 'Er is een fout opgetreden' }));
-            throw new Error(error.error || 'Kon klant niet opslaan');
+            // Try to parse JSON error, fallback to text
+            let errorMessage = 'Kon klant niet opslaan';
+            try {
+                const errJson = await response.json();
+                errorMessage = errJson.error || errJson.message || errorMessage;
+            } catch (e) {
+                try {
+                    const text = await response.text();
+                    if (text) errorMessage = text;
+                } catch { }
+            }
+            throw new Error(errorMessage);
         }
         
         showSuccess(id ? 'Klant succesvol bijgewerkt' : 'Klant succesvol toegevoegd');

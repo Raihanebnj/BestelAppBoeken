@@ -88,6 +88,99 @@ function updateKlantDropdown() {
     console.log('✅ Dropdown updated:', klanten.length, 'klanten');
 }
 
+// Client-side order form validation
+function validateOrderForm() {
+    clearFieldErrors();
+    const klantSelect = document.getElementById('order-klant');
+    const errors = [];
+
+    if (!klantSelect) {
+        errors.push('Kies een klant');
+        return { valid: false, errors };
+    }
+
+    const klantValue = klantSelect.value;
+    if (!klantValue || klantValue === '') {
+        errors.push('Kies een klant');
+        showFieldError('order-klant', 'Kies een klant');
+    }
+
+    if (!Array.isArray(winkelmandje) || winkelmandje.length === 0) {
+        errors.push('Winkelmandje is leeg');
+    }
+
+    // Validate each cart item quantity
+    winkelmandje.forEach((item, idx) => {
+        const qty = parseInt(item.aantal, 10) || 0;
+        if (qty <= 0) {
+            errors.push(`Item ${item.titel || idx + 1}: ongeldig aantal`);
+            // try to show field error near cart item if possible
+            // cart items are rendered dynamically; we add a generic message
+        }
+        if (!item.boekId && !item.bookId && !item.id) {
+            errors.push(`Item ${item.titel || idx + 1}: ontbrekend boek ID`);
+        }
+    });
+
+    return { valid: errors.length === 0, errors };
+}
+
+function showFieldError(fieldId, message) {
+    try {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        field.classList.add('input-error');
+        let hint = field.parentElement.querySelector('.field-error');
+        if (!hint) {
+            hint = document.createElement('div');
+            hint.className = 'field-error';
+            hint.style.color = '#b02a37';
+            hint.style.fontSize = '12px';
+            hint.style.marginTop = '6px';
+            field.parentElement.appendChild(hint);
+        }
+        hint.textContent = message;
+    } catch (e) {
+        // ignore
+    }
+}
+
+function clearFieldErrors() {
+    try {
+        document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+        document.querySelectorAll('.field-error').forEach(el => el.remove());
+    } catch (e) {
+        // ignore
+    }
+}
+
+// Fallback popup functions if not provided by global app
+if (typeof showError !== 'function') {
+    window.showError = function (msg) {
+        console.error('showError:', msg);
+        const container = document.getElementById('message-container');
+        if (container) {
+            container.innerHTML = `<div class="message error"><i class="fas fa-exclamation-circle"></i> ${msg}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        } else {
+            alert(msg);
+        }
+    };
+}
+
+if (typeof showSuccess !== 'function') {
+    window.showSuccess = function (msg) {
+        console.log('showSuccess:', msg);
+        const container = document.getElementById('message-container');
+        if (container) {
+            container.innerHTML = `<div class="message success"><i class="fas fa-check-circle"></i> ${msg}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        } else {
+            alert(msg);
+        }
+    };
+}
+
 // ============================================
 // DISPLAY CART
 // ============================================

@@ -1,6 +1,7 @@
 ﻿using BestelAppBoeken.Core.Interfaces;
 using BestelAppBoeken.Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace BestelAppBoeken.Web.Controllers.Api
 {
@@ -106,10 +107,15 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 var createdKlant = _klantService.CreateKlant(klant);
                 return CreatedAtAction(nameof(GetKlant), new { id = createdKlant.Id }, createdKlant);
             }
+            catch (ValidationException vex)
+            {
+                _logger.LogWarning(vex, "Validatie fout bij aanmaken klant: {Message}", vex.Message);
+                return Conflict(new { error = vex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Fout bij aanmaken klant");
-                return StatusCode(500, new { error = "Er is een fout opgetreden bij het aanmaken van de klant. Mogelijk bestaat het e-mailadres al." });
+                return StatusCode(500, new { error = "Er is een fout opgetreden bij het aanmaken van de klant." });
             }
         }
 

@@ -146,6 +146,7 @@ namespace BestelAppBoeken.Web.Controllers.Api
                 decimal totaalBedrag = 0;
                 var orderItems = new List<OrderItem>();
 
+                // Validate all items first without changing stock
                 foreach (var item in request.Items)
                 {
                     var boek = _bookService.GetBookById(item.BoekId);
@@ -170,24 +171,49 @@ namespace BestelAppBoeken.Web.Controllers.Api
 
                     orderItems.Add(orderItem);
                     totaalBedrag += boek.Price * item.Aantal;
-
-                    // Update voorraad
-                    boek.VoorraadAantal -= item.Aantal;
-                    _bookService.UpdateBook(boek.Id, boek);
                 }
 
-                // Maak order aan
-                var order = new Order
+                // Alles gevalideerd: maak order aan en update voorraad binnen transactie
+                Order savedOrder;
+                try
                 {
-                    OrderDate = DateTime.Now,
-                    CustomerEmail = klant.Email,
-                    TotalAmount = totaalBedrag,
-                    Status = "Pending",
-                    Items = orderItems
-                };
+                    using var tx = ((BestelAppBoeken.Infrastructure.Data.BookstoreDbContext)_orderService.GetType()
+                                     .GetProperty("_context", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                                     ?.GetValue(_orderService))
+                                    ?.Database.BeginTransaction();
 
-                // Opslaan in database
-                var savedOrder = _orderService.CreateOrder(order);
+                    // Update voorraad via BookService
+                    foreach (var item in request.Items)
+                    {
+                        // ReduceStock bevat eigen checks
+                        var ok = _bookService.ReduceStock(item.BoekId, item.Aantal);
+                        if (!ok)
+                        {
+                            // Rollback if we started a transaction
+                            tx?.Rollback();
+                            return BadRequest(new { error = $"Kon voorraad niet bijwerken voor boek ID {item.BoekId}" });
+                        }
+                    }
+
+                    var order = new Order
+                    {
+                        OrderDate = DateTime.Now,
+                        CustomerEmail = klant.Email,
+                        TotalAmount = totaalBedrag,
+                        Status = "Pending",
+                        Items = orderItems
+                    };
+
+                    savedOrder = _orderService.CreateOrder(order);
+
+                    // Commit transaction if used
+                    tx?.Commit();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Fout bij opslaan bestelling of bijwerken voorraad");
+                    return StatusCode(500, new { error = "Er is een fout opgetreden bij het verwerken van de bestelling" });
+                }
 
                 _logger.LogInformation("✅ Order {OrderId} opgeslagen in database", savedOrder.Id);
 
@@ -365,13 +391,21 @@ namespace BestelAppBoeken.Web.Controllers.Api
     // Request/Response models
     public class CreateOrderRequest
     {
+        [Required]
         public int KlantId { get; set; }
+
+        [Required]
+        [MinLength(1, ErrorMessage = "Er moet minimaal één orderitem worden opgegeven.")]
         public List<OrderItemRequest> Items { get; set; } = new();
     }
 
     public class OrderItemRequest
     {
+        [Required]
         public int BoekId { get; set; }
+
+        [Required]
+        [Range(1, 1000, ErrorMessage = "Aantal moet minimaal 1 zijn.")]
         public int Aantal { get; set; }
     }
 
