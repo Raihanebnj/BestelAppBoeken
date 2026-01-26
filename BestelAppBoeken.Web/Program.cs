@@ -139,15 +139,13 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // Database Backup Service
 builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
 builder.Services.AddHostedService<BestelAppBoeken.Web.Services.OrderUpdateConsumer>();
+// Scheduled backup service (daily)
+builder.Services.AddHostedService<BestelAppBoeken.Infrastructure.Services.DatabaseBackupScheduler>();
 
-<<<<<<< HEAD
 // SSE notifications service
 builder.Services.AddSingleton<BestelAppBoeken.Web.Services.OrderNotificationService>();
 
-// ?? PDF Export Service
-=======
 // PDF Export Service
->>>>>>> 0a3f8015e75ea8ca184e779a3addaa6640688474
 builder.Services.AddScoped<PdfExportService>();
 
 var app = builder.Build();
