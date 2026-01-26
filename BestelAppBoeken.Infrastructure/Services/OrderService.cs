@@ -8,10 +8,12 @@ namespace BestelAppBoeken.Infrastructure.Services
     public class OrderService : IOrderService
     {
         private readonly BookstoreDbContext _context;
+        private readonly IMessageQueueService _messageQueueService;
 
-        public OrderService(BookstoreDbContext context)
+        public OrderService(BookstoreDbContext context, IMessageQueueService messageQueueService)
         {
             _context = context;
+            _messageQueueService = messageQueueService;
         }
 
         public IEnumerable<Order> GetAllOrders()
@@ -45,10 +47,34 @@ namespace BestelAppBoeken.Infrastructure.Services
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
 
+        // Keep existing synchronous API but call into async implementation to publish messages cleanly.
         public Order CreateOrder(Order order)
         {
+            return CreateOrderAsync(order).GetAwaiter().GetResult();
+        }
+
+        // New async creation that persists the order and publishes an approval/request message to RabbitMQ
+        public async Task<Order> CreateOrderAsync(Order order)
+        {
+            // Ensure initial status
+            if (string.IsNullOrWhiteSpace(order.Status))
+            {
+                order.Status = "Pending";
+            }
+
             _context.Orders.Add(order);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
+            // Publish approval/request message to RabbitMQ so Receiver -> Salesforce flow is triggered.
+            try
+            {
+                await _messageQueueService.PublishOrderApprovalRequestAsync(order);
+            }
+            catch
+            {
+                // Logging happens inside RabbitMqService. Do not fail order creation because of MQ issues.
+            }
+
             return order;
         }
 

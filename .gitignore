@@ -31,3 +31,4 @@ obj/
 /.gitignore
 /.gitignore
 *.md
+.idea/

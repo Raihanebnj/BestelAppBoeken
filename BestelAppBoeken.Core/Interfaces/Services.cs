@@ -6,6 +6,12 @@ namespace BestelAppBoeken.Core.Interfaces
     public interface IMessageQueueService
     {
         Task PublishOrderAsync(Order order);
+        
+        // Publish an explicit approval/request message when an order is created in the App.
+        Task PublishOrderApprovalRequestAsync(Order order);
+
+        // Publish a status update (App <-> Salesforce coordination)
+        Task PublishOrderStatusUpdateAsync(int orderId, string status, string? description = null);
     }
 
     public interface ISalesforceService
