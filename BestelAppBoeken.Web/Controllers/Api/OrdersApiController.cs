@@ -1,6 +1,7 @@
 ﻿using BestelAppBoeken.Core.Interfaces;
 using BestelAppBoeken.Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace BestelAppBoeken.Web.Controllers.Api
 {

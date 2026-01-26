@@ -78,6 +78,9 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
 builder.Services.AddHostedService<BestelAppBoeken.Web.Services.OrderUpdateConsumer>();
 
+// SSE notifications service
+builder.Services.AddSingleton<BestelAppBoeken.Web.Services.OrderNotificationService>();
+
 // ?? PDF Export Service
 builder.Services.AddScoped<PdfExportService>();
 

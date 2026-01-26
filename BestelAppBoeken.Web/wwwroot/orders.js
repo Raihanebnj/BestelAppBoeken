@@ -21,12 +21,43 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('orders-loading').style.display = 'none';
             document.getElementById('orders-table-container').style.display = 'block';
         }
+
+// Subscribe to SSE notifications
+function subscribeToNotifications() {
+    if (!window.EventSource) {
+        console.warn('SSE not supported in this browser');
+        return;
+    }
+
+    try {
+        const es = new EventSource('/api/notifications/stream');
+        es.onmessage = function (e) {
+            console.log('SSE message:', e.data);
+            try {
+                const msg = JSON.parse(e.data);
+                // simple: refresh entire orders list
+                loadOrders();
+                if (typeof showInfo === 'function') showInfo(`Order update: ${msg.orderId} ? ${msg.status}`);
+            } catch (err) {
+                console.log('SSE non-JSON payload', e.data);
+                loadOrders();
+            }
+        };
+        es.onerror = function (err) {
+            console.warn('SSE error, EventSource will retry automatically', err);
+        };
+    } catch (ex) {
+        console.warn('Failed to open SSE', ex);
+    }
+}
     } catch (e) {
         console.warn('No cached orders available or parse error', e);
     }
 
     // Always load fresh orders in background
     loadOrders();
+    // Subscribe to server-sent events for live updates
+    subscribeToNotifications();
     
     // If new order was detected, schedule a refresh after load
     if (hasNewOrder) {

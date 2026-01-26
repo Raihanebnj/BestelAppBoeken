@@ -21,14 +21,16 @@ namespace BestelAppBoeken.Web.Services
         private readonly ILogger<OrderUpdateConsumer> _logger;
         private readonly IConfiguration _configuration;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly OrderNotificationService? _notificationService;
         private IConnection? _connection;
         private IChannel? _channel;
 
-        public OrderUpdateConsumer(ILogger<OrderUpdateConsumer> logger, IConfiguration configuration, IServiceScopeFactory scopeFactory)
+        public OrderUpdateConsumer(ILogger<OrderUpdateConsumer> logger, IConfiguration configuration, IServiceScopeFactory scopeFactory, OrderNotificationService? notificationService = null)
         {
             _logger = logger;
             _configuration = configuration;
             _scopeFactory = scopeFactory;
+            _notificationService = notificationService;
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
@@ -131,6 +133,20 @@ namespace BestelAppBoeken.Web.Services
 
                         order.Status = newStatus;
                         await dbContext.SaveChangesAsync();
+
+                        // Publish notification for connected clients (if available)
+                        try
+                        {
+                            if (_notificationService != null)
+                            {
+                                var payload = Newtonsoft.Json.JsonConvert.SerializeObject(new { orderId = order.Id, status = newStatus });
+                                await _notificationService.PublishAsync(payload);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to publish order notification");
+                        }
                     }
                 }
                 else
