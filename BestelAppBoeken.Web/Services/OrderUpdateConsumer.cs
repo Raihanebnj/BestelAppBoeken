@@ -44,6 +44,7 @@ namespace BestelAppBoeken.Web.Services
 
             try
             {
+            // Attempt connecting to RabbitMQ (real mode)
                 _connection = await factory.CreateConnectionAsync();
                 _channel = await _connection.CreateChannelAsync();
 

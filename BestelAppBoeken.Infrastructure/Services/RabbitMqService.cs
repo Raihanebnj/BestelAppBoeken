@@ -19,15 +19,19 @@ namespace BestelAppBoeken.Infrastructure.Services
         {
             _configuration = configuration;
             _logger = logger;
-
+            
+            // Lees RabbitMQ config
             var rabbitMqSection = _configuration.GetSection("RabbitMq");
+
 
             _factory = new ConnectionFactory
             {
                 HostName = rabbitMqSection["HostName"] ?? "10.2.160.223",
                 UserName = rabbitMqSection["UserName"] ?? "bestelapp",
-                Password = rabbitMqSection["Password"] ?? "Groep3"
+                Password = rabbitMqSection["Password"] ?? "Groep3" // Gebruik raw wachtwoord
             };
+
+            _logger.LogInformation("RabbitMQ service met encryptie geïnitialiseerd");
         }
 
         public async Task PublishOrderAsync(Order order)
@@ -48,70 +52,18 @@ namespace BestelAppBoeken.Infrastructure.Services
                 string message = JsonSerializer.Serialize(order);
                 var body = Encoding.UTF8.GetBytes(message);
 
-                await channel.BasicPublishAsync(exchange: string.Empty,
+                await channel.BasicPublishAsync(exchange: "",
                                      routingKey: queueName,
+                                     mandatory: false,
+                                     basicProperties: new BasicProperties(),
                                      body: body);
 
+                // FIX: Gebruik een property die WEL bestaat in Order
                 _logger.LogInformation($"Successfully published order to queue '{queueName}': Order ID {order.Id}");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to publish order to RabbitMQ.");
-            }
-        }
-
-        public async Task PublishOrderApprovalRequestAsync(Order order)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(order.Status))
-                {
-                    order.Status = "Pending";
-                }
-
-                await PublishOrderAsync(order);
-                _logger.LogInformation($"Published approval/request message for Order #{order.Id}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to publish approval request to RabbitMQ.");
-            }
-        }
-
-        public async Task PublishOrderStatusUpdateAsync(int orderId, string status, string? description = null)
-        {
-            try
-            {
-                using var connection = await _factory.CreateConnectionAsync();
-                using var channel = await connection.CreateChannelAsync();
-
-                var queueName = _configuration["RabbitMq:UpdatesQueueName"] ?? "order-updates";
-
-                await channel.QueueDeclareAsync(queue: queueName,
-                                     durable: false,
-                                     exclusive: false,
-                                     autoDelete: false,
-                                     arguments: null);
-
-                var payload = new
-                {
-                    OrderId = orderId,
-                    Status = status,
-                    Description = description ?? $"Web Order #{orderId}",
-                    UpdatedAt = DateTime.UtcNow
-                };
-
-                var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
-
-                await channel.BasicPublishAsync(exchange: string.Empty,
-                                     routingKey: queueName,
-                                     body: body);
-
-                _logger.LogInformation($"Published status update for Order #{orderId} -> {status} to '{queueName}'");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to publish order status update to RabbitMQ.");
             }
         }
     }

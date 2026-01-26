@@ -31,6 +31,15 @@ namespace BestelAppBoeken.Receiver
                 Password = _configuration["RabbitMq:Password"]
             };
 
+            // Skip attempting connection when RabbitMQ is disabled via configuration (mock mode)
+            var mqEnabled = _configuration.GetValue<bool>("RabbitMq:Enabled", false);
+            if (!mqEnabled)
+            {
+                _logger.LogInformation("RabbitMQ is disabled via configuration (mock mode). Worker will not connect.");
+                await base.StartAsync(cancellationToken);
+                return;
+            }
+
             try 
             {
                 _connection = await factory.CreateConnectionAsync();

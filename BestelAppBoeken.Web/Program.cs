@@ -5,47 +5,7 @@ using BestelAppBoeken.Infrastructure.Services;
 using BestelAppBoeken.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-// ============================================
-// ENCRYPTIE TEST VOOR DEMO
-// ============================================
-Console.WriteLine("🔐 ENCRYPTIE DEMO VOOR SCHOOLPROJECT");
-Console.WriteLine("====================================\n");
-
-// Test 1: Basis encryptie/decryptie
-var testPassword = "groep3"; // kleine letters!
-Console.WriteLine("🧪 TEST 1: Basis encryptie");
-Console.WriteLine($"Origineel wachtwoord: '{testPassword}'");
-
-var encrypted = SimpleCrypto.Encrypt(testPassword);
-Console.WriteLine($"Geëncrypteerd: '{encrypted}'");
-Console.WriteLine($"Lengte: {encrypted.Length} characters");
-
-var decrypted = SimpleCrypto.Decrypt(encrypted);
-Console.WriteLine($"Gedecrypteerd: '{decrypted}'");
-Console.WriteLine($"Werkt: {testPassword == decrypted}");
-
-// Test 2: Check of het echt encrypted is
-Console.WriteLine("\n🧪 TEST 2: Validatie");
-bool isEncrypted = encrypted != testPassword &&
-                   encrypted.Length > 20 &&
-                   !encrypted.Contains(" ");
-Console.WriteLine($"Is echt encrypted: {isEncrypted}");
-Console.WriteLine($"Is Base64: {IsBase64String(encrypted)}");
-
-// Test 3: Voor appsettings.json
-Console.WriteLine("\n📋 VOOR APPSETTINGS.JSON:");
-Console.WriteLine("------------------------");
-Console.WriteLine("RabbitMQ configuratie:");
-Console.WriteLine($"\"Password\": \"{encrypted}\"");
-Console.WriteLine("\nSalesforce configuratie:");
-Console.WriteLine($"\"Password\": \"{SimpleCrypto.Encrypt("Groep3Rabbit")}\"");
-
-// Test 4: Simuleer RabbitMQ gebruik
-Console.WriteLine("\n🧪 TEST 4: RabbitMQ simulatie");
-Console.WriteLine("Config lezen → Decrypt → Verbinden");
-Console.WriteLine($"Decrypt voor RabbitMQ: '{SimpleCrypto.Decrypt(encrypted)}'");
-
-Console.WriteLine("\n🚀 Start applicatie...\n");
+// Start application
 
 // ============================================
 // HULPFUNCTIE
@@ -139,8 +99,6 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // Database Backup Service
 builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
 builder.Services.AddHostedService<BestelAppBoeken.Web.Services.OrderUpdateConsumer>();
-// Scheduled backup service (daily)
-builder.Services.AddHostedService<BestelAppBoeken.Infrastructure.Services.DatabaseBackupScheduler>();
 
 // SSE notifications service
 builder.Services.AddSingleton<BestelAppBoeken.Web.Services.OrderNotificationService>();

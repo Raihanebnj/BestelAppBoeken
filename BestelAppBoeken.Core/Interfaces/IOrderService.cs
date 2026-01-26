@@ -12,7 +12,6 @@ namespace BestelAppBoeken.Core.Interfaces
         Order? GetOrderById(int id);
         Task<Order?> GetOrderByIdAsync(int id);
         Order CreateOrder(Order order);
-        Task<Order> CreateOrderAsync(Order order);
         IEnumerable<Order> GetOrdersByCustomerEmail(string email);
     }
 }
