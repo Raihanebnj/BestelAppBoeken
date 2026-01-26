@@ -31,6 +31,15 @@ static bool IsBase64String(string value)
 // ============================================
 var builder = WebApplication.CreateBuilder(args);
 
+// Allow overriding RabbitMQ settings with environment variables (recommended for secrets)
+// Support common env names: RABBITMQ_HOSTNAME / RABBITMQ_USERNAME / RABBITMQ_PASSWORD
+var envRabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME") ?? Environment.GetEnvironmentVariable("RabbitMq__HostName");
+var envRabbitUser = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? Environment.GetEnvironmentVariable("RabbitMq__UserName");
+var envRabbitPass = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? Environment.GetEnvironmentVariable("RabbitMq__Password");
+if (!string.IsNullOrWhiteSpace(envRabbitHost)) builder.Configuration["RabbitMq:HostName"] = envRabbitHost;
+if (!string.IsNullOrWhiteSpace(envRabbitUser)) builder.Configuration["RabbitMq:UserName"] = envRabbitUser;
+if (!string.IsNullOrWhiteSpace(envRabbitPass)) builder.Configuration["RabbitMq:Password"] = envRabbitPass;
+
 // Add services to the container.
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
@@ -82,14 +91,15 @@ builder.Services.AddDbContext<BookstoreDbContext>(options =>
 
 // Register Custom Services
 builder.Services.AddSingleton<IMessageQueueService, RabbitMqService>();
-// builder.Services.AddScoped<ISalesforceService, SalesforceService>(); // Tijdelijk commenten
+// Register SalesforceService so ISalesforceService can be injected
+builder.Services.AddScoped<ISalesforceService, SalesforceService>();
 
-// SAP iDoc Service (tijdelijk commenten)
-// builder.Services.AddHttpClient<ISapService, SapService>(client =>
-// {
-//     client.Timeout = TimeSpan.FromSeconds(30);
-//     client.DefaultRequestHeaders.Add("User-Agent", "Bookstore-SAP-iDoc/1.0");
-// });
+// SAP iDoc Service
+builder.Services.AddHttpClient<ISapService, SapService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+    client.DefaultRequestHeaders.Add("User-Agent", "Bookstore-SAP-iDoc/1.0");
+});
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IKlantService, KlantService>();
@@ -98,7 +108,14 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Database Backup Service
 builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
-builder.Services.AddHostedService<BestelAppBoeken.Web.Services.OrderUpdateConsumer>();
+// Only register the background consumer if RabbitMQ settings are present.
+// This prevents startup errors when RabbitMQ is not configured or credentials are invalid.
+var rabbitHost = builder.Configuration["RabbitMq:HostName"];
+var rabbitUser = builder.Configuration["RabbitMq:UserName"];
+if (!string.IsNullOrWhiteSpace(rabbitHost) && !string.IsNullOrWhiteSpace(rabbitUser))
+{
+    builder.Services.AddHostedService<BestelAppBoeken.Web.Services.OrderUpdateConsumer>();
+}
 
 // SSE notifications service
 builder.Services.AddSingleton<BestelAppBoeken.Web.Services.OrderNotificationService>();
