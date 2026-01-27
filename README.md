@@ -51,7 +51,7 @@ Foutenafhandeling (klanten & bestellingen)
   - `409` bij conflicts (bv. voorraadrace)
   - `500` bij interne fouten
 - Centrale exception-middleware en logging; `GdprCompliantLogger` (maskering PII).
-- Asynchrone verwerking: retry-policy en DLQ-ondersteuning voor RabbitMQ (zie `DLQ-IMPLEMENTATION.md`).
+- Asynchrone verwerking: retry-policy en DLQ-ondersteuning voor RabbitMQ.
 - Transacties: gebruik EF Core transacties bij order + voorraad updates; rollback bij falen.
 
 Backups en JSON — waarvoor en hoe in dit project
@@ -64,7 +64,7 @@ Backups en JSON — waarvoor en hoe in dit project
   - Seeding: snel vullen van dev/test databases met consistente voorbeelddata (`DbSeeder` leest JSON).
   - Export/import: verplaatsen van order- en klantdata tussen omgevingen of voor handmatig herstel (`orders_export_*.json`).
   - Handmatige backups: portable snapshots voor herstel of forensische analyse.
-  - Migratie/opschoning: JSON gebruiken als tussenformaat bij migraties of bulk-correcties (zie `SEED-DATA-GUIDE.md` / `HARDCODED-DATA-CHANGES.md`).
+  - Migratie/opschoning: JSON gebruiken als tussenformaat bij migraties of bulk-correcties.
 - Best practices:
   - Geen onversleutelde persoonsgegevens in publieke backups: anonimiseer of versleutel (gebruik secret store / opslag met toegangscontrole).
   - Bewaar backups op beveiligde opslag en beperk toegang via environment-configuratie (`appsettings*.json`).
