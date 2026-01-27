@@ -90,13 +90,16 @@ Runnen (snelstart)
 3. Start webapp: `dotnet run --project BestelAppBoeken.Web`
 4. Start worker: `dotnet run --project BestelAppBoeken.Receiver`
 
-Contributie & tests
-- Feature-branch → PR met teststappen en beschrijving.
-- Voeg unit- en integratietests toe voor services, validatie en error flows.
-- Voeg tests voor messaging en DLQ handling toe.
 
-Referenties & documenten in repo
-- `DATABASE.md`, `SEED-DATA-GUIDE.md`, `DLQ-IMPLEMENTATION.md`, `SAP-IDOC-INTEGRATION.md`, `BESTELLING-PLAATSEN-FIXED.md`
 
-Opmerking
-- Wil je dat ik dit bestand direct probeer aan te maken in de repository? Zeg “maak aan” en ik probeer het nogmaals.
+
+## Licentie
+
+Dit project is ontwikkeld in het kader van een opleiding aan **Hogeschool Erasmus**.
+
+Het project is uitsluitend bedoeld voor **educatieve doeleinden**.  
+Gebruik, distributie of modificatie voor **commerciële doeleinden** is niet toegestaan zonder expliciete schriftelijke toestemming van de auteur(s).
+
+© 2026 – BestelAppBoeken  
+Alle rechten voorbehouden, tenzij anders overeengekomen.
+
