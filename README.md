@@ -104,6 +104,10 @@ npm run test:integration
 ### Test RabbitMQ connection
 npm run test:rabbitmq
 
+##Screenshots
+![image alt]()
+
+
 👥 Teamrollen
 
 Teamlid 1	Project Lead	Coördinatie, architectuur
