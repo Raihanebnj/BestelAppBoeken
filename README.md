@@ -105,7 +105,25 @@ npm run test:integration
 npm run test:rabbitmq
 
 ##Screenshots
-![image alt]()
+
+
+###Homepage
+![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Homepage.jpeg)
+
+###Admin
+![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Admin_Paneel.png)
+
+###Klanten beheer
+![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Klantenbeheer.jpeg)
+
+###Boeken Beheer
+![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Boeken_beheer.jpeg)
+
+###WinkelMand
+![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/WinkelMand.jpeg)
+
+###Bestellingen Overzicht
+![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Bestellingen_Overzicht.jpeg)
 
 
 👥 Teamrollen
