@@ -104,25 +104,25 @@ npm run test:integration
 ### Test RabbitMQ connection
 npm run test:rabbitmq
 
-##Screenshots
+## Screenshots
 
 
-###Homepage
+### Homepage
 ![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Homepage.jpeg)
 
-###Admin
+### Admin
 ![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Admin_Paneel.png)
 
-###Klanten beheer
+### Klanten beheer
 ![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Klantenbeheer.jpeg)
 
-###Boeken Beheer
+### Boeken Beheer
 ![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Boeken_beheer.jpeg)
 
-###WinkelMand
+### WinkelMand
 ![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/WinkelMand.jpeg)
 
-###Bestellingen Overzicht
+### Bestellingen Overzicht
 ![image alt](https://github.com/Raihanebnj/BestelAppBoeken/blob/2e436f4cee0097ddb55a0f1c64945598826bac0a/Bestellingen_Overzicht.jpeg)
 
 
@@ -156,5 +156,5 @@ Accountability: Audit logging van alle verwerkingen
 
 Recht op inzage: Gestructureerde logs voor DPO
 
-### Screenshots
+
 
